@@ -22,6 +22,7 @@ Calendula.prototype._templates = {
             SATURDAY = 5,
             SUNDAY = 6,
             month = this.parent.text('months')[m],
+            className = '',
             text = [];
             
         if (isLeapYear(y)) {
@@ -100,7 +101,7 @@ Calendula.prototype._templates = {
     },
     months: function() {
         var buf = '<div class="$month-selector"><div class="$month-selector-i"></div></div>';
-        Calendula.text(this.parent._prefs.lang, 'months').forEach(function(el, i) {
+        this.parent.text('months').forEach(function(el, i) {
             buf += '<div class="$month" data-month="' + i + '">' + el + '</div>';
         });
         
@@ -108,7 +109,7 @@ Calendula.prototype._templates = {
     },
     main: function() {
         var weekdays = '';
-        Calendula.text(this.parent._prefs.lang, 'shortWeekDays').forEach(function(el, i) {
+        this.parent.text('shortWeekDays').forEach(function(el, i) {
             weekdays += '<td class="$short-weekdays-cell $short-weekdays-cell_n_' + i + '">' + el + '</td>';
         });
         
@@ -116,7 +117,7 @@ return this._prepare('\
 <table class="$short-weekdays">' + weekdays + '</table>\
 <div class="$container">\
 <div class="$days">\
-    <div class="$days-container">' + this.days(2014) + '</div>\
+    <div class="$days-container">' + this.days(this.parent._year) + '</div>\
 </div>\
 <div class="$months">' + this.months() + '</div>\
 <div class="$years">' + this.years() + '</div>\

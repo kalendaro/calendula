@@ -1,5 +1,3 @@
-'use strict';
-
 var Calendula = function(prefs) {
     this._prefs = prefs || {
         lang: 'ru',
@@ -7,6 +5,7 @@ var Calendula = function(prefs) {
         endYear: 2014
     };
 };
+
 Calendula.prototype = {
     init: function() {
         var cur = new Date();
@@ -37,9 +36,6 @@ Calendula.prototype = {
     },
     getDate: function() {
         return date;
-    },
-    text: function(id) {
-        return this._texts[this._prefs.lang][id];
     },
     setPrefs: function(prefs) {
         return this;
