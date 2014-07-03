@@ -9,7 +9,7 @@ Calendula.prototype._templates = {
     daysMonth: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
     days: function(year) {
         var text = '';
-        for(var m = 0; m < 11; m++) {
+        for(var m = 0; m < this.daysMonth.length; m++) {
             text += this.month(m, year);
         }
     
@@ -32,8 +32,6 @@ Calendula.prototype._templates = {
         }
             
         text.push('<div class="$days-month">');
-        
-        
         
         if (weekday == -1) {
             weekday = SUNDAY;

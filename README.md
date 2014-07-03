@@ -15,6 +15,11 @@
 + Google Chrome 6 и выше;
 + Safari 6 и выше.
 
+## Подключение
+TODO
+
+## API
+TODO
 
 ## Лицензия
 The MIT License (MIT)

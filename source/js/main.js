@@ -40,8 +40,14 @@ Calendula.prototype = {
     setPrefs: function(prefs) {
         return this;
     },
-    elem: function(name) {
+    _elem: function(name) {
         return this._container.querySelector('.' + elem(name));
+    },
+    _elemAll: function(name) {
+        return this._container.querySelectorAll('.' + elem(name));
+    },
+    _top: function(elem, y) {
+        elem.style.top = y + 'px';
     },
     setOpenedEvents: function() {
         var that = this;
@@ -61,9 +67,10 @@ Calendula.prototype = {
             that._ignoreDocumentClick = true;
         });
         
-        var months = this.elem('months');
+        var months = this._elem('months');
+        var days = this._elem('days');
         
-        addWheelListener(months, function(e) {
+        this._onwheelmonths = function(e) {
             var k = 0;
             if(e.deltaY > 0) {
                 k = 1;
@@ -74,7 +81,10 @@ Calendula.prototype = {
             if(k) {
                 that._monthSelector(that._month + k);
             }
-        });
+        };
+        
+        addWheelListener(months, this._onwheelmonths);
+        addWheelListener(days, this._onwheelmonths);
         
         this.events.on(months, 'click', function(e) {
             if(e.target.classList.contains(elem('month'))) {
@@ -82,13 +92,12 @@ Calendula.prototype = {
             }
         });
         
-        this.events.on(this.elem('years'), 'click', function(e) {
-           if(e.target.dataset.year) {
+        this.events.on(this._elem('years'), 'click', function(e) {
+            if(e.target.dataset.year) {
                 that._year = +e.target.dataset.year;
             }
         });
         
-        var days = this.elem('days');
         this.events.on(days, 'click', function(e) {
             var cl = elem('day', 'selected');
             var target = e.target;
@@ -114,20 +123,35 @@ Calendula.prototype = {
         
         this._month = month;
         
-        var months = this.elem('months');
-        var monthHeight = this.elem('month').offsetHeight;
-        var selector = this.elem('month-selector');
-
+        var months = this._elem('months');
+        var monthHeight = this._elem('month').offsetHeight;
+        var selector = this._elem('month-selector');
+        var daysContainer = this._elem('days-container');
+        var days = this._elem('days');
+        var daysContainerTop;
+        var monthsElems = this._elemAll('days-month');
+        
         var top = Math.floor(this._month * monthHeight - (monthHeight / 2));
-        if(top < 0) {
-            top = 0;
+        if(top <= 0) {
+            top = 1;
         }
         
-        if(top + selector.offsetHeight > months.offsetHeight) {
-            top = months.offsetHeight - selector.offsetHeight;
+        if(top + selector.offsetHeight >= months.offsetHeight) {
+            top = months.offsetHeight - selector.offsetHeight - 1;
         }
         
-        this.elem('month-selector').style.top = top + 'px';
+        this._top(this._elem('month-selector'), top);
+        
+        daysContainerTop = -Math.floor(monthsElems[month].offsetTop - days.offsetHeight / 2 + monthsElems[month].offsetHeight / 2);
+        if(daysContainerTop > 0) {
+            daysContainerTop = 0;
+        }
+        
+        if(daysContainerTop < days.offsetHeight - daysContainer.offsetHeight) {
+            daysContainerTop = days.offsetHeight - daysContainer.offsetHeight;
+        }
+        
+        this._top(daysContainer, daysContainerTop);
     },
     delOpenedEvents: function() {
     },

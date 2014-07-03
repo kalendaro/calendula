@@ -47,6 +47,7 @@
     position: absolute;
     top: 4px;
     left: 12px;
+    cursor: default;
 }
 
 .calendula__short-weekdays-cell_n_5,
@@ -106,6 +107,9 @@
 .calendula__days-container
 {
     box-shadow: 5px inset #000;
+    position: relative;
+    top: 0;
+    transition: top 0.3s linear;
 }
 
 .calendula__days-title-month
