@@ -5,22 +5,54 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="../source/calendula.dev.css" />
     <script src="../source/calendula.dev.js"></script>
+    <style>
+        #api-methods
+        {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+        
+        #example
+        {
+            position: absolute;
+            left: 30%;
+            top: 80px;
+        }
+    </style>
 </head>
 <body>
-    <input type="button" value=".open()" id="cl-open" /><br />
-    <input type="button" value=".close()" id="cl-close" /><br />
-    <input type="button" value=".toggle()" id="cl-toggle" /><br />
-    <input type="button" value=".destroy()" id="cl-destroy" />
+
+    <div id="api-methods">
+        <input type="button" value="open" id="cl-open" />
+        <input type="button" value="close" id="cl-close" />
+        <input type="button" value="toggle" id="cl-toggle" />
+        <input type="button" value="destroy" id="cl-destroy" />
+        <br /><br />
+        theme: <select><option value="normal">normal</option><option value="black">black</option></select>
+        
+    </div>
+    
+    <div id="example">
+        <button id="example-button"></button>
+    </div>
+    
     <script>
     (function() {
-        var cl = new Calendula();
+        var cl = new Calendula({value: new Date()});
         cl.open();
         
         var clOpen = document.getElementById('cl-open'),
             clClose = document.getElementById('cl-close'),
             clToggle = document.getElementById('cl-toggle'),
-            clDestroy = document.getElementById('cl-destroy');
+            clDestroy = document.getElementById('cl-destroy'),
+            button = document.getElementById('example-button');
         
+        button.innerHTML = cl._buttonText();
+        button.addEventListener('click', function() {
+            cl.toggle();
+        }, false);
+
         clOpen.addEventListener('click', function() {
             cl.open();
         }, false);

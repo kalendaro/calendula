@@ -13,3 +13,15 @@ var extend = function(container, obj) {
         }
     }
 };
+
+extend(Calendula.prototype, {
+    _elem: function(name) {
+        return this._container.querySelector('.' + elem(name));
+    },
+    _elemAll: function(name) {
+        return this._container.querySelectorAll('.' + elem(name));
+    },
+    _top: function(elem, y) {
+        elem.style.top = y + 'px';
+    }
+});

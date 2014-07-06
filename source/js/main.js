@@ -1,9 +1,14 @@
-var Calendula = function(prefs) {
+var Calendula = function(data) {
+    data = data || {};
+    
     var current = new Date();
-    this._prefs = prefs || {
-        lang: 'ru',
-        startYear: current.getFullYear() - 11,
-        endYear: current.getFullYear() + 1
+    
+    this._data = {
+        onselect: data.onselect || function(e, value) {},
+        theme: data.theme || 'normal',
+        lang: data.lang || Calendula._default,
+        startYear: data.startYear || (current.getFullYear() - 11),
+        endYear: data.endYear || (current.getFullYear() + 1)
     };
 };
 
@@ -22,33 +27,88 @@ Calendula.prototype = {
         this._year = cur.getFullYear();
         
         var container = document.createElement('div');
+
         container.classList.add(NS);
-        
         container.innerHTML = this.template('main');
-        
+
         document.body.appendChild(container);
         
         this._container = container;
     },
-    setDate: function(date) {
-        this.update();
+    isOpened: function() {
+        return this._isOpened;
+    },
+    open: function() {
+        var that = this;
+        
+        this.init();
+        
+        this._ignoreDocumentClick = true;
+        
+        if(!this.isOpened()) {
+            this.update();
+            
+            // For Firefox CSS3 animation
+            setTimeout(function() {
+                that._container.classList.add(mod('opened'));
+            }, 1);
+            
+            this._openedEvents();
+            
+            this._isOpened = true;
+        }
         
         return this;
     },
-    getDate: function() {
-        return date;
-    },
-    setPrefs: function(prefs) {
+    close: function() {
+        this.init();
+        
+        if(this.isOpened()) {
+            this._ignoreDocumentClick = false;
+            
+            this.update();
+            this._container.classList.remove(mod('opened'));
+            
+            this._delOpenedEvents();
+            this._isOpened = false;
+        }
+        
         return this;
     },
-    _elem: function(name) {
-        return this._container.querySelector('.' + elem(name));
+    toggle: function() {
+        if(this.isOpened()) {
+            this.close();
+        } else {
+            this.open();
+        }
     },
-    _elemAll: function(name) {
-        return this._container.querySelectorAll('.' + elem(name));
+    update: function() {
+        if(this._isInited) {
+            this.init();
+        }
     },
-    _top: function(elem, y) {
-        elem.style.top = y + 'px';
+    resize: function() {
+    },
+    setTheme: function(name) {
+        var container = this._container;
+        if(container) {
+            container.classList.remove(mod('theme', this._data.theme));
+            this._data.theme = name;
+            container.classList.add(mod('theme', name));
+        }
+    },
+    destroy: function() {
+        if(this._isInited) {
+            this.close();
+            
+            this._events.offAll();
+            
+            document.body.removeChild(this._container);
+            
+            ['_isInited', '_container', '_isOpened', '_ignoreDocumentClick'].forEach(function(el) {
+                delete this[el];
+            }, this);
+        }
     },
     _openedEvents: function() {
         var that = this;
@@ -115,6 +175,16 @@ Calendula.prototype = {
                 }
                 
                 target.classList.add(cl);
+                
+                that._data.onselect({
+                    type: 'select'
+                    }, {
+                    day: that._day,
+                    month: that._month,
+                    year: that._year
+                });
+                
+                that.close();
             }
         }, 'open');
     },
@@ -161,69 +231,11 @@ Calendula.prototype = {
     _delOpenedEvents: function() {
         this._events.offAll('open');
     },
-    isOpened: function() {
-        return this._isOpened;
-    },
-    open: function() {
-        var that = this;
-        
-        this.init();
-        
-        this._ignoreDocumentClick = true;
-        
-        if(!this.isOpened()) {
-            this.update();
+    _buttonText: function() {
+        var date = new Date(),
+            m = this.text('months'),
+            cm = this.text('caseMonths');
             
-            // For Firefox CSS3 animation
-            setTimeout(function() {
-                that._container.classList.add(mod('opened'));
-            }, 1);
-            
-            this._openedEvents();
-            
-            this._isOpened = true;
-        }
-        
-        return this;
-    },
-    close: function() {
-        this.init();
-        
-        if(this.isOpened()) {
-            this._ignoreDocumentClick = false;
-            
-            this.update();
-            this._container.classList.remove(mod('opened'));
-            
-            this._delOpenedEvents();
-            this._isOpened = false;
-        }
-        
-        return this;
-    },
-    toggle: function() {
-        if(this.isOpened()) {
-            this.close();
-        } else {
-            this.open();
-        }
-    },
-    update: function() {
-        if(this._isInited) {
-            this.init();
-        }
-    },
-    resize: function() {
-    },
-    destroy: function() {
-        if(this._isInited) {
-            this._events.offAll();
-            
-            document.body.removeChild(this._container);
-            
-            ['_isInited', '_container', '_isOpened', '_ignoreDocumentClick'].forEach(function(el) {
-                delete this[el];
-            }, this);
-        }
+        return date.getDate() + ' ' + (cm || m)[date.getMonth()] + ' ' + date.getFullYear();
     }
 };

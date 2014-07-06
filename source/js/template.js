@@ -89,8 +89,8 @@ Calendula.prototype._templates = {
     },
     years: function() {
         var buf = '<div class="$year-selector"><div class="$year-selector-i"></div></div>';
-        var startYear = this.parent._prefs.startYear;
-        var endYear = this.parent._prefs.endYear;
+        var startYear = this.parent._data.startYear;
+        var endYear = this.parent._data.endYear;
         for(var i = startYear; i <= endYear; i++) {
             buf += '<div class="$year" data-year="' + i + '">' + i + '</div>';
         }
