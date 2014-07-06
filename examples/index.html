@@ -7,9 +7,36 @@
     <script src="../source/calendula.dev.js"></script>
 </head>
 <body>
+    <input type="button" value=".open()" id="cl-open" /><br />
+    <input type="button" value=".close()" id="cl-close" /><br />
+    <input type="button" value=".toggle()" id="cl-toggle" /><br />
+    <input type="button" value=".destroy()" id="cl-destroy" />
     <script>
-        var c = new Calendula();
-        c.open();
+    (function() {
+        var cl = new Calendula();
+        cl.open();
+        
+        var clOpen = document.getElementById('cl-open'),
+            clClose = document.getElementById('cl-close'),
+            clToggle = document.getElementById('cl-toggle'),
+            clDestroy = document.getElementById('cl-destroy');
+        
+        clOpen.addEventListener('click', function() {
+            cl.open();
+        }, false);
+        
+        clClose.addEventListener('click', function() {
+            cl.close();
+        }, false);
+        
+        clToggle.addEventListener('click', function() {
+            cl.toggle();
+        }, false);
+        
+        clDestroy.addEventListener('click', function() {
+            cl.destroy();
+        }, false);
+    })();
     </script>
 </body>
 </html>

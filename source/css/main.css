@@ -9,7 +9,11 @@
 
     width: 310px;
     height: 310px;
-    margin-top: -50px;
+    left: 50%;
+    top: 50%;
+
+    margin-top: -300px;
+    margin-left: -155px;
 
     -moz-user-select: none;
          user-select: none;
@@ -26,7 +30,7 @@
 {
     visibility: visible;
 
-    margin-top: 0;
+    margin-top: -155px;
 
     transition: visibility 0s linear, margin-top .2s linear, opacity .2s linear;
 
