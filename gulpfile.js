@@ -20,7 +20,8 @@ var paths = {
         'source/js/end.js'
     ],
     css: [
-        'source/css/main.css'
+        'source/css/main.css',
+        'source/css/theme.normal.css'
     ]
 };
 

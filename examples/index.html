@@ -19,9 +19,21 @@
             left: 30%;
             top: 100px;
         }
+        
+        .page_theme_normal
+        {
+            background-color: none;
+            color: #000;
+        }
+        
+        .page_theme_black
+        {
+            background-color: black;
+            color: #fff;
+        }
     </style>
 </head>
-<body>
+<body class="page_theme_normal">
 
     <div id="api-methods">
         <input type="button" value="open" id="cl-open" />
@@ -29,12 +41,24 @@
         <input type="button" value="toggle" id="cl-toggle" />
         <input type="button" value="destroy" id="cl-destroy" />
         <br /><br />
-        theme: <select><option value="normal">normal</option><option value="black">black</option></select>
+        theme: <select id="cl-theme" autocomplete="off">
+            <option value="normal">normal</option>
+            <option value="black">black</option>
+        </select><br />
         
+        lang: <select id="cl-lang" autocomplete="off">
+            <option value="ru">ru</option>
+            <option value="en">en</option>
+            <option value="be">be</option>
+            <option value="uk">uk</option>
+            <option value="tr">tr</option>
+        </select>
     </div>
     
     <div id="example">
-        <button id="example-button"></button>
+        <button id="example-button" class="calendula-selector">
+            <span class="calendula-selector__text"></span>&thinsp;<span class="calendula-selector__arrow" style="display: inline-block; transform: rotate(90deg)">&#9656;</span>
+        </button>
     </div>
     
     <script>
@@ -44,13 +68,33 @@
             clToggle = document.getElementById('cl-toggle'),
             clDestroy = document.getElementById('cl-destroy'),
             button = document.getElementById('example-button'),
-            cl = new Calendula({value: new Date(), linkTo: button});
+            clTheme = document.getElementById('cl-theme'),
+            clLang = document.getElementById('cl-lang'),
+            cl = new Calendula({
+                value: new Date(),
+                linkTo: button,
+                onselect: function(e, value) {
+                    updateButton();
+                }
+            }),
+            updateButton = function() {
+                button.querySelector('.calendula-selector__text').innerHTML = cl._buttonText();
+            };
             
         cl.open();
+        updateButton();
         
-        button.innerHTML = cl._buttonText();
         button.addEventListener('click', function() {
             cl.toggle();
+        }, false);
+        
+        clTheme.addEventListener('change', function() {
+            cl.setTheme(this.value);
+            document.body.className = 'page_theme_' + this.value;
+        }, false);
+
+        clLang.addEventListener('change', function() {
+            cl.setLang(this.value);
         }, false);
 
         clOpen.addEventListener('click', function() {

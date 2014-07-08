@@ -6,7 +6,7 @@ var Calendula = function(data) {
         data = extend(data, {
             onselect: data.onselect || function(e, value) {},
             theme: data.theme || 'normal',
-            lang: data.lang || Calendula._default,
+            lang: data.lang || Calendula._defaultLang,
             startYear: data.startYear || (current.getFullYear() - 11),
             endYear: data.endYear || (current.getFullYear() + 1)
         });
@@ -36,6 +36,7 @@ extend(Calendula.prototype, {
         var container = document.createElement('div');
 
         container.classList.add(NS);
+        container.classList.add(mod('theme', this._data.theme));
         container.innerHTML = this.template('main');
 
         document.body.appendChild(container);
@@ -58,9 +59,8 @@ extend(Calendula.prototype, {
                 that._container.classList.add(mod('opened'));
                 that._update();
                 that._monthSelector(that._currentDate.month);
+                that._openedEvents();
             }, 1);
-            
-            this._openedEvents();
             
             this._isOpened = true;
         }
@@ -69,7 +69,6 @@ extend(Calendula.prototype, {
     },
     close: function() {
         this.init();
-        
         if(this.isOpened()) {
             this._ignoreDocumentClick = false;
             
@@ -145,15 +144,18 @@ extend(Calendula.prototype, {
             this._position(this._container, offset);
         }
     },
-    _resize: function() {
-        this._update();
-    },
     setTheme: function(name) {
         var container = this._container;
-        if(container) {
+        if(container && this._data) {
             container.classList.remove(mod('theme', this._data.theme));
-            this._data.theme = name;
             container.classList.add(mod('theme', name));
+            this._data.theme = name;
+        }
+    },
+    setLang: function(lang) {
+        if(this._data) {
+            this._rebuild();
+            this._data.lang = lang;
         }
     },
     destroy: function() {
@@ -168,6 +170,12 @@ extend(Calendula.prototype, {
                 delete this[el];
             }, this);
         }
+    },
+    _resize: function() {
+        this._update();
+    },
+    _rebuild: function() {
+        // TODO
     },
     _openedEvents: function() {
         var that = this;

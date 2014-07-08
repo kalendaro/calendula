@@ -52,11 +52,13 @@ Calendula.prototype._templates = {
         }
         
         var hasTr,
+            title,
             selectedDay = this.parent._val.day,
             selectedMonth = this.parent._val.month,
             selectedYear = this.parent._val.year;
         
         for (var day = 1; day <= this.daysMonth[m]; day++) {
+            title = '';
             hasTr = false;
             date.setDate(day);
             weekday = date.getDay() - 1;
@@ -75,13 +77,12 @@ Calendula.prototype._templates = {
                 className += ' $day_selected';
             }
             
-            var title = '';
             if (isNow(day, m, y)) {
-                className += ' $now';
+                className += ' $day_now';
                 title = this.parent.text('now');
             }
             
-            text.push('<td class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
+            text.push('<td' + (title ? ' title="' + title + '"' : '') + ' class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
             if(weekday === SUNDAY) {
                 text.push('</tr>');
                 hasTr = true;

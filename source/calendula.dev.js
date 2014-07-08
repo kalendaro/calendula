@@ -22,7 +22,7 @@ var Calendula = function(data) {
         data = extend(data, {
             onselect: data.onselect || function(e, value) {},
             theme: data.theme || 'normal',
-            lang: data.lang || Calendula._default,
+            lang: data.lang || Calendula._defaultLang,
             startYear: data.startYear || (current.getFullYear() - 11),
             endYear: data.endYear || (current.getFullYear() + 1)
         });
@@ -52,6 +52,7 @@ extend(Calendula.prototype, {
         var container = document.createElement('div');
 
         container.classList.add(NS);
+        container.classList.add(mod('theme', this._data.theme));
         container.innerHTML = this.template('main');
 
         document.body.appendChild(container);
@@ -74,9 +75,8 @@ extend(Calendula.prototype, {
                 that._container.classList.add(mod('opened'));
                 that._update();
                 that._monthSelector(that._currentDate.month);
+                that._openedEvents();
             }, 1);
-            
-            this._openedEvents();
             
             this._isOpened = true;
         }
@@ -85,7 +85,6 @@ extend(Calendula.prototype, {
     },
     close: function() {
         this.init();
-        
         if(this.isOpened()) {
             this._ignoreDocumentClick = false;
             
@@ -161,15 +160,18 @@ extend(Calendula.prototype, {
             this._position(this._container, offset);
         }
     },
-    _resize: function() {
-        this._update();
-    },
     setTheme: function(name) {
         var container = this._container;
-        if(container) {
+        if(container && this._data) {
             container.classList.remove(mod('theme', this._data.theme));
-            this._data.theme = name;
             container.classList.add(mod('theme', name));
+            this._data.theme = name;
+        }
+    },
+    setLang: function(lang) {
+        if(this._data) {
+            this._rebuild();
+            this._data.lang = lang;
         }
     },
     destroy: function() {
@@ -184,6 +186,12 @@ extend(Calendula.prototype, {
                 delete this[el];
             }, this);
         }
+    },
+    _resize: function() {
+        this._update();
+    },
+    _rebuild: function() {
+        // TODO
     },
     _openedEvents: function() {
         var that = this;
@@ -315,6 +323,47 @@ extend(Calendula.prototype, {
     }
 });
 
+var elem = function(name, mod, val) {
+    return NS + '__' + name + (mod ? '_' + mod + (val ? '_' + val : '') : '');
+};
+
+var mod = function(name, val) {
+    return NS + '_' + name + (val ? '_' + val : '');
+};
+
+extend(Calendula.prototype, {
+    _elem: function(name) {
+        return this._container.querySelector('.' + elem(name));
+    },
+    _elemAll: function(name) {
+        return this._container.querySelectorAll('.' + elem(name));
+    },
+    _left: function(elem, x) {
+        elem.style.left = x + 'px';
+    },
+    _top: function(elem, y) {
+        elem.style.top = y + 'px';
+    },
+    _position: function(elem, coords) {
+        this._left(elem, coords.left);
+        this._top(elem, coords.top);
+    },
+    _offset: function(elem) {
+        var box = {top: 0, left: 0};
+
+        // If we don't have gBCR, just use 0,0 rather than error
+        // BlackBerry 5, iOS 3 (original iPhone)
+        if (typeof elem.getBoundingClientRect !== 'undefined') {
+            box = elem.getBoundingClientRect();
+        }
+        
+        return {
+            top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
+            left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
+        };        
+    }
+});
+
 var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
     'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
@@ -439,11 +488,13 @@ Calendula.prototype._templates = {
         }
         
         var hasTr,
+            title,
             selectedDay = this.parent._val.day,
             selectedMonth = this.parent._val.month,
             selectedYear = this.parent._val.year;
         
         for (var day = 1; day <= this.daysMonth[m]; day++) {
+            title = '';
             hasTr = false;
             date.setDate(day);
             weekday = date.getDay() - 1;
@@ -462,13 +513,12 @@ Calendula.prototype._templates = {
                 className += ' $day_selected';
             }
             
-            var title = '';
             if (isNow(day, m, y)) {
-                className += ' $now';
+                className += ' $day_now';
                 title = this.parent.text('now');
             }
             
-            text.push('<td class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
+            text.push('<td' + (title ? ' title="' + title + '"' : '') + ' class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
             if(weekday === SUNDAY) {
                 text.push('</tr>');
                 hasTr = true;
@@ -532,47 +582,6 @@ function isLeapYear(y) {
     return false;
 }
 
-var elem = function(name, mod, val) {
-    return NS + '__' + name + (mod ? '_' + mod + (val ? '_' + val : '') : '');
-};
-
-var mod = function(name, val) {
-    return NS + '_' + name + (val ? '_' + val : '');
-};
-
-extend(Calendula.prototype, {
-    _elem: function(name) {
-        return this._container.querySelector('.' + elem(name));
-    },
-    _elemAll: function(name) {
-        return this._container.querySelectorAll('.' + elem(name));
-    },
-    _left: function(elem, x) {
-        elem.style.left = x + 'px';
-    },
-    _top: function(elem, y) {
-        elem.style.top = y + 'px';
-    },
-    _position: function(elem, coords) {
-        this._left(elem, coords.left);
-        this._top(elem, coords.top);
-    },
-    _offset: function(elem) {
-        var box = {top: 0, left: 0};
-
-        // If we don't have gBCR, just use 0,0 rather than error
-        // BlackBerry 5, iOS 3 (original iPhone)
-        if (typeof elem.getBoundingClientRect !== 'undefined') {
-            box = elem.getBoundingClientRect();
-        }
-        
-        return {
-            top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
-            left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
-        };        
-    }
-});
-
 extend(Calendula, {
     _texts: {},
     _langs: [],
@@ -581,7 +590,7 @@ extend(Calendula, {
         this._texts[lang] = texts;
         
         if(texts.def) {
-            this._default = lang;
+            this._defaultLang = lang;
         }
     }
 });
@@ -592,25 +601,30 @@ Calendula.prototype.text = function(id) {
 
 Calendula.addLocale('be', {
     months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В']
+    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
+    now: 'Сегодня'    
 });
 Calendula.addLocale('en', {
     months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В']
+    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
+    now: 'Сегодня'
 });
 Calendula.addLocale('ru', {
     months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
     caseMonths: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
     shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
+    now: 'Сегодня',
     def: true
 });
 Calendula.addLocale('tr', {
     months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В']
+    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
+    now: 'Сегодня'    
 });
 Calendula.addLocale('uk', {
     months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В']
+    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
+    now: 'Сегодня'    
 });
 
 return Calendula;

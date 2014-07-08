@@ -6,7 +6,7 @@ extend(Calendula, {
         this._texts[lang] = texts;
         
         if(texts.def) {
-            this._default = lang;
+            this._defaultLang = lang;
         }
     }
 });
