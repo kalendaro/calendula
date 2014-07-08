@@ -11,10 +11,10 @@ var paths = {
         'source/js/start.js',
         'source/js/vars.js',
         'source/js/main.js',
+        'source/js/utils.js',
         'source/js/event.js',
         'source/js/template.js',
         'source/js/date.js',
-        'source/js/utils.js',
         'source/js/locale.js',
         'source/js/locale/*.js',
         'source/js/end.js'

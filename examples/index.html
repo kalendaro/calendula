@@ -17,7 +17,7 @@
         {
             position: absolute;
             left: 30%;
-            top: 80px;
+            top: 100px;
         }
     </style>
 </head>
@@ -39,14 +39,14 @@
     
     <script>
     (function() {
-        var cl = new Calendula({value: new Date()});
-        cl.open();
-        
         var clOpen = document.getElementById('cl-open'),
             clClose = document.getElementById('cl-close'),
             clToggle = document.getElementById('cl-toggle'),
             clDestroy = document.getElementById('cl-destroy'),
-            button = document.getElementById('example-button');
+            button = document.getElementById('example-button'),
+            cl = new Calendula({value: new Date(), linkTo: button});
+            
+        cl.open();
         
         button.innerHTML = cl._buttonText();
         button.addEventListener('click', function() {

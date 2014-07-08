@@ -17,13 +17,18 @@ Calendula.prototype._templates = {
     },
     month: function(m, y) {
         var date = new Date(y, m, 1, 12, 0, 0),
+            current = new Date(),
+            currentStr = [current.getDate(), current.getMonth(), current.getFullYear()].join('-'),
             weekday = date.getDay() - 1,
             FEBRARY = 1,
             SATURDAY = 5,
             SUNDAY = 6,
             month = this.parent.text('months')[m],
             className = '',
-            text = [];
+            text = [],
+            isNow = function(day, month, year) {
+                return Array.prototype.join.call(arguments, '-') === currentStr;
+            };
             
         if (isLeapYear(y)) {
             this.daysMonth[FEBRARY] = 29;
@@ -33,7 +38,7 @@ Calendula.prototype._templates = {
             
         text.push('<div class="$days-month">');
         
-        if (weekday == -1) {
+        if (weekday === -1) {
             weekday = SUNDAY;
         }
         
@@ -46,7 +51,10 @@ Calendula.prototype._templates = {
             text.push('<td colspan="' + weekday + '" class="$empty">' + (weekday < 3 ? '' : '<div class="$days-title-month">' + month + '</div>') + '</td>');
         }
         
-        var hasTr;
+        var hasTr,
+            selectedDay = this.parent._val.day,
+            selectedMonth = this.parent._val.month,
+            selectedYear = this.parent._val.year;
         
         for (var day = 1; day <= this.daysMonth[m]; day++) {
             hasTr = false;
@@ -57,20 +65,21 @@ Calendula.prototype._templates = {
                 weekday = SUNDAY;
             }
             
-            if (weekday != SUNDAY && weekday != SATURDAY) {
+            if (weekday !== SUNDAY && weekday !== SATURDAY) {
                 className = '$day_weekday';
             } else {
                 className = '$day_holiday';
             }
             
-            if (day === this.parent.day && m === this.parent.month && y === this.parent.year) {
+            if (day === selectedDay && m === selectedMonth && y === selectedYear) {
                 className += ' $day_selected';
             }
             
-            /*if (isNow(day, m, y)) {
-                className += ' {n}now';
-                title += that.getString('now');
-            }*/
+            var title = '';
+            if (isNow(day, m, y)) {
+                className += ' $now';
+                title = this.parent.text('now');
+            }
             
             text.push('<td class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
             if(weekday === SUNDAY) {
@@ -115,7 +124,7 @@ return this._prepare('\
 <table class="$short-weekdays">' + weekdays + '</table>\
 <div class="$container">\
 <div class="$days">\
-    <div class="$days-container">' + this.days(this.parent._year) + '</div>\
+    <div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>\
 </div>\
 <div class="$months">' + this.months() + '</div>\
 <div class="$years">' + this.years() + '</div>\

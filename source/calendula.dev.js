@@ -4,21 +4,41 @@ var Calendula = (function(window, document) {
 
 var NS = 'calendula';
 
-var Calendula = function(data) {
-    data = data || {};
+var extend = function(container, obj) {
+    for(var i in obj) {
+        if(obj.hasOwnProperty(i)) {
+            container[i] = obj[i];
+        }
+    }
     
-    var current = new Date();
-    
-    this._data = {
-        onselect: data.onselect || function(e, value) {},
-        theme: data.theme || 'normal',
-        lang: data.lang || Calendula._default,
-        startYear: data.startYear || (current.getFullYear() - 11),
-        endYear: data.endYear || (current.getFullYear() + 1)
-    };
+    return container;
 };
 
-Calendula.prototype = {
+var Calendula = function(data) {
+    data = extend({}, data || {});
+    
+    var current = new Date(),
+        obj = this,
+        data = extend(data, {
+            onselect: data.onselect || function(e, value) {},
+            theme: data.theme || 'normal',
+            lang: data.lang || Calendula._default,
+            startYear: data.startYear || (current.getFullYear() - 11),
+            endYear: data.endYear || (current.getFullYear() + 1)
+        });
+        
+    if(!this instanceof Calendula) {
+        obj = new Calendula(data);
+    }
+    
+    obj._data = data;
+    
+    this.val(this._data.value);
+    
+    return obj;
+};
+
+extend(Calendula.prototype, {
     init: function() {
         var cur = new Date();
         if(this._isInited) {
@@ -28,9 +48,6 @@ Calendula.prototype = {
         this._templates.parent = this;
         
         this._isInited = true;
-        this._day = cur.getDate();
-        this._month = cur.getMonth();
-        this._year = cur.getFullYear();
         
         var container = document.createElement('div');
 
@@ -52,11 +69,11 @@ Calendula.prototype = {
         this._ignoreDocumentClick = true;
         
         if(!this.isOpened()) {
-            this.update();
-            
             // For Firefox CSS3 animation
             setTimeout(function() {
                 that._container.classList.add(mod('opened'));
+                that._update();
+                that._monthSelector(that._currentDate.month);
             }, 1);
             
             this._openedEvents();
@@ -72,7 +89,7 @@ Calendula.prototype = {
         if(this.isOpened()) {
             this._ignoreDocumentClick = false;
             
-            this.update();
+            this._update();
             this._container.classList.remove(mod('opened'));
             
             this._delOpenedEvents();
@@ -87,13 +104,65 @@ Calendula.prototype = {
         } else {
             this.open();
         }
+        
+        return this;
     },
-    update: function() {
+    val: function(value) {
+        var date;
+        
+        if(!arguments.length) {
+            return this._val;
+        }
+        
+        if(value) {
+            if(typeof value === 'string') {
+                date = Date.parse(value);
+            } else if(typeof value === 'object') {
+                if(value instanceof Date) {
+                    date = value;
+                } else {
+                    date = new Date(value.year, value.month, value.day, 12, 0, 0, 0);
+                }
+            } else if(typeof number === 'number') {
+                date = new Date(value);
+            }
+            
+            this._val = {
+                day: date.getDate(),
+                month: date.getMonth(),
+                year: date.getFullYear()
+            };
+            
+            this._currentDate = extend({}, this._val);
+        } else {
+            this._val = {};
+            this._currentDate = this._current();
+        }
+    },
+    _current: function() {
+        var d = new Date();
+        
+        return {
+            day: d.getDate(),
+            month: d.getMonth(),
+            year: d.getFullYear()
+        };
+    },
+    _update: function() {
         if(this._isInited) {
             this.init();
         }
+        
+        var linkTo = this._data.linkTo,
+            offset;
+        if(linkTo) {
+            offset = this._offset(linkTo);
+            offset.top += linkTo.offsetHeight;
+            this._position(this._container, offset);
+        }
     },
-    resize: function() {
+    _resize: function() {
+        this._update();
     },
     setTheme: function(name) {
         var container = this._container;
@@ -111,7 +180,7 @@ Calendula.prototype = {
             
             document.body.removeChild(this._container);
             
-            ['_isInited', '_container', '_isOpened', '_ignoreDocumentClick'].forEach(function(el) {
+            ['_isInited', '_container', '_isOpened', '_ignoreDocumentClick', '_data'].forEach(function(el) {
                 delete this[el];
             }, this);
         }
@@ -130,7 +199,7 @@ Calendula.prototype = {
         }, 'open');
         
         this._events.on(window, 'resize', function() {
-            that.resize();
+            that._resize();
         }, 'open');
         
         this._events.on(this._container, 'click', function() {
@@ -149,7 +218,7 @@ Calendula.prototype = {
             }
             
             if(k) {
-                that._monthSelector(that._month + k);
+                that._monthSelector(that._currentDate.month + k);
             }
         };
         
@@ -164,7 +233,7 @@ Calendula.prototype = {
         
         this._events.on(this._elem('years'), 'click', function(e) {
             if(e.target.dataset.year) {
-                that._year = +e.target.dataset.year;
+                that._currentDate.year = +e.target.dataset.year;
             }
         }, 'open');
         
@@ -172,8 +241,8 @@ Calendula.prototype = {
             var cl = elem('day', 'selected');
             var target = e.target;
             if(target.dataset.day && !target.classList.contains(cl)) {
-                that._month = +target.dataset.month;
-                that._day = +target.dataset.day;
+                that._currentDate.month = +target.dataset.month;
+                that._currentDate.day = +target.dataset.day;
                 
                 var selected = days.querySelector('.' + cl);
                 if(selected) {
@@ -184,10 +253,10 @@ Calendula.prototype = {
                 
                 that._data.onselect({
                     type: 'select'
-                    }, {
-                    day: that._day,
-                    month: that._month,
-                    year: that._year
+                }, {
+                    day: that._currentDate.day,
+                    month: that._currentDate.month,
+                    year: that._currentDate.year
                 });
                 
                 that.close();
@@ -201,7 +270,7 @@ Calendula.prototype = {
             month = 11;
         }
         
-        this._month = month;
+        this._currentDate.month = month;
         
         var months = this._elem('months');
         var monthHeight = this._elem('month').offsetHeight;
@@ -211,7 +280,7 @@ Calendula.prototype = {
         var daysContainerTop;
         var monthsElems = this._elemAll('days-month');
         
-        var top = Math.floor(this._month * monthHeight - (monthHeight / 2));
+        var top = Math.floor(this._currentDate.month * monthHeight - (monthHeight / 2));
         if(top <= 0) {
             top = 1;
         }
@@ -238,13 +307,13 @@ Calendula.prototype = {
         this._events.offAll('open');
     },
     _buttonText: function() {
-        var date = new Date(),
+        var date = this._current(),
             m = this.text('months'),
             cm = this.text('caseMonths');
             
-        return date.getDate() + ' ' + (cm || m)[date.getMonth()] + ' ' + date.getFullYear();
+        return date.day + ' ' + (cm || m)[date.month] + ' ' + date.year;
     }
-};
+});
 
 var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
@@ -335,13 +404,18 @@ Calendula.prototype._templates = {
     },
     month: function(m, y) {
         var date = new Date(y, m, 1, 12, 0, 0),
+            current = new Date(),
+            currentStr = [current.getDate(), current.getMonth(), current.getFullYear()].join('-'),
             weekday = date.getDay() - 1,
             FEBRARY = 1,
             SATURDAY = 5,
             SUNDAY = 6,
             month = this.parent.text('months')[m],
             className = '',
-            text = [];
+            text = [],
+            isNow = function(day, month, year) {
+                return Array.prototype.join.call(arguments, '-') === currentStr;
+            };
             
         if (isLeapYear(y)) {
             this.daysMonth[FEBRARY] = 29;
@@ -351,7 +425,7 @@ Calendula.prototype._templates = {
             
         text.push('<div class="$days-month">');
         
-        if (weekday == -1) {
+        if (weekday === -1) {
             weekday = SUNDAY;
         }
         
@@ -364,7 +438,10 @@ Calendula.prototype._templates = {
             text.push('<td colspan="' + weekday + '" class="$empty">' + (weekday < 3 ? '' : '<div class="$days-title-month">' + month + '</div>') + '</td>');
         }
         
-        var hasTr;
+        var hasTr,
+            selectedDay = this.parent._val.day,
+            selectedMonth = this.parent._val.month,
+            selectedYear = this.parent._val.year;
         
         for (var day = 1; day <= this.daysMonth[m]; day++) {
             hasTr = false;
@@ -375,20 +452,21 @@ Calendula.prototype._templates = {
                 weekday = SUNDAY;
             }
             
-            if (weekday != SUNDAY && weekday != SATURDAY) {
+            if (weekday !== SUNDAY && weekday !== SATURDAY) {
                 className = '$day_weekday';
             } else {
                 className = '$day_holiday';
             }
             
-            if (day === this.parent.day && m === this.parent.month && y === this.parent.year) {
+            if (day === selectedDay && m === selectedMonth && y === selectedYear) {
                 className += ' $day_selected';
             }
             
-            /*if (isNow(day, m, y)) {
-                className += ' {n}now';
-                title += that.getString('now');
-            }*/
+            var title = '';
+            if (isNow(day, m, y)) {
+                className += ' $now';
+                title = this.parent.text('now');
+            }
             
             text.push('<td class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
             if(weekday === SUNDAY) {
@@ -433,7 +511,7 @@ return this._prepare('\
 <table class="$short-weekdays">' + weekdays + '</table>\
 <div class="$container">\
 <div class="$days">\
-    <div class="$days-container">' + this.days(this.parent._year) + '</div>\
+    <div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>\
 </div>\
 <div class="$months">' + this.months() + '</div>\
 <div class="$years">' + this.years() + '</div>\
@@ -462,14 +540,6 @@ var mod = function(name, val) {
     return NS + '_' + name + (val ? '_' + val : '');
 };
 
-var extend = function(container, obj) {
-    for(var i in obj) {
-        if(obj.hasOwnProperty(i)) {
-            container[i] = obj[i];
-        }
-    }
-};
-
 extend(Calendula.prototype, {
     _elem: function(name) {
         return this._container.querySelector('.' + elem(name));
@@ -477,8 +547,29 @@ extend(Calendula.prototype, {
     _elemAll: function(name) {
         return this._container.querySelectorAll('.' + elem(name));
     },
+    _left: function(elem, x) {
+        elem.style.left = x + 'px';
+    },
     _top: function(elem, y) {
         elem.style.top = y + 'px';
+    },
+    _position: function(elem, coords) {
+        this._left(elem, coords.left);
+        this._top(elem, coords.top);
+    },
+    _offset: function(elem) {
+        var box = {top: 0, left: 0};
+
+        // If we don't have gBCR, just use 0,0 rather than error
+        // BlackBerry 5, iOS 3 (original iPhone)
+        if (typeof elem.getBoundingClientRect !== 'undefined') {
+            box = elem.getBoundingClientRect();
+        }
+        
+        return {
+            top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
+            left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
+        };        
     }
 });
 

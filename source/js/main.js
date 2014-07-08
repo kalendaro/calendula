@@ -1,18 +1,28 @@
 var Calendula = function(data) {
-    data = data || {};
+    data = extend({}, data || {});
     
-    var current = new Date();
+    var current = new Date(),
+        obj = this,
+        data = extend(data, {
+            onselect: data.onselect || function(e, value) {},
+            theme: data.theme || 'normal',
+            lang: data.lang || Calendula._default,
+            startYear: data.startYear || (current.getFullYear() - 11),
+            endYear: data.endYear || (current.getFullYear() + 1)
+        });
+        
+    if(!this instanceof Calendula) {
+        obj = new Calendula(data);
+    }
     
-    this._data = {
-        onselect: data.onselect || function(e, value) {},
-        theme: data.theme || 'normal',
-        lang: data.lang || Calendula._default,
-        startYear: data.startYear || (current.getFullYear() - 11),
-        endYear: data.endYear || (current.getFullYear() + 1)
-    };
+    obj._data = data;
+    
+    this.val(this._data.value);
+    
+    return obj;
 };
 
-Calendula.prototype = {
+extend(Calendula.prototype, {
     init: function() {
         var cur = new Date();
         if(this._isInited) {
@@ -22,9 +32,6 @@ Calendula.prototype = {
         this._templates.parent = this;
         
         this._isInited = true;
-        this._day = cur.getDate();
-        this._month = cur.getMonth();
-        this._year = cur.getFullYear();
         
         var container = document.createElement('div');
 
@@ -46,11 +53,11 @@ Calendula.prototype = {
         this._ignoreDocumentClick = true;
         
         if(!this.isOpened()) {
-            this.update();
-            
             // For Firefox CSS3 animation
             setTimeout(function() {
                 that._container.classList.add(mod('opened'));
+                that._update();
+                that._monthSelector(that._currentDate.month);
             }, 1);
             
             this._openedEvents();
@@ -66,7 +73,7 @@ Calendula.prototype = {
         if(this.isOpened()) {
             this._ignoreDocumentClick = false;
             
-            this.update();
+            this._update();
             this._container.classList.remove(mod('opened'));
             
             this._delOpenedEvents();
@@ -81,13 +88,65 @@ Calendula.prototype = {
         } else {
             this.open();
         }
+        
+        return this;
     },
-    update: function() {
+    val: function(value) {
+        var date;
+        
+        if(!arguments.length) {
+            return this._val;
+        }
+        
+        if(value) {
+            if(typeof value === 'string') {
+                date = Date.parse(value);
+            } else if(typeof value === 'object') {
+                if(value instanceof Date) {
+                    date = value;
+                } else {
+                    date = new Date(value.year, value.month, value.day, 12, 0, 0, 0);
+                }
+            } else if(typeof number === 'number') {
+                date = new Date(value);
+            }
+            
+            this._val = {
+                day: date.getDate(),
+                month: date.getMonth(),
+                year: date.getFullYear()
+            };
+            
+            this._currentDate = extend({}, this._val);
+        } else {
+            this._val = {};
+            this._currentDate = this._current();
+        }
+    },
+    _current: function() {
+        var d = new Date();
+        
+        return {
+            day: d.getDate(),
+            month: d.getMonth(),
+            year: d.getFullYear()
+        };
+    },
+    _update: function() {
         if(this._isInited) {
             this.init();
         }
+        
+        var linkTo = this._data.linkTo,
+            offset;
+        if(linkTo) {
+            offset = this._offset(linkTo);
+            offset.top += linkTo.offsetHeight;
+            this._position(this._container, offset);
+        }
     },
-    resize: function() {
+    _resize: function() {
+        this._update();
     },
     setTheme: function(name) {
         var container = this._container;
@@ -105,7 +164,7 @@ Calendula.prototype = {
             
             document.body.removeChild(this._container);
             
-            ['_isInited', '_container', '_isOpened', '_ignoreDocumentClick'].forEach(function(el) {
+            ['_isInited', '_container', '_isOpened', '_ignoreDocumentClick', '_data'].forEach(function(el) {
                 delete this[el];
             }, this);
         }
@@ -124,7 +183,7 @@ Calendula.prototype = {
         }, 'open');
         
         this._events.on(window, 'resize', function() {
-            that.resize();
+            that._resize();
         }, 'open');
         
         this._events.on(this._container, 'click', function() {
@@ -143,7 +202,7 @@ Calendula.prototype = {
             }
             
             if(k) {
-                that._monthSelector(that._month + k);
+                that._monthSelector(that._currentDate.month + k);
             }
         };
         
@@ -158,7 +217,7 @@ Calendula.prototype = {
         
         this._events.on(this._elem('years'), 'click', function(e) {
             if(e.target.dataset.year) {
-                that._year = +e.target.dataset.year;
+                that._currentDate.year = +e.target.dataset.year;
             }
         }, 'open');
         
@@ -166,8 +225,8 @@ Calendula.prototype = {
             var cl = elem('day', 'selected');
             var target = e.target;
             if(target.dataset.day && !target.classList.contains(cl)) {
-                that._month = +target.dataset.month;
-                that._day = +target.dataset.day;
+                that._currentDate.month = +target.dataset.month;
+                that._currentDate.day = +target.dataset.day;
                 
                 var selected = days.querySelector('.' + cl);
                 if(selected) {
@@ -178,10 +237,10 @@ Calendula.prototype = {
                 
                 that._data.onselect({
                     type: 'select'
-                    }, {
-                    day: that._day,
-                    month: that._month,
-                    year: that._year
+                }, {
+                    day: that._currentDate.day,
+                    month: that._currentDate.month,
+                    year: that._currentDate.year
                 });
                 
                 that.close();
@@ -195,7 +254,7 @@ Calendula.prototype = {
             month = 11;
         }
         
-        this._month = month;
+        this._currentDate.month = month;
         
         var months = this._elem('months');
         var monthHeight = this._elem('month').offsetHeight;
@@ -205,7 +264,7 @@ Calendula.prototype = {
         var daysContainerTop;
         var monthsElems = this._elemAll('days-month');
         
-        var top = Math.floor(this._month * monthHeight - (monthHeight / 2));
+        var top = Math.floor(this._currentDate.month * monthHeight - (monthHeight / 2));
         if(top <= 0) {
             top = 1;
         }
@@ -232,10 +291,10 @@ Calendula.prototype = {
         this._events.offAll('open');
     },
     _buttonText: function() {
-        var date = new Date(),
+        var date = this._current(),
             m = this.text('months'),
             cm = this.text('caseMonths');
             
-        return date.getDate() + ' ' + (cm || m)[date.getMonth()] + ' ' + date.getFullYear();
+        return date.day + ' ' + (cm || m)[date.month] + ' ' + date.year;
     }
-};
+});
