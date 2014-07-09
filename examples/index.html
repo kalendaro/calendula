@@ -13,7 +13,7 @@
             top: 20px;
         }
         
-        #example
+        #example-button
         {
             position: absolute;
             left: 30%;
@@ -41,78 +41,117 @@
         <input type="button" value="toggle" id="cl-toggle" />
         <input type="button" value="destroy" id="cl-destroy" />
         <br /><br />
-        theme: <select id="cl-theme" autocomplete="off">
-            <option value="normal">normal</option>
-            <option value="black">black</option>
-        </select><br />
-        
-        lang: <select id="cl-lang" autocomplete="off">
-            <option value="ru">ru</option>
-            <option value="en">en</option>
-            <option value="be">be</option>
-            <option value="uk">uk</option>
-            <option value="tr">tr</option>
-        </select>
+        <table>
+            <tr>
+                <td>
+                    theme
+                </td>
+                <td>
+                    <select id="cl-theme">
+                        <option value="normal">normal</option>
+                        <option value="black">black</option>
+                        <option value="ios">ios</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    lang
+                <td>
+                    <select id="cl-lang"></select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="checkbox" checked="checked" id="cl-autoclose" /> <label for="cl-autoclose">autoclose</label>
+                </td>
+            </tr>
+        </table>
     </div>
     
-    <div id="example">
-        <button id="example-button" class="calendula-selector">
-            <span class="calendula-selector__text"></span>&thinsp;<span class="calendula-selector__arrow" style="display: inline-block; transform: rotate(90deg)">&#9656;</span>
-        </button>
-    </div>
+    <button id="example-button"></button>
     
-    <script>
-    (function() {
-        var clOpen = document.getElementById('cl-open'),
-            clClose = document.getElementById('cl-close'),
-            clToggle = document.getElementById('cl-toggle'),
-            clDestroy = document.getElementById('cl-destroy'),
-            button = document.getElementById('example-button'),
-            clTheme = document.getElementById('cl-theme'),
-            clLang = document.getElementById('cl-lang'),
-            cl = new Calendula({
-                value: new Date(),
-                linkTo: button,
-                onselect: function(e, value) {
-                    updateButton();
-                }
-            }),
-            updateButton = function() {
-                button.querySelector('.calendula-selector__text').innerHTML = cl._buttonText();
-            };
-            
-        cl.open();
-        updateButton();
+<script>
+window.addEventListener('load', function() {
+    var getById = function(id) {
+        return document.getElementById(id);
+    };
+    
+    var clLang = getById('cl-lang');
+    Calendula._langs.sort().forEach(function(el) {
+        var opt = document.createElement('option');
+        opt.value = opt.text = el;
+        clLang.add(opt);
+    });
         
-        button.addEventListener('click', function() {
-            cl.toggle();
-        }, false);
+    var clOpen = getById('cl-open'),
+        clClose = getById('cl-close'),
+        clToggle = getById('cl-toggle'),
+        clDestroy = getById('cl-destroy'),
+        clTheme = getById('cl-theme'),
+        clAutoclose = getById('cl-autoclose'),
+        button = getById('example-button'),
+        cl = new Calendula({
+            lang: clLang.value,
+            value: new Date(),
+            linkTo: button,
+            autoclose: clAutoclose.checked,
+            theme: clTheme.value,
+            onselect: function(e, value) {
+                updateButton();
+            }
+        }),
+        updateButton = function() {
+            button.innerHTML = cl._buttonText();
+        };
         
-        clTheme.addEventListener('change', function() {
-            cl.setTheme(this.value);
-            document.body.className = 'page_theme_' + this.value;
-        }, false);
-
-        clLang.addEventListener('change', function() {
-            cl.setLang(this.value);
-        }, false);
-
-        clOpen.addEventListener('click', function() {
+    cl.open();
+    updateButton();
+    
+    button.addEventListener('click', function() {
+        cl.toggle();
+    }, false);
+    
+    clTheme.addEventListener('change', function() {
+        cl.setting('theme', this.value);
+        document.body.className = 'page_theme_' + this.value;
+        
+        setTimeout(function() {
             cl.open();
-        }, false);
+        }, 300);
+    }, false);
+    
+    clAutoclose.addEventListener('change', function() {
+        cl.setting('autoclose', this.checked);
+    }, false);    
+    
+    document.body.className = 'page_theme_' + clTheme.value;
+
+    clLang.addEventListener('change', function() {
+        cl.setting('lang', this.value);
         
-        clClose.addEventListener('click', function() {
-            cl.close();
-        }, false);
-        
-        clToggle.addEventListener('click', function() {
-            cl.toggle();
-        }, false);
-        
-        clDestroy.addEventListener('click', function() {
-            cl.destroy();
-        }, false);
-    })();
-    </script>
+        setTimeout(function() {
+            cl.open();
+        }, 300);
+    }, false);
+
+    clOpen.addEventListener('click', function() {
+        cl.open();
+    }, false);
+    
+    clClose.addEventListener('click', function() {
+        cl.close();
+    }, false);
+    
+    clToggle.addEventListener('click', function() {
+        cl.toggle();
+    }, false);
+    
+    clDestroy.addEventListener('click', function() {
+        cl.destroy();
+    }, false);
+}, false);
+
+</script>
 </body>
 </html>

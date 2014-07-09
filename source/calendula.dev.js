@@ -21,6 +21,7 @@ var Calendula = function(data) {
         obj = this,
         data = extend(data, {
             onselect: data.onselect || function(e, value) {},
+            autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
             theme: data.theme || 'normal',
             lang: data.lang || Calendula._defaultLang,
             startYear: data.startYear || (current.getFullYear() - 11),
@@ -50,14 +51,14 @@ extend(Calendula.prototype, {
         this._isInited = true;
         
         var container = document.createElement('div');
+        this._container = container;
 
         container.classList.add(NS);
         container.classList.add(mod('theme', this._data.theme));
-        container.innerHTML = this.template('main');
+        
+        this._rebuild();
 
         document.body.appendChild(container);
-        
-        this._container = container;
     },
     isOpened: function() {
         return this._isOpened;
@@ -152,7 +153,7 @@ extend(Calendula.prototype, {
             this.init();
         }
         
-        var linkTo = this._data.linkTo,
+        var linkTo = this.setting('linkTo'),
             offset;
         if(linkTo) {
             offset = this._offset(linkTo);
@@ -160,19 +161,24 @@ extend(Calendula.prototype, {
             this._position(this._container, offset);
         }
     },
-    setTheme: function(name) {
+    setting: function(name, value) {
+        if(arguments.length === 1) {
+            return this._data[name];
+        }
+        
         var container = this._container;
-        if(container && this._data) {
+        if(name === 'theme' && container) {
             container.classList.remove(mod('theme', this._data.theme));
-            container.classList.add(mod('theme', name));
-            this._data.theme = name;
+            container.classList.add(mod('theme', value));
         }
-    },
-    setLang: function(lang) {
-        if(this._data) {
+        
+        this._data[name] = value;
+        
+        if(name === 'lang') {
             this._rebuild();
-            this._data.lang = lang;
         }
+        
+        return this;
     },
     destroy: function() {
         if(this._isInited) {
@@ -191,14 +197,18 @@ extend(Calendula.prototype, {
         this._update();
     },
     _rebuild: function() {
-        // TODO
+        this._container.innerHTML = this.template('main');
     },
     _openedEvents: function() {
         var that = this;
         
         this._ignoreDocumentClick = false;
         
-        this._events.on(document, 'click', function() {
+        this._events.on(document, 'click', function(e) {
+            if(e.button || !that.setting('autoclose')) {
+                return;
+            }
+            
             if(that._ignoreDocumentClick) {
                 that._ignoreDocumentClick = false;
             } else {
@@ -210,7 +220,11 @@ extend(Calendula.prototype, {
             that._resize();
         }, 'open');
         
-        this._events.on(this._container, 'click', function() {
+        this._events.on(this._container, 'click', function(e) {
+            if(e.button) {
+                return;
+            }
+            
             that._ignoreDocumentClick = true;
         }, 'open');
         
@@ -234,18 +248,30 @@ extend(Calendula.prototype, {
         this._events.onWheel(days, this._onwheelmonths, 'open');
         
         this._events.on(months, 'click', function(e) {
+            if(e.button) {
+                return;
+            }
+
             if(e.target.classList.contains(elem('month'))) {
                 that._monthSelector(+e.target.dataset.month);
             }
         }, 'open');
         
         this._events.on(this._elem('years'), 'click', function(e) {
+            if(e.button) {
+                return;
+            }
+
             if(e.target.dataset.year) {
                 that._currentDate.year = +e.target.dataset.year;
             }
         }, 'open');
         
         this._events.on(days, 'click', function(e) {
+            if(e.button) {
+                return;
+            }
+
             var cl = elem('day', 'selected');
             var target = e.target;
             if(target.dataset.day && !target.classList.contains(cl)) {
@@ -259,7 +285,7 @@ extend(Calendula.prototype, {
                 
                 target.classList.add(cl);
                 
-                that._data.onselect({
+                that.setting('onselect')({
                     type: 'select'
                 }, {
                     day: that._currentDate.day,
@@ -599,33 +625,36 @@ Calendula.prototype.text = function(id) {
     return Calendula._texts[this._data.lang][id];
 };
 
-Calendula.addLocale('be', {
-    months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
-    now: 'Сегодня'    
-});
 Calendula.addLocale('en', {
-    months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
-    now: 'Сегодня'
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    shortWeekDays: ['Mon','Tu','Wed','Th','Fri','Sat','Su'],
+    now: 'Today',
+    firstWeekDay: 6
 });
+
 Calendula.addLocale('ru', {
     months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
     caseMonths: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
     shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
     now: 'Сегодня',
+    firstWeekDay: 0,
     def: true
 });
 Calendula.addLocale('tr', {
-    months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
-    now: 'Сегодня'    
+    months: ['ocak', 'şubat', 'mart', 'nisan', 'mayıs', 'haziran', 'temmuz', 'ağustos', 'eylül', 'ekim', 'kasım', 'aralık'],
+    shortWeekDays:['PT', 'Sa', 'Çarş', 'Per', 'CU', 'Ctesi', 'Pa'],
+    now: 'Bugün',
+    firstWeekDay: 0
 });
+
 Calendula.addLocale('uk', {
-    months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
-    now: 'Сегодня'    
+    months:['січень', 'лютий', 'березень', 'квітень', 'травень', 'червень', 'липень', 'серпень', 'вересень', 'жовтень', 'листопад', 'грудень'],
+    caseMonths: ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'],
+    shortWeekDays: ['П', 'В', 'С', 'Ч', 'П', 'С', 'Н'],
+    now: 'Сьогодні',
+    firstWeekDay: 0
 });
+
 
 return Calendula;
 

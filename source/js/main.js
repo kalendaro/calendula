@@ -5,6 +5,7 @@ var Calendula = function(data) {
         obj = this,
         data = extend(data, {
             onselect: data.onselect || function(e, value) {},
+            autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
             theme: data.theme || 'normal',
             lang: data.lang || Calendula._defaultLang,
             startYear: data.startYear || (current.getFullYear() - 11),
@@ -34,14 +35,14 @@ extend(Calendula.prototype, {
         this._isInited = true;
         
         var container = document.createElement('div');
+        this._container = container;
 
         container.classList.add(NS);
         container.classList.add(mod('theme', this._data.theme));
-        container.innerHTML = this.template('main');
+        
+        this._rebuild();
 
         document.body.appendChild(container);
-        
-        this._container = container;
     },
     isOpened: function() {
         return this._isOpened;
@@ -136,7 +137,7 @@ extend(Calendula.prototype, {
             this.init();
         }
         
-        var linkTo = this._data.linkTo,
+        var linkTo = this.setting('linkTo'),
             offset;
         if(linkTo) {
             offset = this._offset(linkTo);
@@ -144,19 +145,24 @@ extend(Calendula.prototype, {
             this._position(this._container, offset);
         }
     },
-    setTheme: function(name) {
+    setting: function(name, value) {
+        if(arguments.length === 1) {
+            return this._data[name];
+        }
+        
         var container = this._container;
-        if(container && this._data) {
+        if(name === 'theme' && container) {
             container.classList.remove(mod('theme', this._data.theme));
-            container.classList.add(mod('theme', name));
-            this._data.theme = name;
+            container.classList.add(mod('theme', value));
         }
-    },
-    setLang: function(lang) {
-        if(this._data) {
+        
+        this._data[name] = value;
+        
+        if(name === 'lang') {
             this._rebuild();
-            this._data.lang = lang;
         }
+        
+        return this;
     },
     destroy: function() {
         if(this._isInited) {
@@ -175,14 +181,18 @@ extend(Calendula.prototype, {
         this._update();
     },
     _rebuild: function() {
-        // TODO
+        this._container.innerHTML = this.template('main');
     },
     _openedEvents: function() {
         var that = this;
         
         this._ignoreDocumentClick = false;
         
-        this._events.on(document, 'click', function() {
+        this._events.on(document, 'click', function(e) {
+            if(e.button || !that.setting('autoclose')) {
+                return;
+            }
+            
             if(that._ignoreDocumentClick) {
                 that._ignoreDocumentClick = false;
             } else {
@@ -194,7 +204,11 @@ extend(Calendula.prototype, {
             that._resize();
         }, 'open');
         
-        this._events.on(this._container, 'click', function() {
+        this._events.on(this._container, 'click', function(e) {
+            if(e.button) {
+                return;
+            }
+            
             that._ignoreDocumentClick = true;
         }, 'open');
         
@@ -218,18 +232,30 @@ extend(Calendula.prototype, {
         this._events.onWheel(days, this._onwheelmonths, 'open');
         
         this._events.on(months, 'click', function(e) {
+            if(e.button) {
+                return;
+            }
+
             if(e.target.classList.contains(elem('month'))) {
                 that._monthSelector(+e.target.dataset.month);
             }
         }, 'open');
         
         this._events.on(this._elem('years'), 'click', function(e) {
+            if(e.button) {
+                return;
+            }
+
             if(e.target.dataset.year) {
                 that._currentDate.year = +e.target.dataset.year;
             }
         }, 'open');
         
         this._events.on(days, 'click', function(e) {
+            if(e.button) {
+                return;
+            }
+
             var cl = elem('day', 'selected');
             var target = e.target;
             if(target.dataset.day && !target.classList.contains(cl)) {
@@ -243,7 +269,7 @@ extend(Calendula.prototype, {
                 
                 target.classList.add(cl);
                 
-                that._data.onselect({
+                that.setting('onselect')({
                     type: 'select'
                 }, {
                     day: that._currentDate.day,

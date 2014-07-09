@@ -41,12 +41,6 @@
     cursor: default;
 }
 
-.calendula__short-weekdays-cell_n_5,
-.calendula__short-weekdays-cell_n_6
-{
-    color: red;
-}
-
 .calendula__short-weekdays-cell
 {
     width: 18px;
@@ -103,7 +97,7 @@
 {
     font-weight: bold;
 
-    padding-left: 8px;
+    padding-left: 4px;
 
     text-align: left;
 }
@@ -111,11 +105,7 @@
 .calendula__day
 {
     transition: border-radius 0.1s linear;
-}
-
-.calendula__day_holiday
-{
-    color: red;
+    text-align: center;
 }
 
 .calendula__month
@@ -128,6 +118,8 @@
     padding-left: 6px;
 
     vertical-align: middle;
+    
+    transition: color 0.3s linear;
 }
 
 .calendula__month-selector

@@ -1,0 +1,80 @@
+.calendula_theme_black
+{
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+
+    color: #fff;
+    border-radius: 3px;
+    background: #000;
+    box-shadow: 0 0 20px #b0b0b0;
+}
+
+.calendula_theme_black .calendula__days
+{
+    border-radius: 3px;
+    box-shadow: inset 0 0 5px 0 rgba(255,255,255,.2);
+}
+
+.calendula_theme_black .calendula__days-container
+{
+    box-shadow: 5px inset #fff;
+}
+
+.calendula_theme_black .calendula__day_selected
+{
+    text-shadow: 1px 1px 3px #000;
+    border-radius: 10px;
+    background: #ffec95;
+    background:    -moz-linear-gradient(top, #ffec95 0%, #ff8f56 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffec95), color-stop(100%,#ff8f56));
+    background: -webkit-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
+    background:      -o-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
+    background:     -ms-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
+    background:         linear-gradient(to bottom, #ffec95 0%,#ff8f56 100%);
+}
+
+.calendula_theme_black .calendula__day_now
+{
+    outline: 1px dotted #aaa;
+}
+
+.calendula_theme_black .calendula__day:hover
+{
+    outline: 1px solid #bbb;
+}
+
+.calendula_theme_black .calendula__month-selector,
+.calendula_theme_black .calendula__year-selector
+{
+    border-radius: 3px;
+    background: #000;
+    box-shadow: 0 2px 5px #505050;
+}
+
+.calendula_theme_black .calendula__month-selector-i,
+.calendula_theme_black .calendula__year-selector-i
+{
+    border-radius: 0 0 3px 3px;
+    background: #1f1f1f;
+    background:    -moz-linear-gradient(top, #1f1f1f 0%, #000 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1f1f1f), color-stop(100%,#000));
+    background: -webkit-linear-gradient(top, #1f1f1f 0%,#000 100%);
+    background:      -o-linear-gradient(top, #1f1f1f 0%,#000 100%);
+    background:     -ms-linear-gradient(top, #1f1f1f 0%,#000 100%);
+    background:         linear-gradient(to bottom, #1f1f1f 0%,#000 100%);
+}
+
+.calendula_theme_black .calendula__years,
+.calendula_theme_black .calendula__months
+{
+    border-radius: 3px;
+    background-color: #151515;
+    box-shadow: inset 0 0 5px 0 rgba(255,255,255,.2);
+}
+
+.calendula_theme_black .calendula__short-weekdays-cell_n_5,
+.calendula_theme_black .calendula__short-weekdays-cell_n_6,
+.calendula_theme_black .calendula__day_holiday
+{
+    color: gray;
+}

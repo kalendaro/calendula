@@ -1,2 +1,3 @@
 cd ../
-gulp watch
+call gulp
+call gulp watch

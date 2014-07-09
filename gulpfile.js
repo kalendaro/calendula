@@ -20,8 +20,10 @@ var paths = {
         'source/js/end.js'
     ],
     css: [
-        'source/css/main.css',
-        'source/css/theme.normal.css'
+        'source/css/calendula.css',
+        'source/css/calendula.normal.css',
+        'source/css/calendula.black.css',
+        'source/css/calendula.ios.css'
     ]
 };
 
@@ -59,14 +61,6 @@ gulp.task('default', [
 ]);
 
 gulp.task('watch', function() {
-    gulp.run('js');
-    gulp.run('css');
-    
-    gulp.watch('source/js/**/*', function() {
-        gulp.run('js');
-    });
-    
-    gulp.watch('source/css/**/*', function() {
-        gulp.run('css');
-    });
+    gulp.watch('source/js/**/*', ['js']);
+    gulp.watch('source/css/**/*', ['css']);
 });

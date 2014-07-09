@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calendula</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="../source/calendula.dev.css" />
+    <script src="../source/calendula.dev.js"></script>
+</head>
+<body>
+
+<button id="example-button" style="position: absolute; left: 30%; top: 100px;"></button>
+
+<script>
+(function() {
+    var button = document.getElementById('example-button');
+    
+    button.addEventListener('click', function() {
+        cl.toggle();
+    }, false);
+    
+    function updateButton() {
+        button.innerHTML = cl._buttonText();
+    }
+
+    var cl = new Calendula({
+        linkTo: button,
+        onselect: function(e, value) {
+            updateButton();
+        }
+    });
+        
+    cl.open();
+    updateButton();
+})();
+</script>
+
+</body>
+</html>
