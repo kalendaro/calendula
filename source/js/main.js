@@ -320,6 +320,38 @@ extend(Calendula.prototype, {
         }
         
         this._top(daysContainer, daysContainerTop);
+        
+        this._colorizeMonths(month);
+    },
+    _colorizeMonths: function(month) {
+        var months = this._elemAll('month');
+        for(var c = 0; c < 6; c++) {
+            var elems = this._elemAll('month', 'color', c);
+            for(var i = 0, len = elems.length; i < len; i++) {
+                elems[i].classList.remove(elem('month', 'color', c));
+            }
+        }
+        
+        var cl0 = elem('month', 'color', '0');
+        months[month].classList.add(cl0);
+        
+        if(month - 1 >= 0) {
+            months[month - 1].classList.add(cl0);
+        }
+        
+        if(month + 1 <= 11) {
+            months[month + 1].classList.add(cl0);
+        }
+        
+        var n = 1;
+        for(c = month - 2; c >= 0 && n < 5; c--, n++) {
+            months[c].classList.add(elem('month', 'color', n));
+        }
+        
+        n = 1;
+        for(c = month + 2; c <= 11 && n < 5; c++, n++) {
+            months[c].classList.add(elem('month', 'color', n));
+        }
     },
     _delOpenedEvents: function() {
         this._events.offAll('open');

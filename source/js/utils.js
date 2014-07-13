@@ -1,17 +1,25 @@
 var elem = function(name, mod, val) {
-    return NS + '__' + name + (mod ? '_' + mod + (val ? '_' + val : '') : '');
+    if(val === null || val === undefined) {
+        val = '';
+    }
+    
+    return NS + '__' + name + (mod ? '_' + mod + (val === '' ? '' : '_' + val) : '');
 };
 
 var mod = function(name, val) {
-    return NS + '_' + name + (val ? '_' + val : '');
+    if(val === null || val === undefined) {
+        val = '';
+    }
+    
+    return NS + '_' + name + (val === '' ? '' : '_' + val);
 };
 
 extend(Calendula.prototype, {
-    _elem: function(name) {
-        return this._container.querySelector('.' + elem(name));
+    _elem: function(name, mod, val) {
+        return this._container.querySelector('.' + elem(name, mod, val));
     },
-    _elemAll: function(name) {
-        return this._container.querySelectorAll('.' + elem(name));
+    _elemAll: function(name, mod, val) {
+        return this._container.querySelectorAll('.' + elem(name, mod, val));
     },
     _left: function(elem, x) {
         elem.style.left = x + 'px';
