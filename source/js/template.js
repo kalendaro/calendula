@@ -3,87 +3,93 @@ Calendula.prototype.template = function(name) {
 };
 
 Calendula.prototype._templates = {
-    _prepare: function(text) {
+    prepare: function(text) {
         return text.replace(/\$/g, NS + '__');
     },
-    daysMonth: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+    attr: function(name, value) {
+        return name === '' || name === null || name === undefined ? '' : ' ' + name + '="' + value + '"';
+    },
     days: function(year) {
         var text = '';
-        for(var m = 0; m < this.daysMonth.length; m++) {
+        for(var m = 0; m < 12; m++) {
             text += this.month(m, year);
         }
     
         return text;
     },
+    weekdays: function() {
+        var first = this.parent.text('firstWeekDay') || 0;
+        var w = {
+            first: first,
+            last: !first ? 6 : first - 1,
+        };
+        
+        var n = first;
+        for(var i = 0; i < 7; i++) {
+            w[n] = i;
+            
+            n++;
+            if(n > 6) {
+                n = 0;
+            }
+        }
+        
+        return w;
+    },
     month: function(m, y) {
         var date = new Date(y, m, 1, 12, 0, 0),
             current = new Date(),
             currentStr = [current.getDate(), current.getMonth(), current.getFullYear()].join('-'),
-            weekday = date.getDay() - 1,
-            FEBRARY = 1,
-            SATURDAY = 5,
-            SUNDAY = 6,
-            month = this.parent.text('months')[m],
+            par = this.parent,
+            weekday = date.getDay(),
+            weekdays = this.weekdays(),
+            dayIndex = weekdays[weekday],
+            month = par.text('months')[m],
+            daysMonth = [31, isLeapYear(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
             className = '',
             text = [],
             isNow = function(day, month, year) {
                 return Array.prototype.join.call(arguments, '-') === currentStr;
             };
             
-        if (isLeapYear(y)) {
-            this.daysMonth[FEBRARY] = 29;
-        } else {
-            this.daysMonth[FEBRARY] = 28;
-        }
-            
         text.push('<div class="$days-month">');
         
-        if (weekday === -1) {
-            weekday = SUNDAY;
-        }
-        
-        if(weekday < 3) {
+        if(dayIndex < 3) {
             text.push('<div class="$days-title-month">' + month + '</div>');
         }
         
         text.push('<table class="$days-table"><tr>');
-        if(weekday > 0) {
-            text.push('<td colspan="' + weekday + '" class="$empty">' + (weekday < 3 ? '' : '<div class="$days-title-month">' + month + '</div>') + '</td>');
+        
+        if(weekday !== weekdays.first) {
+            text.push('<td colspan="' + dayIndex + '" class="$empty">' + (dayIndex < 3 ? '' : '<div class="$days-title-month">' + month + '</div>') + '</td>');
         }
         
         var hasTr,
             title,
-            selectedDay = this.parent._val.day,
-            selectedMonth = this.parent._val.month,
-            selectedYear = this.parent._val.year;
+            selectedDay = par._val.day,
+            selectedMonth = par._val.month,
+            selectedYear = par._val.year;
         
-        for (var day = 1; day <= this.daysMonth[m]; day++) {
+        for(var day = 1; day <= daysMonth[m]; day++) {
             title = '';
             hasTr = false;
             date.setDate(day);
-            weekday = date.getDay() - 1;
+            weekday = date.getDay();
+
+            // 0 - Sunday, 6 - Saturday
+            className = (weekday === 0 || weekday === 6) ? '$day_holiday' : '$day_weekday';
             
-            if (weekday == -1) {
-                weekday = SUNDAY;
-            }
-            
-            if (weekday !== SUNDAY && weekday !== SATURDAY) {
-                className = '$day_weekday';
-            } else {
-                className = '$day_holiday';
-            }
-            
-            if (day === selectedDay && m === selectedMonth && y === selectedYear) {
+            if(day === selectedDay && m === selectedMonth && y === selectedYear) {
                 className += ' $day_selected';
             }
             
-            if (isNow(day, m, y)) {
+            if(isNow(day, m, y)) {
                 className += ' $day_now';
-                title = this.parent.text('now');
+                title = par.text('now');
             }
             
-            text.push('<td' + (title ? ' title="' + title + '"' : '') + ' class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
-            if(weekday === SUNDAY) {
+            text.push('<td' + this.attr('title', title) + ' class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
+            if(weekday === weekdays.last) {
                 text.push('</tr>');
                 hasTr = true;
             }
@@ -98,9 +104,10 @@ Calendula.prototype._templates = {
         return text.join('');
     },
     years: function() {
-        var buf = '<div class="$year-selector"><div class="$year-selector-i"></div></div>';
-        var startYear = this.parent._data.startYear;
-        var endYear = this.parent._data.endYear;
+        var buf = '<div class="$year-selector"><div class="$year-selector-i"></div></div>',
+            startYear = this.parent._data.startYear,
+            endYear = this.parent._data.endYear;
+            
         for(var i = startYear; i <= endYear; i++) {
             buf += '<div class="$year" data-year="' + i + '">' + i + '</div>';
         }
@@ -116,13 +123,20 @@ Calendula.prototype._templates = {
         return buf;
     },
     main: function() {
-        var weekdays = '';
-        this.parent.text('shortWeekDays').forEach(function(el, i) {
-            weekdays += '<td class="$short-weekdays-cell $short-weekdays-cell_n_' + i + '">' + el + '</td>';
-        });
+        var shortWeekDays = this.parent.text('shortWeekDays'),
+            wd = this.parent.text('firstWeekDay') || 0,
+            weekdays = '';
+            
+        this.parent.text('shortWeekDays').forEach(function(el, i, data) {
+            weekdays += '<div class="$short-weekdays-cell $short-weekdays-cell_n_' + wd + '"' + this.attr('title', data[wd]) + '>' + data[wd] + '</div>';
+            wd++;
+            if(wd > 6) { // Saturday
+                wd = 0;
+            }
+        }, this);
         
-return this._prepare('\
-<table class="$short-weekdays">' + weekdays + '</table>\
+return this.prepare('\
+<div class="$short-weekdays">' + weekdays + '</div>\
 <div class="$container">\
 <div class="$days">\
     <div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>\

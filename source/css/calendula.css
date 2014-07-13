@@ -43,7 +43,9 @@
 
 .calendula__short-weekdays-cell
 {
-    width: 18px;
+    float: left;
+    width: 22px;
+    overflow-x: hidden;
 
     text-align: center;
 }
@@ -58,6 +60,10 @@
     height: 100%;
 
     cursor: default;
+    
+    overflow: hidden;
+
+    height: 100%;
 }
 
 .calendula__days-month
@@ -72,23 +78,15 @@
 
 .calendula__days-table
 {
-    width: 156px;
+    width: 157px;
 
     table-layout: fixed;
-}
-
-.calendula__days
-{
-    overflow: hidden;
-
-    height: 100%;
-
-    text-align: right;
 }
 
 .calendula__days-container
 {
     position: relative;
+    left: 5px;
     top: 0;
     transition: top 0.3s linear;
 }
@@ -188,7 +186,7 @@
     position: relative;
     z-index: 10;
 
-    padding-left: 6px;
+    padding-left: 16px;
 
     vertical-align: middle;
 }

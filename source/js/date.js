@@ -3,7 +3,7 @@ function leadZero(num) {
 }
 
 function isLeapYear(y) {
-    if ((!(y % 4) && (y % 100)) || !(y % 400)) {
+    if((!(y % 4) && (y % 100)) || !(y % 400)) {
         return true;
     }
     
