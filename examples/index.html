@@ -81,6 +81,9 @@ window.addEventListener('load', function() {
     Calendula._langs.sort().forEach(function(el) {
         var opt = document.createElement('option');
         opt.value = opt.text = el;
+        if(el === 'en') {
+            opt.selected = true;
+        }
         clLang.add(opt);
     });
         

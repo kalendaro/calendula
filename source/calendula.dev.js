@@ -679,11 +679,45 @@ Calendula.prototype.text = function(id) {
     return Calendula._texts[this._data.lang][id];
 };
 
+Calendula.addLocale('de', {
+    months: ['Januar', 'Februar', 'Marz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+    shortWeekDays: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+    today: 'Heute',
+    firstWeekDay: 1
+});
+
+
+
 Calendula.addLocale('en', {
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-    shortWeekDays: ['Su', 'Mon', 'Tu', 'Wed', 'Th', 'Fri', 'Sat'],
+    shortWeekDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     today: 'Today',
     firstWeekDay: 0
+});
+
+Calendula.addLocale('es', {
+    months: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+    shortWeekDays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+    today: 'Hoy',
+    firstWeekDay: 1
+});
+
+Calendula.addLocale('fr', {
+    months: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+    shortWeekDays: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'],
+    today: 'Aujourd’hui',
+    firstWeekDay: 1
+});
+
+
+
+
+
+Calendula.addLocale('it', {
+    months: ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
+    shortWeekDays: ['Do', 'Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa'],
+    today: 'Oggi',
+    firstWeekDay: 1
 });
 
 Calendula.addLocale('ru', {
@@ -691,8 +725,7 @@ Calendula.addLocale('ru', {
     caseMonths: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
     shortWeekDays: ['В', 'П', 'В', 'С', 'Ч', 'П', 'С'],
     today: 'Сегодня',
-    firstWeekDay: 1,
-    def: true
+    firstWeekDay: 1
 });
 Calendula.addLocale('tr', {
     months: ['ocak', 'şubat', 'mart', 'nisan', 'mayıs', 'haziran', 'temmuz', 'ağustos', 'eylül', 'ekim', 'kasım', 'aralık'],

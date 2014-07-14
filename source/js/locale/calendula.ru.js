@@ -3,6 +3,5 @@ Calendula.addLocale('ru', {
     caseMonths: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
     shortWeekDays: ['В', 'П', 'В', 'С', 'Ч', 'П', 'С'],
     today: 'Сегодня',
-    firstWeekDay: 1,
-    def: true
+    firstWeekDay: 1
 });
