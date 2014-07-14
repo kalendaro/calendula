@@ -123,28 +123,6 @@ extend(Calendula.prototype, {
             this._currentDate = this._current();
         }
     },
-    _current: function() {
-        var d = new Date();
-        
-        return {
-            day: d.getDate(),
-            month: d.getMonth(),
-            year: d.getFullYear()
-        };
-    },
-    _update: function() {
-        if(this._isInited) {
-            this.init();
-        }
-        
-        var linkTo = this.setting('linkTo'),
-            offset;
-        if(linkTo) {
-            offset = this._offset(linkTo);
-            offset.top += linkTo.offsetHeight;
-            this._position(this._container, offset);
-        }
-    },
     setting: function(name, value) {
         if(arguments.length === 1) {
             return this._data[name];
@@ -175,6 +153,28 @@ extend(Calendula.prototype, {
             ['_isInited', '_container', '_isOpened', '_ignoreDocumentClick', '_data'].forEach(function(el) {
                 delete this[el];
             }, this);
+        }
+    },
+    _current: function() {
+        var d = new Date();
+        
+        return {
+            day: d.getDate(),
+            month: d.getMonth(),
+            year: d.getFullYear()
+        };
+    },
+    _update: function() {
+        if(this._isInited) {
+            this.init();
+        }
+        
+        var linkTo = this.setting('linkTo'),
+            offset;
+        if(linkTo) {
+            offset = this._offset(linkTo);
+            offset.top += linkTo.offsetHeight;
+            this._position(this._container, offset);
         }
     },
     _resize: function() {
@@ -357,7 +357,7 @@ extend(Calendula.prototype, {
         this._events.offAll('open');
     },
     _buttonText: function() {
-        var date = this._current(),
+        var date = this._currentDate,
             m = this.text('months'),
             cm = this.text('caseMonths');
             

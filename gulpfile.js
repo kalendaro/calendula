@@ -61,6 +61,6 @@ gulp.task('default', [
 ]);
 
 gulp.task('watch', function() {
-    gulp.watch('source/js/**/*', ['js']);
-    gulp.watch('source/css/**/*', ['css']);
+    gulp.watch('source/js/**/*', ['js', 'uglify']);
+    gulp.watch('source/css/**/*', ['css', 'cleancss']);
 });
