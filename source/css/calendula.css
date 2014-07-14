@@ -122,12 +122,13 @@
 
 .calendula__month-selector
 {
-    height: 52px;
+    height: 49px;
 }
 
 .calendula__year-selector
 {
-    height: 26px;
+    height: 23px;
+    transition: top .3s linear;
 }
 
 .calendula__month-selector,
@@ -166,6 +167,12 @@
     width: 66px;
 }
 
+.calendula__years-container
+{
+    position: relative;
+    transition: top .3s linear;
+}
+
 .calendula__years,
 .calendula__months
 {
@@ -189,9 +196,6 @@
     padding-left: 16px;
 
     vertical-align: middle;
-}
-
-.calendula__year-selector
-{
-    transition: top .4s linear;
+    
+    transition: color 0.3s linear;
 }

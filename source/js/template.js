@@ -11,7 +11,7 @@ Calendula.prototype._templates = {
     },
     days: function(year) {
         var text = '';
-        for(var m = 0; m < 12; m++) {
+        for(var m = MIN_MONTH; m <= MAX_MONTH; m++) {
             text += this.month(m, year);
         }
     
@@ -105,8 +105,8 @@ Calendula.prototype._templates = {
     },
     years: function() {
         var buf = '<div class="$year-selector"><div class="$year-selector-i"></div></div>',
-            startYear = this.parent._data.startYear,
-            endYear = this.parent._data.endYear;
+            startYear = this.parent._data._startYear,
+            endYear = this.parent._data._endYear;
             
         for(var i = startYear; i <= endYear; i++) {
             buf += '<div class="$year" data-year="' + i + '">' + i + '</div>';
@@ -142,7 +142,7 @@ return this.prepare('\
     <div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>\
 </div>\
 <div class="$months">' + this.months() + '</div>\
-<div class="$years">' + this.years() + '</div>\
+<div class="$years"><div class="$years-container">' + this.years() + '</div></div>\
 </div>\
 ');
     }

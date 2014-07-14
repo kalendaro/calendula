@@ -2,7 +2,9 @@ var Calendula = (function(window, document) {
 
 'use strict';
 
-var NS = 'calendula';
+var NS = 'calendula',
+    MIN_MONTH = 0,
+    MAX_MONTH = 11;
 
 var extend = function(container, obj) {
     for(var i in obj) {
@@ -19,24 +21,19 @@ var Calendula = function(data) {
     
     var current = new Date(),
         obj = this,
+        years = this._prepareYears(data.years),
         data = extend(data, {
             onselect: data.onselect || function(e, value) {},
             autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
             theme: data.theme || 'normal',
             lang: data.lang || Calendula._defaultLang,
-            startYear: data.startYear || (current.getFullYear() - 11),
-            endYear: data.endYear || (current.getFullYear() + 1)
+            _startYear: years.start,
+            _endYear: years.end
         });
-        
-    if(!this instanceof Calendula) {
-        obj = new Calendula(data);
-    }
-    
+
     obj._data = data;
     
     this.val(this._data.value);
-    
-    return obj;
 };
 
 extend(Calendula.prototype, {
@@ -76,6 +73,7 @@ extend(Calendula.prototype, {
                 that._container.classList.add(mod('opened'));
                 that._update();
                 that._monthSelector(that._currentDate.month);
+                that._yearSelector(that._currentDate.year);
                 that._openedEvents();
             }, 1);
             
@@ -144,16 +142,20 @@ extend(Calendula.prototype, {
             return this._data[name];
         }
         
-        var container = this._container;
-        if(name === 'theme' && container) {
-            container.classList.remove(mod('theme', this._data.theme));
-            container.classList.add(mod('theme', value));
-        }
+        var oldValue = this._data[name],
+            container = this._container;
         
         this._data[name] = value;
         
-        if(name === 'lang') {
-            this._rebuild();
+        if(container) {
+            if(name === 'theme') {
+                container.classList.remove(mod('theme', oldValue));
+                container.classList.add(mod('theme', value));
+            }
+            
+            if(name === 'lang') {
+                this._rebuild();
+            }
         }
         
         return this;
@@ -199,6 +201,10 @@ extend(Calendula.prototype, {
     _rebuild: function() {
         this._container.innerHTML = this.template('main');
     },
+    _rebuildDays: function() {
+        this._elem('days-container').innerHTML = this._templates.prepare(this._templates.days(this._currentDate.year));
+        this._monthSelector(this._currentDate.month);
+    },
     _openedEvents: function() {
         var that = this;
         
@@ -228,8 +234,9 @@ extend(Calendula.prototype, {
             that._ignoreDocumentClick = true;
         }, 'open');
         
-        var months = this._elem('months');
-        var days = this._elem('days');
+        var days = this._elem('days'),
+            months = this._elem('months'),
+            years = this._elem('years');
         
         this._onwheelmonths = function(e) {
             var k = 0;
@@ -244,8 +251,22 @@ extend(Calendula.prototype, {
             }
         };
         
-        this._events.onWheel(months, this._onwheelmonths, 'open');
+        this._onwheelyears = function(e) {
+            var k = 0;
+            if(e.deltaY > 0) {
+                k = 1;
+            } else if(e.deltaY < 0) {
+                k = -1;
+            }
+            
+            if(k) {
+                that._yearSelector(that._currentDate.year + k);
+            }
+        };
+        
         this._events.onWheel(days, this._onwheelmonths, 'open');
+        this._events.onWheel(months, this._onwheelmonths, 'open');
+        this._events.onWheel(years, this._onwheelyears, 'open');
         
         this._events.on(months, 'click', function(e) {
             if(e.button) {
@@ -257,13 +278,13 @@ extend(Calendula.prototype, {
             }
         }, 'open');
         
-        this._events.on(this._elem('years'), 'click', function(e) {
+        this._events.on(years, 'click', function(e) {
             if(e.button) {
                 return;
             }
 
             if(e.target.dataset.year) {
-                that._currentDate.year = +e.target.dataset.year;
+                that._yearSelector(+e.target.dataset.year);
             }
         }, 'open');
         
@@ -272,11 +293,12 @@ extend(Calendula.prototype, {
                 return;
             }
 
-            var cl = elem('day', 'selected');
-            var target = e.target;
+            var cl = elem('day', 'selected'),
+                cd = that._currentDate,
+                target = e.target;
             if(target.dataset.day && !target.classList.contains(cl)) {
-                that._currentDate.month = +target.dataset.month;
-                that._currentDate.day = +target.dataset.day;
+                cd.month = +target.dataset.month;
+                cd.day = +target.dataset.day;
                 
                 var selected = days.querySelector('.' + cl);
                 if(selected) {
@@ -288,9 +310,9 @@ extend(Calendula.prototype, {
                 that.setting('onselect')({
                     type: 'select'
                 }, {
-                    day: that._currentDate.day,
-                    month: that._currentDate.month,
-                    year: that._currentDate.year
+                    day: cd.day,
+                    month: cd.month,
+                    year: cd.year
                 });
                 
                 that.close();
@@ -298,21 +320,21 @@ extend(Calendula.prototype, {
         }, 'open');
     },
     _monthSelector: function(month) {
-        if(month < 0) {
-            month = 0;
-        } else if(month > 11) {
-            month = 11;
+        if(month < MIN_MONTH) {
+            month = MIN_MONTH;
+        } else if(month > MAX_MONTH) {
+            month = MAX_MONTH;
         }
         
         this._currentDate.month = month;
         
-        var months = this._elem('months');
-        var monthHeight = this._elem('month').offsetHeight;
-        var selector = this._elem('month-selector');
-        var daysContainer = this._elem('days-container');
-        var days = this._elem('days');
-        var daysContainerTop;
-        var monthsElems = this._elemAll('days-month');
+        var months = this._elem('months'),
+            monthHeight = this._elem('month').offsetHeight,
+            monthsElems = this._elemAll('days-month'),
+            selector = this._elem('month-selector'),
+            daysContainer = this._elem('days-container'),
+            days = this._elem('days'),
+            daysContainerTop;
         
         var top = Math.floor(this._currentDate.month * monthHeight - (monthHeight / 2));
         if(top <= 0) {
@@ -323,7 +345,7 @@ extend(Calendula.prototype, {
             top = months.offsetHeight - selector.offsetHeight - 1;
         }
         
-        this._top(this._elem('month-selector'), top);
+        this._top(selector, top);
         
         daysContainerTop = -Math.floor(monthsElems[month].offsetTop - days.offsetHeight / 2 + monthsElems[month].offsetHeight / 2);
         if(daysContainerTop > 0) {
@@ -339,9 +361,60 @@ extend(Calendula.prototype, {
         
         this._colorizeMonths(month);
     },
+    _yearSelector: function(year) {
+        var d = this._data,
+            startYear = d._startYear,
+            endYear = d._endYear,
+            oldYear = this._currentDate.year;
+            
+        if(year < startYear) {
+            year = startYear;
+        } else if(year > endYear) {
+            year = endYear;
+        }
+        
+        this._currentDate.year = year;
+        
+        var years = this._elem('years'),
+            yearsContainer = this._elem('years-container'),
+            yearHeight = this._elem('year').offsetHeight,
+            selector = this._elem('year-selector'),
+            startYear = this._data._startYear;
+            endYear = this._data._endYear;
+        
+        var topSelector = Math.floor((this._currentDate.year - startYear) * yearHeight),
+            topContainer = -Math.floor((this._currentDate.year - startYear) * yearHeight - years.offsetHeight / 2);
+            
+        if(topContainer > 0) {
+            topContainer = 0;
+        }
+        
+        if(topContainer < years.offsetHeight - yearsContainer.offsetHeight) {
+            topContainer = years.offsetHeight - yearsContainer.offsetHeight;
+        }
+        
+        var k = 0;
+        if(years.offsetHeight >= yearsContainer.offsetHeight) {
+            if((endYear - startYear + 1) % 2) {
+                k = yearHeight;
+            }
+            
+            topContainer = Math.floor((years.offsetHeight - yearsContainer.offsetHeight - k) / 2);
+        }
+        
+        if(year !== oldYear) {
+            this._rebuildDays(year);
+        }
+        
+        this._top(selector, topSelector);
+        this._top(yearsContainer, topContainer);
+        
+        this._colorizeYears(year);
+    },
     _colorizeMonths: function(month) {
-        var months = this._elemAll('month');
-        for(var c = 0; c < 6; c++) {
+        var months = this._elemAll('month'),
+            MAX_COLOR = 5;
+        for(var c = 0; c < MAX_COLOR; c++) {
             var elems = this._elemAll('month', 'color', c);
             for(var i = 0, len = elems.length; i < len; i++) {
                 elems[i].classList.remove(elem('month', 'color', c));
@@ -351,26 +424,76 @@ extend(Calendula.prototype, {
         var cl0 = elem('month', 'color', '0');
         months[month].classList.add(cl0);
         
-        if(month - 1 >= 0) {
+        if(month - 1 >= MIN_MONTH) {
             months[month - 1].classList.add(cl0);
         }
         
-        if(month + 1 <= 11) {
+        if(month + 1 <= MAX_MONTH) {
             months[month + 1].classList.add(cl0);
         }
         
         var n = 1;
-        for(c = month - 2; c >= 0 && n < 5; c--, n++) {
+        for(c = month - 2; c >= MIN_MONTH && n < MAX_COLOR; c--, n++) {
             months[c].classList.add(elem('month', 'color', n));
         }
         
         n = 1;
-        for(c = month + 2; c <= 11 && n < 5; c++, n++) {
+        for(c = month + 2; c <= MAX_MONTH && n < MAX_COLOR; c++, n++) {
             months[c].classList.add(elem('month', 'color', n));
+        }
+    },
+    _colorizeYears: function(year) {
+        var years = this._elemAll('year'),
+            startYear = this._data._startYear,
+            MAX_COLOR = 5;
+        for(var c = 0; c < MAX_COLOR; c++) {
+            var elems = this._elemAll('year', 'color', c);
+            for(var i = 0, len = elems.length; i < len; i++) {
+                elems[i].classList.remove(elem('year', 'color', c));
+            }
+        }
+        
+        years[year - startYear].classList.add(elem('year', 'color', '0'));
+        
+        var n = 1;
+        for(c = year - 1; c >= this._data._startYear && n < MAX_COLOR; c--, n++) {
+            years[c - startYear].classList.add(elem('year', 'color', n));
+        }
+        
+        n = 1;
+        for(c = year + 1; c <= this._data.endYear && n < MAX_COLOR; c++, n++) {
+            years[c - startYear].classList.add(elem('year', 'color', n));
         }
     },
     _delOpenedEvents: function() {
         this._events.offAll('open');
+    },
+    _prepareYears: function(y) {
+        var current = this._current(),
+            buf,
+            startYear,
+            endYear;
+        
+        if(typeof y === 'string') {
+            buf = y.trim().split(/[:,; ]/);
+            startYear = parseInt(buf[0], 10);
+            endYear = parseInt(buf[1], 10);
+            
+            if(!isNaN(startYear) && !isNaN(endYear)) {
+                if(Math.abs(startYear) < 1000) {
+                    startYear = current.year + startYear;
+                }
+                
+                if(Math.abs(endYear) < 1000) {
+                    endYear = current.year + endYear;
+                }
+            }
+        }
+        
+        return {
+            start: startYear || (current.year - 11),
+            end: endYear || (current.year + 1)
+        };
     },
     _buttonText: function() {
         var date = this._currentDate,
@@ -513,7 +636,7 @@ Calendula.prototype._templates = {
     },
     days: function(year) {
         var text = '';
-        for(var m = 0; m < 12; m++) {
+        for(var m = MIN_MONTH; m <= MAX_MONTH; m++) {
             text += this.month(m, year);
         }
     
@@ -607,8 +730,8 @@ Calendula.prototype._templates = {
     },
     years: function() {
         var buf = '<div class="$year-selector"><div class="$year-selector-i"></div></div>',
-            startYear = this.parent._data.startYear,
-            endYear = this.parent._data.endYear;
+            startYear = this.parent._data._startYear,
+            endYear = this.parent._data._endYear;
             
         for(var i = startYear; i <= endYear; i++) {
             buf += '<div class="$year" data-year="' + i + '">' + i + '</div>';
@@ -644,7 +767,7 @@ return this.prepare('\
     <div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>\
 </div>\
 <div class="$months">' + this.months() + '</div>\
-<div class="$years">' + this.years() + '</div>\
+<div class="$years"><div class="$years-container">' + this.years() + '</div></div>\
 </div>\
 ');
     }

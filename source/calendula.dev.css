@@ -122,12 +122,13 @@
 
 .calendula__month-selector
 {
-    height: 52px;
+    height: 49px;
 }
 
 .calendula__year-selector
 {
-    height: 26px;
+    height: 23px;
+    transition: top .3s linear;
 }
 
 .calendula__month-selector,
@@ -166,6 +167,12 @@
     width: 66px;
 }
 
+.calendula__years-container
+{
+    position: relative;
+    transition: top .3s linear;
+}
+
 .calendula__years,
 .calendula__months
 {
@@ -189,11 +196,8 @@
     padding-left: 16px;
 
     vertical-align: middle;
-}
-
-.calendula__year-selector
-{
-    transition: top .4s linear;
+    
+    transition: color 0.3s linear;
 }
 
 .calendula_theme_normal
@@ -207,32 +211,38 @@
     box-shadow: 0 0 20px #b0b0b0;
 }
 
-.calendula_theme_normal .calendula__month
+.calendula_theme_normal .calendula__month,
+.calendula_theme_normal .calendula__year
 {
     color: #a0a0a0;
 }
 
-.calendula_theme_normal .calendula__month_color_0
+.calendula_theme_normal .calendula__month_color_0,
+.calendula_theme_normal .calendula__year_color_0
 {
     color: #000;
 }
 
-.calendula_theme_normal .calendula__month_color_1
+.calendula_theme_normal .calendula__month_color_1,
+.calendula_theme_normal .calendula__year_color_1
 {
     color: #606060;
 }
 
-.calendula_theme_normal .calendula__month_color_2
+.calendula_theme_normal .calendula__month_color_2,
+.calendula_theme_normal .calendula__year_color_2
 {
     color: #707070;
 }
 
-.calendula_theme_normal .calendula__month_color_3
+.calendula_theme_normal .calendula__month_color_3,
+.calendula_theme_normal .calendula__year_color_3
 {
     color: #808080;
 }
 
-.calendula_theme_normal .calendula__month_color_4
+.calendula_theme_normal .calendula__month_color_4,
+.calendula_theme_normal .calendula__year_color_4
 {
     color: #909090;
 }
@@ -352,32 +362,38 @@
     outline: 1px solid #bbb;
 }
 
-.calendula_theme_black .calendula__month
+.calendula_theme_black .calendula__month,
+.calendula_theme_black .calendula__year
 {
     color: #606060;
 }
 
-.calendula_theme_black .calendula__month_color_0
+.calendula_theme_black .calendula__month_color_0,
+.calendula_theme_black .calendula__year_color_0
 {
     color: #fff;
 }
 
-.calendula_theme_black .calendula__month_color_1
+.calendula_theme_black .calendula__month_color_1,
+.calendula_theme_black .calendula__year_color_1
 {
     color: #a0a0a0;
 }
 
-.calendula_theme_black .calendula__month_color_2
+.calendula_theme_black .calendula__month_color_2,
+.calendula_theme_black .calendula__year_color_2
 {
     color: #909090;
 }
 
-.calendula_theme_black .calendula__month_color_3
+.calendula_theme_black .calendula__month_color_3,
+.calendula_theme_black .calendula__year_color_3
 {
     color: #808080;
 }
 
-.calendula_theme_black .calendula__month_color_4
+.calendula_theme_black .calendula__month_color_4,
+.calendula_theme_black .calendula__year_color_4
 {
     color: #707070;
 }
@@ -450,29 +466,40 @@
     outline: 1px solid #bbb;
 }
 
-.calendula_theme_ios .calendula__month
+.calendula_theme_ios .calendula__month,
+.calendula_theme_ios .calendula__year
 {
     color: #a0a0a0;
 }
 
-.calendula_theme_ios .calendula__month_color_0
+.calendula_theme_ios .calendula__month_color_0,
+.calendula_theme_ios .calendula__year_color_0
 {
     color: #000;
 }
 
-.calendula_theme_ios .calendula__month_color_1
+.calendula_theme_ios .calendula__month_color_1,
+.calendula_theme_ios .calendula__year_color_1
 {
     color: #606060;
 }
 
-.calendula_theme_ios .calendula__month_color_2
+.calendula_theme_ios .calendula__month_color_2,
+.calendula_theme_ios .calendula__year_color_2
 {
     color: #707070;
 }
 
-.calendula_theme_ios .calendula__month_color_3
+.calendula_theme_ios .calendula__month_color_3,
+.calendula_theme_ios .calendula__year_color_3
 {
     color: #808080;
+}
+
+.calendula_theme_ios .calendula__month_color_4,
+.calendula_theme_ios .calendula__year_color_4
+{
+    color: #909090;
 }
 
 .calendula_theme_ios .calendula__month-selector,
