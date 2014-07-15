@@ -37,7 +37,7 @@ Calendula.prototype._events = {
                 }
 
                 return callback(event);
-        }, false);
+        }, ns);
     },    
     on: function(elem, type, callback, ns) {
         if(elem && type && callback) {
@@ -47,9 +47,9 @@ Calendula.prototype._events = {
     },
     off: function(elem, type, callback, ns) {
         if(elem && type && callback) {
-            elem.removeEventListener(type, callback, false);
             this._buf.forEach(function(el, i) {
-                if(el && el.type === type && el.elem === elem && callback === el.callback && ns === ns) {
+                if(el && el.type === type && el.elem === elem && el.callback === callback && el.ns === ns) {
+                    elem.removeEventListener(type, callback, false);
                     this._buf.slice(i, 1);
                 }
             }, this);

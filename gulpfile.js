@@ -11,6 +11,7 @@ var paths = {
         'sources/js/vars.js',
         'sources/js/main.js',
         'sources/js/utils.js',
+        'sources/js/timeout.js',
         'sources/js/event.js',
         'sources/js/template.js',
         'sources/js/date.js',
@@ -36,8 +37,8 @@ paths.devCss = paths.mainCss.concat('sources/css/calendula.theme.*.css');
 paths.prodCss = paths.mainCss.concat('sources/css/calendula.theme.normal.css');
 paths.prodCssAll = paths.mainCss.concat('sources/css/calendula.theme.*.css');
 
-var cssTasks = ['devJs', 'prodJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales'],
-    jsTasks = ['devCss', 'prodCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
+var jsTasks = ['devJs', 'prodJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales'],
+    cssTasks = ['devCss', 'prodCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
     allTasks = [].concat(cssTasks, jsTasks);
     
 gulp.task('devJs', function() {

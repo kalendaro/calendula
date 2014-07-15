@@ -97,7 +97,7 @@ window.addEventListener('load', function() {
         cl = new Calendula({
             lang: clLang.value,
             value: new Date(),
-            linkTo: button,
+            button: button,
             autoclose: clAutoclose.checked,
             theme: clTheme.value,
             onselect: function(e, value) {
@@ -110,10 +110,6 @@ window.addEventListener('load', function() {
         
     cl.open();
     updateButton();
-    
-    button.addEventListener('click', function() {
-        cl.toggle();
-    }, false);
     
     clTheme.addEventListener('change', function() {
         cl.setting('theme', this.value);

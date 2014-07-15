@@ -46,3 +46,9 @@ extend(Calendula.prototype, {
         };        
     }
 });
+
+var dataAttr = document.createElement('div').classList ? function(elem, name) {
+    return elem.dataset[name];
+} : function(elem, name) { // support IE9
+    return elem.getAttribute('data-' + name);
+};
