@@ -1,66 +1,114 @@
-var gulp = require('gulp');
-var path = require('path');
-
-var concat = require('gulp-concat');
-var rename = require('gulp-rename');
-var cleancss = require('gulp-cleancss');
-var uglify = require('gulp-uglify');
+var gulp = require('gulp'),
+    path = require('path'),
+    concat = require('gulp-concat'),
+    rename = require('gulp-rename'),
+    cleancss = require('gulp-cleancss'),
+    uglify = require('gulp-uglify');
 
 var paths = {
-    js: [
-        'source/js/start.js',
-        'source/js/vars.js',
-        'source/js/main.js',
-        'source/js/utils.js',
-        'source/js/event.js',
-        'source/js/template.js',
-        'source/js/date.js',
-        'source/js/locale.js',
-        'source/js/locale/*.js',
-        'source/js/end.js'
+    mainJs: [
+        'sources/js/start.js',
+        'sources/js/vars.js',
+        'sources/js/main.js',
+        'sources/js/utils.js',
+        'sources/js/event.js',
+        'sources/js/template.js',
+        'sources/js/date.js',
+        'sources/js/locale.js'
     ],
-    css: [
-        'source/css/calendula.css',
-        'source/css/calendula.normal.css',
-        'source/css/calendula.black.css',
-        'source/css/calendula.ios.css'
+    mainCss: [
+        'sources/css/calendula.css'
+    ],
+    prodJsLocales: [
+        'sources/js/locale/*.js'
+    ],
+    prodCssThemes: [
+        'sources/css/calendula.theme.*.css'
     ]
 };
 
-gulp.task('js', function() {
-    return gulp.src(paths.js)
+paths.devJs = paths.mainJs.concat('sources/js/locale/*.js', 'sources/js/end.js');
+paths.prodJs = paths.mainJs.concat('sources/js/locale/calendula.locale.en.js', 'sources/js/locale/calendula.locale.ru.js', 'sources/js/end.js');
+paths.prodJsBase = paths.mainJs.concat('sources/js/end.js');
+paths.prodJsAll = paths.mainJs.concat('sources/js/locale/calendula.locale.*.js', 'sources/js/end.js');
+
+paths.devCss = paths.mainCss.concat('sources/css/calendula.theme.*.css');
+paths.prodCss = paths.mainCss.concat('sources/css/calendula.theme.normal.css');
+paths.prodCssAll = paths.mainCss.concat('sources/css/calendula.theme.*.css');
+
+var cssTasks = ['devJs', 'prodJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales'],
+    jsTasks = ['devCss', 'prodCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
+    allTasks = [].concat(cssTasks, jsTasks);
+    
+gulp.task('devJs', function() {
+    return gulp.src(paths.devJs)
         .pipe(concat('calendula.dev.js'))
-        .pipe(gulp.dest('./source'));
+        .pipe(gulp.dest('./dev'));
 });
 
-gulp.task('uglify', function() {
-    return gulp.src(paths.js)
+gulp.task('prodJs', function() {
+    return gulp.src(paths.prodJs)
         .pipe(concat('calendula.js'))
         .pipe(uglify())
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('css', function() {
-    return gulp.src(paths.css)
-        .pipe(concat('calendula.dev.css'))
-        .pipe(gulp.dest('./source'));
+gulp.task('prodJsBase', function() {
+    return gulp.src(paths.prodJsBase)
+        .pipe(concat('calendula.base.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest('./build'));
 });
 
-gulp.task('cleancss', function() {
-    return gulp.src(paths.css)
+gulp.task('prodJsAll', function() {
+    return gulp.src(paths.prodJsAll)
+        .pipe(concat('calendula.all.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest('./build'));
+});
+
+gulp.task('prodJsLocales', function() {
+    return gulp.src(paths.prodJsLocales)
+        .pipe(uglify())
+        .pipe(gulp.dest('./build'));
+});
+
+gulp.task('devCss', function() {
+    return gulp.src(paths.devCss)
+        .pipe(concat('calendula.dev.css'))
+        .pipe(gulp.dest('./dev'));
+});
+
+gulp.task('prodCss', function() {
+    return gulp.src(paths.prodCss)
         .pipe(concat('calendula.css'))
         .pipe(cleancss({keepBreaks: false}))
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('default', [
-    'js',
-    'uglify',
-    'css',
-    'cleancss'
-]);
+gulp.task('prodCssBase', function() {
+    return gulp.src(paths.mainCss)
+        .pipe(concat('calendula.base.css'))
+        .pipe(cleancss({keepBreaks: false}))
+        .pipe(gulp.dest('./build'));
+});
+
+gulp.task('prodCssAll', function() {
+    return gulp.src(paths.prodCssAll)
+        .pipe(concat('calendula.all.css'))
+        .pipe(cleancss({keepBreaks: false}))
+        .pipe(gulp.dest('./build'));
+});
+
+gulp.task('prodCssThemes', function() {
+    return gulp.src(paths.prodCssThemes)
+        .pipe(cleancss({keepBreaks: false}))
+        .pipe(gulp.dest('./build'));
+});
+
+gulp.task('default', allTasks);
 
 gulp.task('watch', function() {
-    gulp.watch('source/js/**/*', ['js', 'uglify']);
-    gulp.watch('source/css/**/*', ['css', 'cleancss']);
+    gulp.watch('sources/js/**/*', jsTasks);
+    gulp.watch('sources/css/**/*', cssTasks);
 });

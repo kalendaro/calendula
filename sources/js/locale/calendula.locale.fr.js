@@ -4,7 +4,3 @@ Calendula.addLocale('fr', {
     today: 'Aujourd’hui',
     firstWeekDay: 1
 });
-
-
-
-

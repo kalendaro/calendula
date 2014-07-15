@@ -809,8 +809,6 @@ Calendula.addLocale('de', {
     firstWeekDay: 1
 });
 
-
-
 Calendula.addLocale('en', {
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     shortWeekDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
@@ -832,10 +830,6 @@ Calendula.addLocale('fr', {
     firstWeekDay: 1
 });
 
-
-
-
-
 Calendula.addLocale('it', {
     months: ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
     shortWeekDays: ['Do', 'Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa'],
@@ -850,6 +844,7 @@ Calendula.addLocale('ru', {
     today: 'Сегодня',
     firstWeekDay: 1
 });
+
 Calendula.addLocale('tr', {
     months: ['ocak', 'şubat', 'mart', 'nisan', 'mayıs', 'haziran', 'temmuz', 'ağustos', 'eylül', 'ekim', 'kasım', 'aralık'],
     shortWeekDays:['Pa', 'PT', 'Sa', 'Çarş', 'Per', 'CU', 'Ctesi'],
