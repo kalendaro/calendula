@@ -10,7 +10,8 @@
 
     -moz-user-select: none;
          user-select: none;
-    transition: visibility 0s linear .2s, margin-top .2s linear, opacity .2s linear;
+         
+    transition: visibility 0s linear .2s, opacity .2s linear, transform 0.2s linear;
 
     opacity: 0;
 }
@@ -19,7 +20,7 @@
 {
     visibility: visible;
 
-    transition: visibility 0s linear, margin-top .2s linear, opacity .2s linear;
+    transition: visibility 0s linear, opacity .2s linear, transform 0.2s linear;
 
     opacity: 1;
 }
