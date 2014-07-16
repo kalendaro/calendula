@@ -880,6 +880,14 @@ Calendula.prototype.text = function(id) {
     return Calendula._texts[this._data.lang][id];
 };
 
+Calendula.addLocale('be', {
+    months: ['студзень', 'люты', 'сакавік', 'красавік', 'май', 'чэрвень', 'ліпень', 'жнівень', 'верасень', 'кастрычнік', 'лістапад', 'снежань'],
+    caseMonths: ['студзеня', 'лютага', 'сакавіка', 'красавіка', 'траўня', 'траўня', 'ліпеня', 'жніўня', 'верасня', 'кастрычніка', 'лістапада', 'снежня'],
+    shortWeekDays: ['Н', 'П', 'А', 'С', 'Ч', 'П', 'С'],
+    today: 'Сення',
+    firstWeekDay: 1
+});
+
 Calendula.addLocale('de', {
     months: ['Januar', 'Februar', 'Marz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
     shortWeekDays: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
