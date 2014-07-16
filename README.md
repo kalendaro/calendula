@@ -1,6 +1,8 @@
 # Calendula
 Особенный календарь на JavaScript
 
+![Calendula](https://raw.githubusercontent.com/hcodes/calendula/master/examples/theme.default.png)
+
 Возможности:
 + эргономичный дизайн;
 + анимация с помощью CSS;
