@@ -35,6 +35,11 @@
 ## API
 TODO
 
+## Примеры
++ [Расширенный](http://hcodes.github.io/calendula/examples/api.html)
++ [Простой](http://hcodes.github.io/calendula/examples/simple.html)
++ [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
+
 ## Лицензия
 The MIT License (MIT)
 
