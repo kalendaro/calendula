@@ -34,7 +34,7 @@ paths.prodJsBase = paths.mainJs.concat('sources/js/end.js');
 paths.prodJsAll = paths.mainJs.concat('sources/js/locale/calendula.locale.*.js', 'sources/js/end.js');
 
 paths.devCss = paths.mainCss.concat('sources/css/calendula.theme.*.css');
-paths.prodCss = paths.mainCss.concat('sources/css/calendula.theme.normal.css');
+paths.prodCss = paths.mainCss.concat('sources/css/calendula.theme.default.css');
 paths.prodCssAll = paths.mainCss.concat('sources/css/calendula.theme.*.css');
 
 var jsTasks = ['devJs', 'prodJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales'],

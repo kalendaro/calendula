@@ -3,7 +3,8 @@
 <head>
     <title>Calendula</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="../build/calendula.all.css" />
+    <link rel="stylesheet" type="text/css" href="../build/calendula.base.css" />
+    <link rel="stylesheet" type="text/css" href="calendula.theme.my.css" />
     <script src="../build/calendula.all.js"></script>
 </head>
 <body>
@@ -20,6 +21,7 @@
 
     var cl = new Calendula({
         button: button,
+        theme: 'my',
         onselect: function(e, value) {
             updateButton();
         }

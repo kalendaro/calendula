@@ -8,7 +8,7 @@ var Calendula = function(data) {
             autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
             lang: data.lang || Calendula._defaultLang,
             onselect: data.onselect || function(e, value) {},
-            theme: data.theme || 'normal',
+            theme: data.theme || 'default',
             _startYear: years.start,
             _endYear: years.end
         });

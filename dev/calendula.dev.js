@@ -26,7 +26,7 @@ var Calendula = function(data) {
             autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
             lang: data.lang || Calendula._defaultLang,
             onselect: data.onselect || function(e, value) {},
-            theme: data.theme || 'normal',
+            theme: data.theme || 'default',
             _startYear: years.start,
             _endYear: years.end
         });
@@ -891,7 +891,8 @@ Calendula.addLocale('en', {
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     shortWeekDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     today: 'Today',
-    firstWeekDay: 0
+    firstWeekDay: 0,
+    def: true
 });
 
 Calendula.addLocale('es', {
