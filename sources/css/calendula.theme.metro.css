@@ -7,12 +7,14 @@
     background: #fff;
     outline: 1px solid #ccc;
     
-    transform: translateY(-20%);
+    -webkit-transform: translateY(-20%);
+            transform: translateY(-20%);
 }
 
 .calendula_theme_metro.calendula_opened
 {
-    transform: translateY(0);
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
 }
 
 .calendula_theme_metro .calendula__month,
