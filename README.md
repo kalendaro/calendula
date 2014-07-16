@@ -7,7 +7,7 @@
 + поддержка тач-устройств;
 + отсутствие зависимостей от сторонних библиотек;
 + отложенная инициализация;
-+ темы: `normal`, `black` и `ios`;
++ темы: `default`, `black` и `ios`;
 + локализация: `de`, `en`, `es`, `fr`, `it`, `ru`, `tr` и `uk`.
 
 Поддержка в браузерах:
@@ -17,7 +17,18 @@
 + Safari 6 и выше.
 
 ## Подключение
-TODO
+  ```HTML
+<link rel="stylesheet" type="text/css" href="build/calendula.all.css" />
+<script src="build/calendula.all.js"></script>
+  ```
+  
+Для подключения только нужной локали и темы:
+  ```HTML
+<link rel="stylesheet" type="text/css" href="build/calendula.base.css" />
+<link rel="stylesheet" type="text/css" href="build/calendula.ios.css" />
+<script src="build/calendula.base.js"></script>
+<script src="build/calendula.en.js"></script>
+  ```
 
 ## API
 TODO
