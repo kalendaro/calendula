@@ -924,6 +924,14 @@ Calendula.addLocale('it', {
     firstWeekDay: 1
 });
 
+Calendula.addLocale('pl', {
+    months: ['styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień'],
+    caseMonths: ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'],
+    shortWeekDays: ['N', 'P', 'W', 'Ś', 'C', 'P', 'S'],
+    today: 'Dziś',
+    firstWeekDay: 1
+});
+
 Calendula.addLocale('ru', {
     months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
     caseMonths: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
