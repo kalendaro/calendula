@@ -58,7 +58,6 @@
 
 .calendula_theme_default .calendula__day_selected
 {
-    text-shadow: 1px 1px 3px #fff;
     border-radius: 10px;
     background: #ffec95;
     background:    -moz-linear-gradient(top, #ffec95 0%, #ff8f56 100%);
@@ -67,6 +66,7 @@
     background:      -o-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
     background:     -ms-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
     background:         linear-gradient(to bottom, #ffec95 0%,#ff8f56 100%);
+    text-shadow: 1px 1px 3px #fff;
 }
 
 .calendula_theme_default .calendula__day_now
