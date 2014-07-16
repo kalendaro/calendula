@@ -237,6 +237,12 @@ extend(Calendula.prototype, {
             that._resize();
         }, 'open');
         
+        this._events.on(document, 'keypress', function(e) {
+            if(e.keyCode === 27) { // ESC
+                that.close();
+            }
+        }, 'open');
+        
         this._events.on(this._container, 'click', function(e) {
             if(e.button) {
                 return;
