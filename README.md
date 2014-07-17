@@ -32,6 +32,8 @@
 <script src="build/calendula.en.js"></script>
   ```
 
+Или воспользуйтесь (инструментом для сборки)[http://hcodes.github.io/calendula/].
+
 ## API
 TODO
 
@@ -41,6 +43,9 @@ TODO
 + [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
 
 ## Пересборка
+(Сборка на сайте)[http://hcodes.github.io/calendula/]
+
+Ручная сборка:
   ```
 npm i
 gulp
