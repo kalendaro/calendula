@@ -12,20 +12,18 @@
 
 <script>
 (function() {
-    var button = document.getElementById('example-button');
-    
-    function updateButton() {
-        button.innerHTML = cl._buttonText();
-    }
+    var button = document.getElementById('example-button'),
+        cl = new Calendula({
+            button: button
+        }),
+        updateButton = function() {
+            button.innerHTML = cl._buttonText();
+        };
 
-    var cl = new Calendula({
-        button: button,
-        onselect: function(e, value) {
-            updateButton();
-        }
-    });
-        
-    cl.open();
+    cl.on('select', function(e, value) {
+        updateButton();
+    }).open();
+    
     updateButton();
 })();
 </script>

@@ -2,21 +2,20 @@ var Calendula = function(data) {
     data = extend({}, data || {});
     
     var current = new Date(),
-        obj = this,
-        years = this._prepareYears(data.years),
-        data = extend(data, {
-            autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
-            lang: data.lang || Calendula._defaultLang,
-            onselect: data.onselect || function(e, value) {},
-            theme: data.theme || 'default',
-            _startYear: years.start,
-            _endYear: years.end
-        });
-
-    obj._data = data;
+        years = this._prepareYears(data.years);
+        
+    this._data = extend(data, {
+        autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
+        lang: data.lang || Calendula._defaultLang,
+        theme: data.theme || 'default',
+        _startYear: years.start,
+        _endYear: years.end
+    });
     
     this.val(this._data.value);
 };
+
+Calendula.version = '0.9.0';
 
 extend(Calendula.prototype, {
     isOpened: function() {
@@ -40,6 +39,8 @@ extend(Calendula.prototype, {
             }, 1, 'open');
             
             this._isOpened = true;
+            
+            this.trigger('open');
         }
         
         return this;
@@ -57,6 +58,8 @@ extend(Calendula.prototype, {
             
             this._delOpenedEvents();
             this._isOpened = false;
+            
+            this.trigger('close');
         }
         
         return this;
@@ -131,7 +134,8 @@ extend(Calendula.prototype, {
             
             Timeout.clearAll();
             
-            this._events.offAll();
+            this._eventBuf = [];
+            this._domEvent.offAll();
             
             document.body.removeChild(this._container);
             
@@ -159,7 +163,7 @@ extend(Calendula.prototype, {
         container.classList.add(mod('theme', this._data.theme));
         
         if(button) {
-            this._events.on(button, 'click', function() {
+            this._domEvent.on(button, 'click', function() {
                 that.toggle();
             }, 'init');
         }
@@ -203,7 +207,7 @@ extend(Calendula.prototype, {
         
         this._ignoreDocumentClick = false;
         
-        this._events.on(document, 'click', function(e) {
+        this._domEvent.on(document, 'click', function(e) {
             if(e.button || !that.setting('autoclose')) {
                 return;
             }
@@ -215,17 +219,17 @@ extend(Calendula.prototype, {
             }
         }, 'open');
         
-        this._events.on(window, 'resize', function() {
+        this._domEvent.on(window, 'resize', function() {
             that._resize();
         }, 'open');
         
-        this._events.on(document, 'keypress', function(e) {
+        this._domEvent.on(document, 'keypress', function(e) {
             if(e.keyCode === 27) { // ESC
                 that.close();
             }
         }, 'open');
         
-        this._events.on(this._container, 'click', function(e) {
+        this._domEvent.on(this._container, 'click', function(e) {
             if(e.button) {
                 return;
             }
@@ -265,11 +269,11 @@ extend(Calendula.prototype, {
             }
         };
         
-        this._events.onWheel(days, this._onwheelmonths, 'open');
-        this._events.onWheel(months, this._onwheelmonths, 'open');
-        this._events.onWheel(years, this._onwheelyears, 'open');
+        this._domEvent.onWheel(days, this._onwheelmonths, 'open');
+        this._domEvent.onWheel(months, this._onwheelmonths, 'open');
+        this._domEvent.onWheel(years, this._onwheelyears, 'open');
         
-        this._events.on(months, 'click', function(e) {
+        this._domEvent.on(months, 'click', function(e) {
             if(e.button) {
                 return;
             }
@@ -279,7 +283,7 @@ extend(Calendula.prototype, {
             }
         }, 'open');
         
-        this._events.on(years, 'click', function(e) {
+        this._domEvent.on(years, 'click', function(e) {
             if(e.button) {
                 return;
             }
@@ -290,7 +294,7 @@ extend(Calendula.prototype, {
             }
         }, 'open');
         
-        this._events.on(days, 'click', function(e) {
+        this._domEvent.on(days, 'click', function(e) {
             if(e.button) {
                 return;
             }
@@ -312,15 +316,11 @@ extend(Calendula.prototype, {
                 
                 target.classList.add(cl);
                 
-                that.setting('onselect')({
-                    type: 'select'
-                }, {
+                that.trigger('select', {
                     day: cd.day,
                     month: cd.month,
                     year: cd.year
-                });
-                
-                that.close();
+                }).close();
             }
         }, 'open');
     },
@@ -491,12 +491,12 @@ extend(Calendula.prototype, {
         }
         
         n = 1;
-        for(c = year + 1; c <= this._data.endYear && n < MAX_COLOR; c++, n++) {
+        for(c = year + 1; c <= this._data._endYear && n < MAX_COLOR; c++, n++) {
             years[c - startYear].classList.add(elem('year', 'color', n));
         }
     },
     _delOpenedEvents: function() {
-        this._events.offAll('open');
+        this._domEvent.offAll('open');
     },
     _prepareYears: function(y) {
         var current = this._current(),

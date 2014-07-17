@@ -31,6 +31,11 @@
             background-color: black;
             color: #fff;
         }
+        
+        #log
+        {
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body class="page_theme_normal">
@@ -68,12 +73,20 @@
                 </td>
             </tr>
         </table>
+        
+        <br />
+        Events:<br />
+        <div id="log"></div>
     </div>
     
     <button id="example-button"></button>
     
 <script>
 window.addEventListener('load', function() {
+    var log = function(text) {
+        getById('log').innerHTML += text + '<br />';
+    };
+    
     var getById = function(id) {
         return document.getElementById(id);
     };
@@ -100,16 +113,22 @@ window.addEventListener('load', function() {
             value: new Date(),
             button: button,
             autoclose: clAutoclose.checked,
-            theme: clTheme.value,
-            onselect: function(e, value) {
-                updateButton();
-            }
+            theme: clTheme.value
         }),
         updateButton = function() {
             button.innerHTML = cl._buttonText();
         };
         
-    cl.open();
+    cl.on('select', function(e, data) {
+        updateButton();
+        log(e.type + ' ' + JSON.stringify(data));
+    }).on('open', function(e) {
+        log(e.type);
+    }).on('close', function(e) {
+        log(e.type);
+    }).open();
+     
+    
     updateButton();
     
     clTheme.addEventListener('change', function() {

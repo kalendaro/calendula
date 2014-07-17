@@ -4,7 +4,7 @@
 ![Calendula](https://raw.githubusercontent.com/hcodes/calendula/master/examples/theme.default.png)
 
 Возможности:
-+ эргономичный дизайн;
++ эргономичный дизайн от [Артёма Горбунова](http://artgorbunov.ru/bb/soviet/20070628/);
 + анимация с помощью CSS;
 + поддержка тач-устройств;
 + отсутствие зависимостей от сторонних библиотек;
@@ -35,6 +35,9 @@
 Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula/).
 
 ## API
+TODO
+
+## События
 TODO
 
 ## Примеры
