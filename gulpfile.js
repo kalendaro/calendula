@@ -42,7 +42,7 @@ var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales'],
 gulp.task('devJs', function() {
     return gulp.src(paths.devJs)
         .pipe(concat('calendula.dev.js'))
-        .pipe(gulp.dest('./dev'));
+        .pipe(gulp.dest('./build'));
 });
 
 gulp.task('prodJsBase', function() {
@@ -68,7 +68,7 @@ gulp.task('prodJsLocales', function() {
 gulp.task('devCss', function() {
     return gulp.src(paths.devCss)
         .pipe(concat('calendula.dev.css'))
-        .pipe(gulp.dest('./dev'));
+        .pipe(gulp.dest('./build'));
 });
 
 gulp.task('prodCssBase', function() {
