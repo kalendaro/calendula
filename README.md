@@ -40,6 +40,12 @@ TODO
 + [Простой](http://hcodes.github.io/calendula/examples/simple.html)
 + [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
 
+## Пересборка
+  ```
+npm i
+gulp
+  ```
+
 ## Лицензия
 The MIT License (MIT)
 
