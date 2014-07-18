@@ -20,3 +20,9 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+*.js eol=lf
+*.css eol=lf
+*.jst eol=lf
+*.json eol=lf
+*.md eol=lf

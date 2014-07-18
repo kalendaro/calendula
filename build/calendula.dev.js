@@ -50,7 +50,7 @@ extend(Calendula.prototype, {
         if(!this.isOpened()) {
             // For Firefox CSS3 animation
             Timeout.set(function() {
-                that._container.classList.add(mod('opened'));
+                addClass(that._container, mod('opened'));
                 that._update();
                 that._monthSelector(that._currentDate.month, false);
                 that._yearSelector(that._currentDate.year, false);
@@ -73,7 +73,7 @@ extend(Calendula.prototype, {
             Timeout.clearAll('open');
             
             this._update();
-            this._container.classList.remove(mod('opened'));
+            removeClass(this._container, mod('opened'));
             
             this._delOpenedEvents();
             this._isOpened = false;
@@ -136,8 +136,8 @@ extend(Calendula.prototype, {
         
         if(container) {
             if(name === 'theme') {
-                container.classList.remove(mod('theme', oldValue));
-                container.classList.add(mod('theme', value));
+                removeClass(container, mod('theme', oldValue));
+                addClass(container, mod('theme', value));
             }
             
             if(name === 'lang') {
@@ -178,8 +178,8 @@ extend(Calendula.prototype, {
             
         this._container = container;
 
-        container.classList.add(NS);
-        container.classList.add(mod('theme', this._data.theme));
+        addClass(container, NS);
+        addClass(container, mod('theme', this._data.theme));
         
         if(button) {
             this._domEvent.on(button, 'click', function() {
@@ -297,7 +297,7 @@ extend(Calendula.prototype, {
                 return;
             }
 
-            if(e.target.classList.contains(elem('month'))) {
+            if(hasClass(e.target, elem('month'))) {
                 that._monthSelector(+dataAttr(e.target, 'month'), true);
             }
         }, 'open');
@@ -324,16 +324,16 @@ extend(Calendula.prototype, {
                 day = dataAttr(target, 'day'),
                 month = dataAttr(target, 'month');
                 
-            if(day && !target.classList.contains(cl)) {
+            if(day && !hasClass(target, cl)) {
                 cd.day = +day;
                 cd.month = +month;
                 
                 var selected = days.querySelector('.' + cl);
                 if(selected) {
-                    selected.classList.remove(cl);
+                    removeClass(selected, cl);
                 }
                 
-                target.classList.add(cl);
+                addClass(target, cl);
                 
                 that.trigger('select', {
                     day: cd.day,
@@ -363,8 +363,8 @@ extend(Calendula.prototype, {
             noAnimMonths = elem('months', 'noanim');
             
         if(!anim) {
-            days.classList.add(noAnimDays);
-            months.classList.add(noAnimMonths);
+            addClass(days, noAnimDays);
+            addClass(months, noAnimMonths);
         }
         
         var top = Math.floor(this._currentDate.month * monthHeight - (monthHeight / 2));
@@ -394,8 +394,8 @@ extend(Calendula.prototype, {
         
         if(!anim) {
             Timeout.set(function() {
-                days.classList.remove(noAnimDays);
-                months.classList.remove(noAnimMonths);
+                removeClass(days, noAnimDays);
+                removeClass(months, noAnimMonths);
             }, 0, 'anim');
         }
     },
@@ -422,7 +422,7 @@ extend(Calendula.prototype, {
             noAnim = elem('years', 'noanim');
             
         if(!anim) {
-            years.classList.add(noAnim);
+            addClass(years, noAnim);
         }
         
         var topSelector = Math.floor((this._currentDate.year - startYear) * yearHeight),
@@ -456,7 +456,7 @@ extend(Calendula.prototype, {
         
         if(!anim) {
             Timeout.set(function() {
-                years.classList.remove(noAnim);
+                removeClass(years, noAnim);
             }, 0, 'anim');
         }
     },
@@ -466,29 +466,29 @@ extend(Calendula.prototype, {
         for(var c = 0; c < MAX_COLOR; c++) {
             var elems = this._elemAll('month', 'color', c);
             for(var i = 0, len = elems.length; i < len; i++) {
-                elems[i].classList.remove(elem('month', 'color', c));
+                removeClass(elems[i], elem('month', 'color', c));
             }
         }
         
         var cl0 = elem('month', 'color', '0');
-        months[month].classList.add(cl0);
+        addClass(months[month], cl0);
         
         if(month - 1 >= MIN_MONTH) {
-            months[month - 1].classList.add(cl0);
+            addClass(months[month - 1], cl0);
         }
         
         if(month + 1 <= MAX_MONTH) {
-            months[month + 1].classList.add(cl0);
+            addClass(months[month + 1], cl0);
         }
         
         var n = 1;
         for(c = month - 2; c >= MIN_MONTH && n < MAX_COLOR; c--, n++) {
-            months[c].classList.add(elem('month', 'color', n));
+            addClass(months[c], elem('month', 'color', n));
         }
         
         n = 1;
         for(c = month + 2; c <= MAX_MONTH && n < MAX_COLOR; c++, n++) {
-            months[c].classList.add(elem('month', 'color', n));
+            addClass(months[c], elem('month', 'color', n));
         }
     },
     _colorizeYears: function(year) {
@@ -498,20 +498,20 @@ extend(Calendula.prototype, {
         for(var c = 0; c < MAX_COLOR; c++) {
             var elems = this._elemAll('year', 'color', c);
             for(var i = 0, len = elems.length; i < len; i++) {
-                elems[i].classList.remove(elem('year', 'color', c));
+                removeClass(elems[i], elem('year', 'color', c));
             }
         }
         
-        years[year - startYear].classList.add(elem('year', 'color', '0'));
+        addClass(years[year - startYear], elem('year', 'color', '0'));
         
         var n = 1;
         for(c = year - 1; c >= this._data._startYear && n < MAX_COLOR; c--, n++) {
-            years[c - startYear].classList.add(elem('year', 'color', n));
+            addClass(years[c - startYear], elem('year', 'color', n));
         }
         
         n = 1;
         for(c = year + 1; c <= this._data._endYear && n < MAX_COLOR; c++, n++) {
-            years[c - startYear].classList.add(elem('year', 'color', n));
+            addClass(years[c - startYear], elem('year', 'color', n));
         }
     },
     _delOpenedEvents: function() {
@@ -554,20 +554,46 @@ extend(Calendula.prototype, {
 });
 
 var elem = function(name, mod, val) {
-    if(val === null || val === undefined) {
-        val = '';
-    }
-    
-    return NS + '__' + name + (mod ? '_' + mod + (val === '' ? '' : '_' + val) : '');
-};
-
-var mod = function(name, val) {
-    if(val === null || val === undefined) {
-        val = '';
-    }
-    
-    return NS + '_' + name + (val === '' ? '' : '_' + val);
-};
+        if(val === null || val === undefined) {
+            val = '';
+        }
+        
+        return NS + '__' + name + (mod ? '_' + mod + (val === '' ? '' : '_' + val) : '');
+    },
+    mod = function(name, val) {
+        if(val === null || val === undefined) {
+            val = '';
+        }
+        
+        return NS + '_' + name + (val === '' ? '' : '_' + val);
+    },
+    div = document.createElement('div'),
+    dataAttr = div.dataset ? function(elem, name) {
+        return elem.dataset[name];
+    } : function(elem, name) { // support IE9
+        return elem.getAttribute('data-' + name);
+    },
+    hasClassList = !!div.classList,
+    addClass = hasClassList ? function(elem, name) {
+        return elem.classList.add(name);
+    } : function(elem, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        if(!re.test(name.className)) {
+            elem.className = (elem.className + ' ' + name).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+        }
+    },
+    removeClass = hasClassList ? function(elem, name) {
+        return elem.classList.remove(name);    
+    } : function(elem, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        elem.className = elem.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+    },
+    hasClass = hasClassList ? function(elem, name) {
+        return elem.classList.contains(name);
+    } : function(elem, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        return elem.className.search(re) !== -1;
+    };
 
 extend(Calendula.prototype, {
     _elem: function(name, mod, val) {
@@ -598,15 +624,9 @@ extend(Calendula.prototype, {
         return {
             top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
             left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
-        };        
+        };
     }
 });
-
-var dataAttr = document.createElement('div').classList ? function(elem, name) {
-    return elem.dataset[name];
-} : function(elem, name) { // support IE9
-    return elem.getAttribute('data-' + name);
-};
 
 var Timeout = {
     _buf: [],

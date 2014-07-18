@@ -1,18 +1,44 @@
 var elem = function(name, mod, val) {
-    if(val === null || val === undefined) {
-        val = '';
-    }
-    
-    return NS + '__' + name + (mod ? '_' + mod + (val === '' ? '' : '_' + val) : '');
-};
-
-var mod = function(name, val) {
-    if(val === null || val === undefined) {
-        val = '';
-    }
-    
-    return NS + '_' + name + (val === '' ? '' : '_' + val);
-};
+        if(val === null || val === undefined) {
+            val = '';
+        }
+        
+        return NS + '__' + name + (mod ? '_' + mod + (val === '' ? '' : '_' + val) : '');
+    },
+    mod = function(name, val) {
+        if(val === null || val === undefined) {
+            val = '';
+        }
+        
+        return NS + '_' + name + (val === '' ? '' : '_' + val);
+    },
+    div = document.createElement('div'),
+    dataAttr = div.dataset ? function(elem, name) {
+        return elem.dataset[name];
+    } : function(elem, name) { // support IE9
+        return elem.getAttribute('data-' + name);
+    },
+    hasClassList = !!div.classList,
+    addClass = hasClassList ? function(elem, name) {
+        return elem.classList.add(name);
+    } : function(elem, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        if(!re.test(name.className)) {
+            elem.className = (elem.className + ' ' + name).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+        }
+    },
+    removeClass = hasClassList ? function(elem, name) {
+        return elem.classList.remove(name);    
+    } : function(elem, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        elem.className = elem.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+    },
+    hasClass = hasClassList ? function(elem, name) {
+        return elem.classList.contains(name);
+    } : function(elem, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        return elem.className.search(re) !== -1;
+    };
 
 extend(Calendula.prototype, {
     _elem: function(name, mod, val) {
@@ -43,12 +69,6 @@ extend(Calendula.prototype, {
         return {
             top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
             left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
-        };        
+        };
     }
 });
-
-var dataAttr = document.createElement('div').classList ? function(elem, name) {
-    return elem.dataset[name];
-} : function(elem, name) { // support IE9
-    return elem.getAttribute('data-' + name);
-};
