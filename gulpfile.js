@@ -14,6 +14,7 @@ var paths = {
         'sources/js/timeout.js',
         'sources/js/event.js',
         'sources/js/template.js',
+        'sources/js/holiday.js',
         'sources/js/date.js',
         'sources/js/locale.js'
     ],
@@ -23,19 +24,22 @@ var paths = {
     prodJsLocales: [
         'sources/js/locale/*.js'
     ],
+    prodJsHolidays: [
+        'sources/js/holiday/*.js'
+    ],
     prodCssThemes: [
         'sources/css/calendula.theme.*.css'
     ]
 };
 
-paths.devJs = paths.mainJs.concat('sources/js/locale/*.js', 'sources/js/end.js');
+paths.devJs = paths.mainJs.concat('sources/js/locale/*.js', 'sources/js/holiday/*.js', 'sources/js/end.js');
 paths.prodJsBase = paths.mainJs.concat('sources/js/end.js');
-paths.prodJsAll = paths.mainJs.concat('sources/js/locale/calendula.locale.*.js', 'sources/js/end.js');
+paths.prodJsAll = paths.mainJs.concat('sources/js/locale/calendula.locale.*.js', 'sources/js/locale/calendula.holiday.*.js', 'sources/js/end.js');
 
 paths.devCss = paths.mainCss.concat('sources/css/calendula.theme.*.css');
 paths.prodCssAll = paths.mainCss.concat('sources/css/calendula.theme.*.css');
 
-var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales'],
+var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolidays'],
     cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
     allTasks = [].concat(cssTasks, jsTasks);
     
@@ -61,6 +65,12 @@ gulp.task('prodJsAll', function() {
 
 gulp.task('prodJsLocales', function() {
     return gulp.src(paths.prodJsLocales)
+        .pipe(uglify())
+        .pipe(gulp.dest('./build'));
+});
+
+gulp.task('prodJsHolidays', function() {
+    return gulp.src(paths.prodJsHolidays)
         .pipe(uglify())
         .pipe(gulp.dest('./build'));
 });

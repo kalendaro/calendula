@@ -68,16 +68,23 @@ Calendula.prototype._templates = {
             title,
             selectedDay = par._val.day,
             selectedMonth = par._val.month,
-            selectedYear = par._val.year;
+            selectedYear = par._val.year,
+            holiday;
         
         for(var day = 1; day <= daysMonth[m]; day++) {
             title = '';
             hasTr = false;
             date.setDate(day);
             weekday = date.getDay();
+            holiday = this.parent.getHoliday(day, m, y);
 
             // 0 - Sunday, 6 - Saturday
             className = (weekday === 0 || weekday === 6) ? '$day_holiday' : '$day_weekday';
+            if(holiday === 0) {
+                className = '$day_weekday';
+            } else if(holiday === 1) {
+                className = '$day_holiday';
+            }
             
             if(day === selectedDay && m === selectedMonth && y === selectedYear) {
                 className += ' $day_selected';
