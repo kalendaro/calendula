@@ -35,6 +35,18 @@
 
 Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula/).
 
+## Использование
+  ```JavaScript
+var c = new Calendula({
+  theme: 'ios', // тема оформления, по умолчание - default.
+  lang: 'fr', // язык интерфейса, по умолчанию - en.
+  button: document.getElementById('data-picker'), // кнопка (DOMElement) при клике на которую открывается и позиционируется календарь.
+  autoclose: true, // закрытие календаря при клике мимо него, по умолчанию - true.
+  years: '-20:+20' // установка диапозона для списка лет, по умолчанию - -11:+1.
+});
+
+  ```
+
 ## API
 TODO
 
@@ -42,7 +54,7 @@ TODO
 ### open
 Открытие календаря.
   ```JavaScript
-sc.on('open', function(e) {
+c.on('open', function(e) {
   //...
 });
   ```
@@ -51,7 +63,7 @@ sc.on('open', function(e) {
 ### close
 Закрытие календаря.
   ```JavaScript
-sc.on('close', function(e) {
+c.on('close', function(e) {
   //...
 });
   ```
@@ -59,7 +71,7 @@ sc.on('close', function(e) {
 ### select
 Выбор даты.
   ```JavaScript
-sc.on('select', function(e, data) {
+c.on('select', function(e, data) {
   console.log(data.day, data.month, data.year);
 });
   ```
