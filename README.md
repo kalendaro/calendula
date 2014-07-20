@@ -39,7 +39,31 @@
 TODO
 
 ## События
-TODO
+### open
+Открытие календаря.
+  ```JavaScript
+sc.on('open', function(e) {
+  //...
+});
+  ```
+  
+  
+### close
+Закрытие календаря.
+  ```JavaScript
+sc.on('close', function(e) {
+  //...
+});
+  ```
+
+### select
+Выбор даты.
+  ```JavaScript
+sc.on('select', function(e, data) {
+  console.log(data.day, data.month, data.year);
+});
+  ```
+
 
 ## Примеры
 + [Расширенный](http://hcodes.github.io/calendula/examples/api.html)
