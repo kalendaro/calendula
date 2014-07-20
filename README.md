@@ -40,7 +40,7 @@
 var c = new Calendula({
   theme: 'ios', // тема оформления, по умолчанию - 'default'.
   lang: 'fr', // язык интерфейса, по умолчанию - 'en'.
-  button: document.getElementById('data-picker'), // кнопка (DOMElement) при клике на которую открывается и позиционируется календарь.
+  button: document.getElementById('date-picker'), // кнопка (DOMElement) при клике на которую открывается и позиционируется календарь.
   autoclose: true, // закрытие календаря при клике мимо него, по умолчанию - true.
   years: '-20:+20' // установка диапозона для списка лет, по умолчанию - '-11:+1'.
 });
@@ -71,20 +71,10 @@ var c = new Calendula({
 ## События
 ### open
 Календарь открыт.
-  ```JavaScript
-c.on('open', function(e) {
-  //...
-});
-  ```
   
   
 ### close
 Календарь закрыт.
-  ```JavaScript
-c.on('close', function(e) {
-  //...
-});
-  ```
 
 ### select
 Выбрана дата.
