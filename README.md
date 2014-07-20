@@ -70,7 +70,7 @@ var c = new Calendula({
 
 ## События
 ### open
-Открытие календаря.
+Календарь открыт.
   ```JavaScript
 c.on('open', function(e) {
   //...
@@ -79,7 +79,7 @@ c.on('open', function(e) {
   
   
 ### close
-Закрытие календаря.
+Календарь закрыт.
   ```JavaScript
 c.on('close', function(e) {
   //...
@@ -87,7 +87,7 @@ c.on('close', function(e) {
   ```
 
 ### select
-Выбор даты.
+Выбрана дата.
   ```JavaScript
 c.on('select', function(e, data) {
   console.log(data.day, data.month, data.year);
