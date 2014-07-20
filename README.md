@@ -63,6 +63,17 @@ var c = new Calendula({
 ### .setting(name, [value])
 Получить/установить значение настройки.
 
+### .on(type, callback)
+Установка события.
+  ```JavaScript
+c.on('select', function(e, data) {
+  console.log(data.day, data.month, data.year);
+});
+  ```
+
+### .off(type, callback)
+Снятие события.
+
 ### .destroy()
 Уничтожить календарь: привязку событий, DOM-элементы и пр.
 
@@ -78,11 +89,6 @@ var c = new Calendula({
 
 ### select
 Выбрана дата.
-  ```JavaScript
-c.on('select', function(e, data) {
-  console.log(data.day, data.month, data.year);
-});
-  ```
 
 
 ## Примеры
