@@ -21,7 +21,8 @@ var Calendula = function(data) {
     data = extend({}, data || {});
     
     var current = new Date(),
-        years = this._prepareYears(data.years);
+        years = this._prepareYears(data.years),
+        that = this;
         
     this._data = extend(data, {
         autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
@@ -30,8 +31,17 @@ var Calendula = function(data) {
         _startYear: years.start,
         _endYear: years.end
     });
+
+    this._domEvent = new DomEvent();
     
     this.val(this._data.value);
+
+    var button = this.setting('button');
+    if(button) {
+        this._domEvent.on(button, 'click', function() {
+            that.toggle();
+        }, 'init');
+    }
 };
 
 Calendula.version = '0.9.0';
@@ -49,7 +59,7 @@ extend(Calendula.prototype, {
         
         if(!this.isOpened()) {
             // For Firefox CSS3 animation
-            Timeout.set(function() {
+            this._timeout.set(function() {
                 addClass(that._container, mod('opened'));
                 that._update();
                 that._monthSelector(that._currentDate.month, false);
@@ -69,13 +79,15 @@ extend(Calendula.prototype, {
         
         if(this.isOpened()) {
             this._ignoreDocumentClick = false;
-            
-            Timeout.clearAll('open');
+
+            this._timeout.clearAll('open');
             
             this._update();
-            removeClass(this._container, mod('opened'));
-            
+
             this._delOpenedEvents();
+
+            removeClass(this._container, mod('opened'));
+
             this._isOpened = false;
             
             this.trigger('close');
@@ -151,14 +163,22 @@ extend(Calendula.prototype, {
         if(this._isInited) {
             this.close();
             
-            Timeout.clearAll();
+            this._timeout.clearAll();
             
             this._eventBuf = [];
             this._domEvent.offAll();
             
             document.body.removeChild(this._container);
             
-            ['_isInited', '_container', '_isOpened', '_ignoreDocumentClick', '_data'].forEach(function(el) {
+            [
+                '_container',
+                '_data',
+                '_domEvent',
+                '_ignoreDocumentClick',
+                '_isInited',
+                '_isOpened',
+                '_timeout'
+            ].forEach(function(el) {
                 delete this[el];
             }, this);
         }
@@ -168,25 +188,20 @@ extend(Calendula.prototype, {
             return;
         }
         
-        this._templates.parent = this;
-        
         this._isInited = true;
-        
+
+        this._timeout = new Timeout();
+
+        this._templates.parent = this;
+                
         var that = this,
-            button = this.setting('button'),
             container = document.createElement('div');
             
         this._container = container;
 
         addClass(container, NS);
         addClass(container, mod('theme', this._data.theme));
-        
-        if(button) {
-            this._domEvent.on(button, 'click', function() {
-                that.toggle();
-            }, 'init');
-        }
-        
+                
         this._rebuild();
 
         document.body.appendChild(container);
@@ -393,7 +408,7 @@ extend(Calendula.prototype, {
         this._colorizeMonths(month);
         
         if(!anim) {
-            Timeout.set(function() {
+            this._timeout.set(function() {
                 removeClass(days, noAnimDays);
                 removeClass(months, noAnimMonths);
             }, 0, 'anim');
@@ -455,7 +470,7 @@ extend(Calendula.prototype, {
         this._colorizeYears(year);
         
         if(!anim) {
-            Timeout.set(function() {
+            this._timeout.set(function() {
                 removeClass(years, noAnim);
             }, 0, 'anim');
         }
@@ -628,35 +643,45 @@ extend(Calendula.prototype, {
     }
 });
 
-var Timeout = {
-    _buf: [],
+var Timeout = function() {};
+
+extend(Timeout.prototype, {
     set: function(callback, time, ns) {
+        this._buf = this._buf || [];
+
+        var id = setTimeout(callback, time);
         this._buf.push({
-            id: setTimeout(callback, time),
+            id: id,
             ns: ns
         });
+
+        return id;
     },
     clear: function(id) {
-        this._buf.forEach(function(el, i) {
-            if(el.id === id) {
-                clearTimeout(id);
-                this._buf.slice(i, 1);
-            }
-        }, this);
-    },
-    clearAll: function(ns) {
-        this._buf.forEach(function(el, i) {
-            if(ns) {
-                if(ns === el.ns) {
-                    clearTimeout(el.id);
+        if(this._buf) {
+            this._buf.forEach(function(el, i) {
+                if(el.id === id) {
+                    clearTimeout(id);
                     this._buf.slice(i, 1);
                 }
-            } else {
-                this._buf.slice(i, 1);
-            }
-        }, this);
+            }, this);
+        }
+    },
+    clearAll: function(ns) {
+        if(this._buf) {
+            this._buf.forEach(function(el, i) {
+                if(ns) {
+                    if(ns === el.ns) {
+                        clearTimeout(el.id);
+                        this._buf.slice(i, 1);
+                    }
+                } else {
+                    this._buf.slice(i, 1);
+                }
+            }, this);
+        }
     }
-};
+});
 
 var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
@@ -697,83 +722,84 @@ extend(Calendula.prototype, {
         }
         
         return this;
-    },
-    _domEvent: {
-        onWheel: function(elem, callback, ns) {
-            // handle MozMousePixelScroll in older Firefox
-            this.on(elem,
-                supportWheel === 'DOMMouseScroll' ? 'MozMousePixelScroll' : supportWheel,
-                supportWheel === 'wheel' ? callback : function(originalEvent) {
-                    if(!originalEvent) {
-                        originalEvent = window.event;
-                    }
+    }
+});
 
-                    var event = {
-                        originalEvent: originalEvent,
-                        target: originalEvent.target || originalEvent.srcElement,
-                        type: 'wheel',
-                        deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
-                        deltaX: 0,
-                        delatZ: 0,
-                        preventDefault: function() {
-                            originalEvent.preventDefault ?
-                                originalEvent.preventDefault() :
-                                originalEvent.returnValue = false;
-                        }
-                    },
-                    k = -1 / 40;
-                    
-                    if(supportWheel === 'mousewheel') {
-                        event.deltaY = k * originalEvent.wheelDelta;
-                        if(originalEvent.wheelDeltaX) {
-                            event.deltaX = k * originalEvent.wheelDeltaX;
-                        }
-                    } else {
-                        event.deltaY = originalEvent.detail;
-                    }
-
-                    return callback(event);
-            }, ns);
-            
-            return this;
-        },    
-        on: function(elem, type, callback, ns) {
-            if(elem && type && callback) {
-                elem.addEventListener(type, callback, false);
-                
-                this._buf = this._buf || [];
-                this._buf.push({elem: elem, type: type, callback: callback, ns: ns});
-            }
-            
-            return this;
-        },
-        off: function(elem, type, callback, ns) {
-            if(elem && type && callback && this._buf) {
-                this._buf.forEach(function(el, i) {
-                    if(el && el.type === type && el.elem === elem && el.callback === callback && el.ns === ns) {
-                        elem.removeEventListener(type, callback, false);
-                        this._buf.slice(i, 1);
-                    }
-                }, this);
-            }
-            
-            return this;
-        },
-        offAll: function(ns) {
-            if(this._buf) {
-                this._buf.forEach(function(el) {
-                    if(el) {
-                        this.off(el.elem, el.type, el.callback, ns || el.ns);
-                    }
-                }, this);
-                
-                if(!ns) {
-                    this._buf = [];
+var DomEvent = function() {};
+extend(DomEvent.prototype, {
+    onWheel: function(elem, callback, ns) {
+        // handle MozMousePixelScroll in older Firefox
+        this.on(elem,
+            supportWheel === 'DOMMouseScroll' ? 'MozMousePixelScroll' : supportWheel,
+            supportWheel === 'wheel' ? callback : function(originalEvent) {
+                if(!originalEvent) {
+                    originalEvent = window.event;
                 }
-            }
-            
-            return this;
+
+                var event = {
+                    originalEvent: originalEvent,
+                    target: originalEvent.target || originalEvent.srcElement,
+                    type: 'wheel',
+                    deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
+                    deltaX: 0,
+                    delatZ: 0,
+                    preventDefault: function() {
+                        originalEvent.preventDefault ?
+                            originalEvent.preventDefault() :
+                            originalEvent.returnValue = false;
+                    }
+                },
+                k = -1 / 40;
+                
+                if(supportWheel === 'mousewheel') {
+                    event.deltaY = k * originalEvent.wheelDelta;
+                    if(originalEvent.wheelDeltaX) {
+                        event.deltaX = k * originalEvent.wheelDeltaX;
+                    }
+                } else {
+                    event.deltaY = originalEvent.detail;
+                }
+
+                return callback(event);
+        }, ns);
+        
+        return this;
+    },    
+    on: function(elem, type, callback, ns) {
+        if(elem && type && callback) {                
+            elem.addEventListener(type, callback, false);
+            this._buf = this._buf || [];
+            this._buf.push({elem: elem, type: type, callback: callback, ns: ns});
         }
+        
+        return this;
+    },
+    off: function(elem, type, callback, ns) {
+        if(elem && type && callback && this._buf) {
+            this._buf.forEach(function(el, i) {
+                if(el && el.type === type && el.elem === elem && el.callback === callback && el.ns === ns) {
+                    elem.removeEventListener(type, callback, false);
+                    this._buf.slice(i, 1);
+                }
+            }, this);
+        }
+        
+        return this;
+    },
+    offAll: function(ns) {
+        if(this._buf) {
+            this._buf.forEach(function(el) {
+                if(el) {
+                    this.off(el.elem, el.type, el.callback, ns || el.ns);
+                }
+            }, this);
+            
+            if(!ns) {
+                this._buf = [];
+            }
+        }
+        
+        return this;
     }
 });
 

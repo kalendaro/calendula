@@ -2,7 +2,8 @@ var Calendula = function(data) {
     data = extend({}, data || {});
     
     var current = new Date(),
-        years = this._prepareYears(data.years);
+        years = this._prepareYears(data.years),
+        that = this;
         
     this._data = extend(data, {
         autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
@@ -11,8 +12,17 @@ var Calendula = function(data) {
         _startYear: years.start,
         _endYear: years.end
     });
+
+    this._domEvent = new DomEvent();
     
     this.val(this._data.value);
+
+    var button = this.setting('button');
+    if(button) {
+        this._domEvent.on(button, 'click', function() {
+            that.toggle();
+        }, 'init');
+    }
 };
 
 Calendula.version = '0.9.0';
@@ -30,7 +40,7 @@ extend(Calendula.prototype, {
         
         if(!this.isOpened()) {
             // For Firefox CSS3 animation
-            Timeout.set(function() {
+            this._timeout.set(function() {
                 addClass(that._container, mod('opened'));
                 that._update();
                 that._monthSelector(that._currentDate.month, false);
@@ -50,13 +60,15 @@ extend(Calendula.prototype, {
         
         if(this.isOpened()) {
             this._ignoreDocumentClick = false;
-            
-            Timeout.clearAll('open');
+
+            this._timeout.clearAll('open');
             
             this._update();
-            removeClass(this._container, mod('opened'));
-            
+
             this._delOpenedEvents();
+
+            removeClass(this._container, mod('opened'));
+
             this._isOpened = false;
             
             this.trigger('close');
@@ -132,14 +144,22 @@ extend(Calendula.prototype, {
         if(this._isInited) {
             this.close();
             
-            Timeout.clearAll();
+            this._timeout.clearAll();
             
             this._eventBuf = [];
             this._domEvent.offAll();
             
             document.body.removeChild(this._container);
             
-            ['_isInited', '_container', '_isOpened', '_ignoreDocumentClick', '_data'].forEach(function(el) {
+            [
+                '_container',
+                '_data',
+                '_domEvent',
+                '_ignoreDocumentClick',
+                '_isInited',
+                '_isOpened',
+                '_timeout'
+            ].forEach(function(el) {
                 delete this[el];
             }, this);
         }
@@ -149,25 +169,20 @@ extend(Calendula.prototype, {
             return;
         }
         
-        this._templates.parent = this;
-        
         this._isInited = true;
-        
+
+        this._timeout = new Timeout();
+
+        this._templates.parent = this;
+                
         var that = this,
-            button = this.setting('button'),
             container = document.createElement('div');
             
         this._container = container;
 
         addClass(container, NS);
         addClass(container, mod('theme', this._data.theme));
-        
-        if(button) {
-            this._domEvent.on(button, 'click', function() {
-                that.toggle();
-            }, 'init');
-        }
-        
+                
         this._rebuild();
 
         document.body.appendChild(container);
@@ -374,7 +389,7 @@ extend(Calendula.prototype, {
         this._colorizeMonths(month);
         
         if(!anim) {
-            Timeout.set(function() {
+            this._timeout.set(function() {
                 removeClass(days, noAnimDays);
                 removeClass(months, noAnimMonths);
             }, 0, 'anim');
@@ -436,7 +451,7 @@ extend(Calendula.prototype, {
         this._colorizeYears(year);
         
         if(!anim) {
-            Timeout.set(function() {
+            this._timeout.set(function() {
                 removeClass(years, noAnim);
             }, 0, 'anim');
         }
