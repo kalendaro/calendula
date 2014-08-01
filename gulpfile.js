@@ -41,7 +41,7 @@ paths.prodCssAll = paths.mainCss.concat('sources/css/calendula.theme.*.css');
 
 var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolidays'],
     cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
-    allTasks = [].concat(cssTasks, jsTasks);
+    allTasks = [].concat(cssTasks, jsTasks, 'watch');
     
 gulp.task('devJs', function() {
     return gulp.src(paths.devJs)
@@ -101,9 +101,9 @@ gulp.task('prodCssThemes', function() {
         .pipe(gulp.dest('./build'));
 });
 
-gulp.task('default', allTasks);
-
 gulp.task('watch', function() {
     gulp.watch('sources/js/**/*', jsTasks);
     gulp.watch('sources/css/**/*', cssTasks);
 });
+
+gulp.task('default', allTasks);
