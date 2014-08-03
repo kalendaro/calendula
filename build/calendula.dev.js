@@ -26,6 +26,7 @@ var Calendula = function(data) {
         
     this._data = extend(data, {
         autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
+        closeAfterSelection: typeof data.closeAfterSelection === 'undefined' ? true : data.closeAfterSelection,
         lang: data.lang || Calendula._defaultLang,
         theme: data.theme || 'default',
         _startYear: years.start,
@@ -354,7 +355,11 @@ extend(Calendula.prototype, {
                     day: cd.day,
                     month: cd.month,
                     year: cd.year
-                }).close();
+                })
+                
+                if(that.closeAfterSelection) {
+                    that.close();
+                }
             }
         }, 'open');
     },
