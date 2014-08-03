@@ -1,13 +1,13 @@
 extend(Calendula, {
-    addHolidays: function(lang, data) {
+    addHolidays: function(locale, data) {
         this._holidays = this._holidays || {};
-        this._holidays[lang] = data;
+        this._holidays[locale] = data;
     }
 });
 
 Calendula.prototype.getHoliday = function(d, m, y) {
-    var lang = this._data.lang,
+    var locale = this._data.locale,
         c = Calendula._holidays;
         
-    return c && c[lang] && c[lang][y] ? c[lang][y][d + '-' + (m + 1)] : undefined;
+    return c && c[locale] && c[locale][y] ? c[locale][y][d + '-' + (m + 1)] : undefined;
 };

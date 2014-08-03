@@ -27,7 +27,7 @@ var Calendula = function(data) {
     this._data = extend(data, {
         autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
         closeAfterSelection: typeof data.closeAfterSelection === 'undefined' ? true : data.closeAfterSelection,
-        lang: data.lang || Calendula._defaultLang,
+        locale: data.locale || Calendula._defaultLocale,
         theme: data.theme || 'default',
         _startYear: years.start,
         _endYear: years.end
@@ -153,7 +153,7 @@ extend(Calendula.prototype, {
                 addClass(container, mod('theme', value));
             }
             
-            if(name === 'lang') {
+            if(name === 'locale') {
                 this._rebuild();
             }
         }
@@ -357,7 +357,7 @@ extend(Calendula.prototype, {
                     year: cd.year
                 })
                 
-                if(that.closeAfterSelection) {
+                if(that.setting('closeAfterSelection')) {
                     that.close();
                 }
             }
@@ -966,17 +966,17 @@ return this.prepare('\
 };
 
 extend(Calendula, {
-    addHolidays: function(lang, data) {
+    addHolidays: function(locale, data) {
         this._holidays = this._holidays || {};
-        this._holidays[lang] = data;
+        this._holidays[locale] = data;
     }
 });
 
 Calendula.prototype.getHoliday = function(d, m, y) {
-    var lang = this._data.lang,
+    var locale = this._data.locale,
         c = Calendula._holidays;
         
-    return c && c[lang] && c[lang][y] ? c[lang][y][d + '-' + (m + 1)] : undefined;
+    return c && c[locale] && c[locale][y] ? c[locale][y][d + '-' + (m + 1)] : undefined;
 };
 
 function leadZero(num) {
@@ -993,19 +993,19 @@ function isLeapYear(y) {
 
 extend(Calendula, {
     _texts: {},
-    _langs: [],
-    addLocale: function(lang, texts) {
-        this._langs.push(lang);
-        this._texts[lang] = texts;
+    _locales: [],
+    addLocale: function(locale, texts) {
+        this._locales.push(locale);
+        this._texts[locale] = texts;
         
         if(texts.def) {
-            this._defaultLang = lang;
+            this._defaultLocale = locale;
         }
     }
 });
 
 Calendula.prototype.text = function(id) {
-    return Calendula._texts[this._data.lang][id];
+    return Calendula._texts[this._data.locale][id];
 };
 
 Calendula.addLocale('be', {

@@ -62,14 +62,19 @@
             </tr>
             <tr>
                 <td>
-                    lang
+                    locale
                 <td>
-                    <select id="cl-lang"></select>
+                    <select id="cl-locale"></select>
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
                     <input type="checkbox" checked="checked" id="cl-autoclose" /> <label for="cl-autoclose">autoclose</label>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="checkbox" checked="checked" id="cl-closeAfterSelection" /> <label for="cl-closeAfterSelection">close after selection</label>
                 </td>
             </tr>
         </table>
@@ -91,14 +96,14 @@ window.addEventListener('load', function() {
         return document.getElementById(id);
     };
     
-    var clLang = getById('cl-lang');
-    Calendula._langs.sort().forEach(function(el) {
+    var clLocale = getById('cl-locale');
+    Calendula._locales.sort().forEach(function(el) {
         var opt = document.createElement('option');
         opt.value = opt.text = el;
         if(el === 'en') {
             opt.selected = true;
         }
-        clLang.add(opt);
+        clLocale.add(opt);
     });
         
     var clOpen = getById('cl-open'),
@@ -107,9 +112,10 @@ window.addEventListener('load', function() {
         clDestroy = getById('cl-destroy'),
         clTheme = getById('cl-theme'),
         clAutoclose = getById('cl-autoclose'),
+        clCloseAfterSelection = getById('cl-closeAfterSelection'),
         button = getById('example-button'),
         cl = new Calendula({
-            lang: clLang.value,
+            locale: clLocale.value,
             value: new Date(),
             button: button,
             autoclose: clAutoclose.checked,
@@ -142,12 +148,16 @@ window.addEventListener('load', function() {
     
     clAutoclose.addEventListener('change', function() {
         cl.setting('autoclose', this.checked);
-    }, false);    
+    }, false);
+    
+    clCloseAfterSelection.addEventListener('change', function() {
+        cl.setting('closeAfterSelection', this.checked);
+    }, false);
     
     document.body.className = 'page_theme_' + clTheme.value;
 
-    clLang.addEventListener('change', function() {
-        cl.setting('lang', this.value);
+    clLocale.addEventListener('change', function() {
+        cl.setting('locale', this.value);
         
         setTimeout(function() {
             cl.open();

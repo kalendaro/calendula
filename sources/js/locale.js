@@ -1,16 +1,16 @@
 extend(Calendula, {
     _texts: {},
-    _langs: [],
-    addLocale: function(lang, texts) {
-        this._langs.push(lang);
-        this._texts[lang] = texts;
+    _locales: [],
+    addLocale: function(locale, texts) {
+        this._locales.push(locale);
+        this._texts[locale] = texts;
         
         if(texts.def) {
-            this._defaultLang = lang;
+            this._defaultLocale = locale;
         }
     }
 });
 
 Calendula.prototype.text = function(id) {
-    return Calendula._texts[this._data.lang][id];
+    return Calendula._texts[this._data.locale][id];
 };

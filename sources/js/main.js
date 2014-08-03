@@ -8,7 +8,7 @@ var Calendula = function(data) {
     this._data = extend(data, {
         autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
         closeAfterSelection: typeof data.closeAfterSelection === 'undefined' ? true : data.closeAfterSelection,
-        lang: data.lang || Calendula._defaultLang,
+        locale: data.locale || Calendula._defaultLocale,
         theme: data.theme || 'default',
         _startYear: years.start,
         _endYear: years.end
@@ -134,7 +134,7 @@ extend(Calendula.prototype, {
                 addClass(container, mod('theme', value));
             }
             
-            if(name === 'lang') {
+            if(name === 'locale') {
                 this._rebuild();
             }
         }
@@ -338,7 +338,7 @@ extend(Calendula.prototype, {
                     year: cd.year
                 })
                 
-                if(that.closeAfterSelection) {
+                if(that.setting('closeAfterSelection')) {
                     that.close();
                 }
             }
