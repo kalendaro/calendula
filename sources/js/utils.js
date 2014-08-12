@@ -44,8 +44,14 @@ extend(Calendula.prototype, {
     _elem: function(name, mod, val) {
         return this._container.querySelector('.' + elem(name, mod, val));
     },
+    _elemContext: function(context, name, mod, val) {
+        return context.querySelector('.' + elem(name, mod, val));
+    },
     _elemAll: function(name, mod, val) {
         return this._container.querySelectorAll('.' + elem(name, mod, val));
+    },
+    _elemAllContext: function(context, name, mod, val) {
+        return context.querySelectorAll('.' + elem(name, mod, val));
     },
     _left: function(elem, x) {
         elem.style.left = x + 'px';

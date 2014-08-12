@@ -68,6 +68,13 @@
                 </td>
             </tr>
             <tr>
+                <td>
+                    value
+                <td>
+                    <input type="text" id="cl-value" size="10" value="" /> <input type="button" id="cl-value-set" value="set" />
+                </td>
+            </tr>
+            <tr>
                 <td colspan="2">
                     <input type="checkbox" checked="checked" id="cl-autoclose" /> <label for="cl-autoclose">autoclose</label>
                 </td>
@@ -111,6 +118,8 @@ window.addEventListener('load', function() {
         clToggle = getById('cl-toggle'),
         clDestroy = getById('cl-destroy'),
         clTheme = getById('cl-theme'),
+        clValue = getById('cl-value'),
+        clValueSet = getById('cl-value-set'),
         clAutoclose = getById('cl-autoclose'),
         clCloseAfterSelection = getById('cl-closeAfterSelection'),
         button = getById('example-button'),
@@ -134,7 +143,6 @@ window.addEventListener('load', function() {
         log(e.type);
     }).open();
      
-    
     updateButton();
     
     clTheme.addEventListener('change', function() {
@@ -144,6 +152,10 @@ window.addEventListener('load', function() {
         setTimeout(function() {
             cl.open();
         }, 300);
+    }, false);
+    
+    clValueSet.addEventListener('click', function() {
+        cl.val(clValue.value);
     }, false);
     
     clAutoclose.addEventListener('change', function() {

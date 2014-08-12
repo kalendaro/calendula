@@ -113,17 +113,7 @@ extend(Calendula.prototype, {
         }
         
         if(value) {
-            if(typeof value === 'string') {
-                date = Date.parse(value);
-            } else if(typeof value === 'object') {
-                if(value instanceof Date) {
-                    date = value;
-                } else {
-                    date = new Date(value.year, value.month, value.day, 12, 0, 0, 0);
-                }
-            } else if(typeof number === 'number') {
-                date = new Date(value);
-            }
+            date = this._parseDate(value);
             
             this._val = {
                 day: date.getDate(),
@@ -135,6 +125,10 @@ extend(Calendula.prototype, {
         } else {
             this._val = {};
             this._currentDate = this._current();
+        }
+        
+        if(this._container) {
+            this._updateSelection();
         }
     },
     setting: function(name, value) {
@@ -564,6 +558,58 @@ extend(Calendula.prototype, {
             end: endYear || (current.year + 1)
         };
     },
+    _parseDate: function(value) {
+        var date = null,
+            match,
+            buf;
+        
+        if(value) {
+            if(typeof value === 'string') {
+                match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
+                if(match) {
+                        buf = [match[3], match[2] - 1, match[1]];
+                } else {
+                    match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
+                    if(match) {
+                        buf = [match[1], match[2] - 1, match[3]];
+                    }
+                }
+                
+                if(buf) {
+                    date = new Date(parseInt(buf[2], 10), parseInt(buf[1], 10), parseInt(buf[0], 10));
+                }
+            } else if(typeof value === 'object') {
+                if(value instanceof Date) {
+                    date = value;
+                } else if(value.year && value.day) {
+                    date = new Date(value.year, value.month - 1, value.day, 12, 0, 0, 0);
+                }
+            } else if(typeof number === 'number') {
+                date = new Date(value);
+            }
+        }
+        
+        return date;
+    },
+    _updateSelection: function() {
+        var el = this._elem('day', 'selected'),
+            months,
+            days;
+       
+        if(el) {
+            removeClass(el, elem('day', 'selected'));
+        }
+        
+        if(this._currentDate.year === this._val.year) {
+            months = this._elemAll('days-month');
+            if(months && months[this._val.month]) {
+                el = this._elemAllContext(months[this._val.month], 'day');
+                if(el && el[this._val.day - 1]) {
+                    addClass(el[this._val.day - 1], elem('day', 'selected'));
+                }
+            }
+        }
+    },
     _buttonText: function() {
         var date = this._currentDate,
             m = this.text('months'),
@@ -619,8 +665,14 @@ extend(Calendula.prototype, {
     _elem: function(name, mod, val) {
         return this._container.querySelector('.' + elem(name, mod, val));
     },
+    _elemContext: function(context, name, mod, val) {
+        return context.querySelector('.' + elem(name, mod, val));
+    },
     _elemAll: function(name, mod, val) {
         return this._container.querySelectorAll('.' + elem(name, mod, val));
+    },
+    _elemAllContext: function(context, name, mod, val) {
+        return context.querySelectorAll('.' + elem(name, mod, val));
     },
     _left: function(elem, x) {
         elem.style.left = x + 'px';
@@ -902,7 +954,7 @@ Calendula.prototype._templates = {
             
             if(isNow(day, m, y)) {
                 className += ' $day_now';
-                title = par.text('now');
+                title = par.text('today');
             }
             
             text.push('<td' + this.attr('title', title) + ' class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');

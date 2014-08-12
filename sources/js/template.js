@@ -92,7 +92,7 @@ Calendula.prototype._templates = {
             
             if(isNow(day, m, y)) {
                 className += ' $day_now';
-                title = par.text('now');
+                title = par.text('today');
             }
             
             text.push('<td' + this.attr('title', title) + ' class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
