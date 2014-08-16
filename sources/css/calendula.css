@@ -122,6 +122,11 @@
     text-align: center;
 }
 
+.calendula__day_minmax
+{
+    cursor: default;
+}
+
 .calendula__month
 {
     line-height: 23px;

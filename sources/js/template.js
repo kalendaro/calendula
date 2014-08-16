@@ -109,12 +109,8 @@ Calendula.prototype._templates = {
                 title = par.text('today');
             }
             
-            if(minTs && dateTs < minTs) {
-                className.push('$day_min');
-            }
-            
-            if(maxTs && dateTs > maxTs) {
-                className.push('$day_max');
+            if((minTs && dateTs < minTs) || (maxTs && dateTs > maxTs)) {
+                className.push('$day_minmax');
             }
             
             text.push('<td' + this.attr('title', title) + ' class="' + className.join(' ') + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');

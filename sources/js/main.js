@@ -89,21 +89,12 @@ extend(Calendula.prototype, {
         return this;
     },
     val: function(value) {
-        var date;
-        
         if(!arguments.length) {
             return this._val;
         }
         
         if(value) {
-            date = this._parseDate(value);
-            
-            this._val = {
-                day: date.getDate(),
-                month: date.getMonth(),
-                year: date.getFullYear()
-            };
-            
+            this._val = this._parseDateToObj(value);
             this._currentDate = extend({}, this._val);
         } else {
             this._val = {};
@@ -114,10 +105,7 @@ extend(Calendula.prototype, {
             this._updateSelection();
         }
         
-        var button = this.setting('button');
-        if(button) {
-            button.innerHTML = this._buttonText();
-        }
+        this._updateButton();
     },
     setting: function(name, value) {
         if(arguments.length === 1) {
@@ -330,26 +318,34 @@ extend(Calendula.prototype, {
                 target = e.target,
                 day = dataAttr(target, 'day'),
                 month = dataAttr(target, 'month');
+            
+            
                 
-            if(day && !hasClass(target, cl)) {
-                cd.day = +day;
-                cd.month = +month;
-                
-                var selected = days.querySelector('.' + cl);
-                if(selected) {
-                    removeClass(selected, cl);
+            if(day) {
+                if(hasClass(target, elem('day', 'minmax'))) {
+                    return;
                 }
                 
-                addClass(target, cl);
-                
-                that.trigger('select', {
-                    day: cd.day,
-                    month: cd.month,
-                    year: cd.year
-                })
-                
-                if(that.setting('closeAfterSelection')) {
-                    that.close();
+                if(!hasClass(target, cl)) {
+                    cd.day = +day;
+                    cd.month = +month;
+                    
+                    var selected = days.querySelector('.' + cl);
+                    if(selected) {
+                        removeClass(selected, cl);
+                    }
+                    
+                    addClass(target, cl);
+                    
+                    that.trigger('select', {
+                        day: cd.day,
+                        month: cd.month,
+                        year: cd.year
+                    })
+                    
+                    if(that.setting('closeAfterSelection')) {
+                        that.close();
+                    }
                 }
             }
         }, 'open');
@@ -616,6 +612,20 @@ extend(Calendula.prototype, {
                 if(el && el[this._val.day - 1]) {
                     addClass(el[this._val.day - 1], elem('day', 'selected'));
                 }
+            }
+        }
+    },
+    _updateButton: function() {
+        var el = this.setting('button'),
+            text = this._buttonText(),
+            tagName;
+            
+        if(el) {
+            tagName = el.tagName.toLowerCase();
+            if(tagName === 'input' || tagName === 'textarea') {
+                el.value = text;
+            } else {
+                el.innerHTML = text;
             }
         }
     },

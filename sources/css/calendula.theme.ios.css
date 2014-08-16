@@ -30,6 +30,11 @@
     outline: 1px solid #bbb;
 }
 
+.calendula_theme_ios .calendula__day_minmax:hover
+{
+    outline: none;
+}
+
 .calendula_theme_ios .calendula__month,
 .calendula_theme_ios .calendula__year
 {
@@ -108,8 +113,7 @@
     color: #000;
 }
 
-.calendula_theme_ios .calendula__day_min,
-.calendula_theme_ios .calendula__day_max
+.calendula_theme_ios .calendula__day_minmax
 {
     color: #aaa;
 }

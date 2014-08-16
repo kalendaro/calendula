@@ -73,6 +73,11 @@
     outline: 1px solid #bbb;
 }
 
+.calendula_theme_metro .calendula__day_minmax:hover
+{
+    outline: none;
+}
+
 .calendula_theme_metro .calendula__month-selector,
 .calendula_theme_metro .calendula__year-selector
 {
@@ -100,8 +105,7 @@
     color: #000;
 }
 
-.calendula_theme_metro .calendula__day_min,
-.calendula_theme_metro .calendula__day_max
+.calendula_theme_metro .calendula__day_minmax
 {
     color: #aaa;
 }
