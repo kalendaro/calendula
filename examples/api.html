@@ -71,7 +71,21 @@
                 <td>
                     value
                 <td>
-                    <input type="text" id="cl-value" size="10" value="" /> <input type="button" id="cl-value-set" value="set" />
+                    <input type="date" id="cl-value" size="10" value="" /> <input type="button" id="cl-value-set" value="Set" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    min
+                <td>
+                    <input type="date" id="cl-min" size="10" value="" /> <input type="button" id="cl-min-set" value="Set" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    max
+                <td>
+                    <input type="date" id="cl-max" size="10" value="" /> <input type="button" id="cl-max-set" value="Set" />
                 </td>
             </tr>
             <tr>
@@ -95,6 +109,14 @@
     
 <script>
 window.addEventListener('load', function() {
+    var leadZero = function(num) {
+        return num < 10 ? '0' + num : num;
+    };
+    
+    var formatDate = function(d) {
+        return [d.getFullYear(), leadZero(d.getMonth() + 1), leadZero(d.getDate())].join('-');
+    };
+    
     var log = function(text) {
         getById('log').innerHTML += text + '<br />';
     };
@@ -120,12 +142,30 @@ window.addEventListener('load', function() {
         clTheme = getById('cl-theme'),
         clValue = getById('cl-value'),
         clValueSet = getById('cl-value-set'),
+        clMin = getById('cl-min'),
+        clMinSet = getById('cl-min-set'),
+        clMax = getById('cl-max'),
+        clMaxSet = getById('cl-max-set'),
         clAutoclose = getById('cl-autoclose'),
         clCloseAfterSelection = getById('cl-closeAfterSelection'),
         button = getById('example-button'),
-        cl = new Calendula({
+        minDate = new Date(),
+        maxDate = new Date();
+    
+    minDate.setDate(1);
+    minDate.setYear(minDate.getFullYear() - 5);
+    maxDate.setDate(1);
+    maxDate.setYear(maxDate.getFullYear() + 1);
+    
+    clValue.value = formatDate(new Date());
+    clMin.value = formatDate(minDate);
+    clMax.value = formatDate(maxDate);
+    
+    var cl = new Calendula({
             locale: clLocale.value,
-            value: new Date(),
+            value: clValue.value,
+            min: clMin.value,
+            max: clMax.value,
             button: button,
             autoclose: clAutoclose.checked,
             theme: clTheme.value
@@ -158,6 +198,14 @@ window.addEventListener('load', function() {
         cl.val(clValue.value);
     }, false);
     
+    clMinSet.addEventListener('click', function() {
+        cl.setting('min', clMin.value);
+    }, false);
+
+    clMaxSet.addEventListener('click', function() {
+        cl.setting('max', clMax.value);
+    }, false);
+
     clAutoclose.addEventListener('change', function() {
         cl.setting('autoclose', this.checked);
     }, false);

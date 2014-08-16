@@ -97,9 +97,21 @@
 
 .calendula_theme_ios .calendula__short-weekdays-cell_n_0,
 .calendula_theme_ios .calendula__short-weekdays-cell_n_6,
-.calendula_theme_ios .calendula__day_holiday
+.calendula_theme_ios .calendula__day_holiday,
+.calendula_theme_ios .calendula__day_highday
 {
     color: gray;
+}
+
+.calendula_theme_ios .calendula__day_nonholiday
+{
+    color: #000;
+}
+
+.calendula_theme_ios .calendula__day_min,
+.calendula_theme_ios .calendula__day_max
+{
+    color: #aaa;
 }
 
 .calendula_theme_ios .calendula__day_selected

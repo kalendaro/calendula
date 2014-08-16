@@ -37,20 +37,40 @@ Calendula.prototype._templates = {
         return w;
     },
     month: function(m, y) {
-        var date = new Date(y, m, 1, 12, 0, 0),
+        var date = new Date(y, m, 1, 12, 0, 0, 0),
+            dateTs = date.getTime(),
             current = new Date(),
-            currentStr = [current.getDate(), current.getMonth(), current.getFullYear()].join('-'),
-            par = this.parent,
+            isSelected = function(d, m, y) {
+                var val = par._val;
+                return d === val.day && m === val.month && y === val.year;
+            },
+            getTs = function(d) {
+                if(!d.year) {
+                    return null;
+                }
+                
+                return new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime();
+            };
+            
+        current.setHours(12);
+        current.setMinutes(0);
+        current.setSeconds(0);
+        current.setMilliseconds(0);
+        
+        var par = this.parent,
             weekday = date.getDay(),
             weekdays = this.weekdays(),
             dayIndex = weekdays[weekday],
             month = par.text('months')[m],
             daysMonth = [31, isLeapYear(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-            className = '',
-            text = [],
-            isNow = function(day, month, year) {
-                return Array.prototype.join.call(arguments, '-') === currentStr;
-            };
+            minTs = getTs(this.parent.setting('min')),
+            maxTs = getTs(this.parent.setting('max')),
+            currentTs = current.getTime(),
+            hasTr,
+            title,
+            holiday,
+            className,
+            text = [];
             
         text.push('<div class="$days-month">');
         
@@ -64,38 +84,40 @@ Calendula.prototype._templates = {
             text.push('<td colspan="' + dayIndex + '" class="$empty">' + (dayIndex < 3 ? '' : '<div class="$days-title-month">' + month + '</div>') + '</td>');
         }
         
-        var hasTr,
-            title,
-            selectedDay = par._val.day,
-            selectedMonth = par._val.month,
-            selectedYear = par._val.year,
-            holiday;
-        
         for(var day = 1; day <= daysMonth[m]; day++) {
             title = '';
             hasTr = false;
             date.setDate(day);
             weekday = date.getDay();
             holiday = this.parent.getHoliday(day, m, y);
+            className = ['$day'];
 
             // 0 - Sunday, 6 - Saturday
-            className = (weekday === 0 || weekday === 6) ? '$day_holiday' : '$day_weekday';
+            className.push((weekday === 0 || weekday === 6) ? '$day_holiday' : '$day_workday');
             if(holiday === 0) {
-                className = '$day_weekday';
+                className.push('$day_nonholiday');
             } else if(holiday === 1) {
-                className = '$day_holiday';
+                className.push('$day_highday');
             }
             
-            if(day === selectedDay && m === selectedMonth && y === selectedYear) {
-                className += ' $day_selected';
+            if(isSelected(day, m, y)) {
+                className.push('$day_selected');
             }
             
-            if(isNow(day, m, y)) {
-                className += ' $day_now';
+            if(currentTs === dateTs) {
+                className.push('$day_now');
                 title = par.text('today');
             }
             
-            text.push('<td' + this.attr('title', title) + ' class="$day ' + className + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
+            if(minTs && dateTs < minTs) {
+                className.push('$day_min');
+            }
+            
+            if(maxTs && dateTs > maxTs) {
+                className.push('$day_max');
+            }
+            
+            text.push('<td' + this.attr('title', title) + ' class="' + className.join(' ') + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
             if(weekday === weekdays.last) {
                 text.push('</tr>');
                 hasTr = true;

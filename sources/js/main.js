@@ -10,10 +10,12 @@ var Calendula = function(data) {
         closeAfterSelection: typeof data.closeAfterSelection === 'undefined' ? true : data.closeAfterSelection,
         locale: data.locale || Calendula._defaultLocale,
         theme: data.theme || 'default',
+        min: this._parseDateToObj(data.min),
+        max: this._parseDateToObj(data.max),
         _startYear: years.start,
         _endYear: years.end
     });
-
+    
     this._domEvent = new DomEvent();
     
     this.val(this._data.value);
@@ -111,6 +113,11 @@ extend(Calendula.prototype, {
         if(this._container) {
             this._updateSelection();
         }
+        
+        var button = this.setting('button');
+        if(button) {
+            button.innerHTML = this._buttonText();
+        }
     },
     setting: function(name, value) {
         if(arguments.length === 1) {
@@ -118,9 +125,18 @@ extend(Calendula.prototype, {
         }
         
         var oldValue = this._data[name],
-            container = this._container;
+            container = this._container,
+            rebuild = {
+                min: true,
+                max: true,
+                locale: true
+            };
         
-        this._data[name] = value;
+        if(name === 'min' || name === 'max' || name === 'value') {
+            this._data[name] = this._parseDateToObj(value);
+        } else {
+            this._data[name] = value;
+        }
         
         if(container) {
             if(name === 'theme') {
@@ -128,7 +144,7 @@ extend(Calendula.prototype, {
                 addClass(container, mod('theme', value));
             }
             
-            if(name === 'locale') {
+            if(rebuild[name]) {
                 this._rebuild();
             }
         }
@@ -571,6 +587,18 @@ extend(Calendula.prototype, {
         }
         
         return date;
+    },
+    _parseDateToObj: function(value) {
+        var d = this._parseDate(value);
+        if(d) {
+            return {
+                day: d.getDate(),
+                month: d.getMonth(),
+                year: d.getFullYear()
+            };
+        } else {
+            return {};
+        }
     },
     _updateSelection: function() {
         var el = this._elem('day', 'selected'),

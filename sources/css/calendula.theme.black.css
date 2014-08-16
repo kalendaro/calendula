@@ -20,19 +20,6 @@
     box-shadow: 5px inset #fff;
 }
 
-.calendula_theme_black .calendula__day_selected
-{
-    border-radius: 10px;
-    background: #ffec95;
-    background:    -moz-linear-gradient(top, #ffec95 0%, #ff8f56 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffec95), color-stop(100%,#ff8f56));
-    background: -webkit-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
-    background:      -o-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
-    background:     -ms-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
-    background:         linear-gradient(to bottom, #ffec95 0%,#ff8f56 100%);
-    text-shadow: 1px 1px 3px #000;
-}
-
 .calendula_theme_black .calendula__day_now
 {
     outline: 1px dotted #aaa;
@@ -113,4 +100,18 @@
 .calendula_theme_black .calendula__day_holiday
 {
     color: gray;
+}
+
+.calendula_theme_black .calendula__day_selected
+{
+    border-radius: 10px;
+    background: #ffec95;
+    background:    -moz-linear-gradient(top, #ffec95 0%, #ff8f56 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffec95), color-stop(100%,#ff8f56));
+    background: -webkit-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
+    background:      -o-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
+    background:     -ms-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
+    background:         linear-gradient(to bottom, #ffec95 0%,#ff8f56 100%);
+    text-shadow: 1px 1px 3px #000;
+    color: #fff;
 }

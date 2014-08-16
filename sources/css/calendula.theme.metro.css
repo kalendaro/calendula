@@ -63,12 +63,6 @@
     box-shadow: 1px inset #000;
 }
 
-.calendula_theme_metro .calendula__day_selected
-{
-    color: #fff;
-    background: #01B1E0;
-}
-
 .calendula_theme_metro .calendula__day_now
 {
     outline: 1px dotted #ccc;
@@ -95,7 +89,25 @@
 
 .calendula_theme_metro .calendula__short-weekdays-cell_n_0,
 .calendula_theme_metro .calendula__short-weekdays-cell_n_6,
-.calendula_theme_metro .calendula__day_holiday
+.calendula_theme_metro .calendula__day_holiday,
+.calendula_theme_metro .calendula__day_highday
 {
     color: red;
+}
+
+.calendula_theme_metro .calendula__day_nonholiday
+{
+    color: #000;
+}
+
+.calendula_theme_metro .calendula__day_min,
+.calendula_theme_metro .calendula__day_max
+{
+    color: #aaa;
+}
+
+.calendula_theme_metro .calendula__day_selected
+{
+    color: #fff;
+    background: #01B1E0;
 }

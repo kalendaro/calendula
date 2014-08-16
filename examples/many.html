@@ -8,17 +8,20 @@
 </head>
 <body>
 
-<button id="example-button1" style="position: absolute; left: 10%; top: 100px;"></button>
+<button id="example-button1" style="position: absolute; left: 100px; top: 10px;"></button>
 
-<button id="example-button2" style="position: absolute; left: 40%; top: 100px;"></button>
+<button id="example-button2" style="position: absolute; left: 450px; top: 10px;"></button>
 
-<button id="example-button3" style="position: absolute; left: 70%; top: 100px;"></button>
+<button id="example-button3" style="position: absolute; left: 100px; top: 360px;"></button>
+
+<button id="example-button4" style="position: absolute; left: 450px; top: 360px;"></button>
 
 <script>
-function init(name) {
+function init(name, theme) {
     var button = document.getElementById(name),
         cl = new Calendula({
-            button: button
+            button: button,
+            theme: theme
         }),
         updateButton = function() {
             button.innerHTML = cl._buttonText();
@@ -28,14 +31,17 @@ function init(name) {
         updateButton();
     });
     
+    cl.open();
+    
     updateButton();
 
     window[name + '__'] = cl;
 }
 
-init('example-button1');
-init('example-button2');
-init('example-button3');
+init('example-button1', 'default');
+init('example-button2', 'black');
+init('example-button3', 'ios');
+init('example-button4', 'metro');
 
 </script>
 
