@@ -551,51 +551,6 @@ extend(Calendula.prototype, {
             end: endYear || (current.year + 1)
         };
     },
-    _parseDate: function(value) {
-        var date = null,
-            match,
-            buf;
-        
-        if(value) {
-            if(typeof value === 'string') {
-                match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
-                if(match) {
-                        buf = [match[3], match[2] - 1, match[1]];
-                } else {
-                    match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
-                    if(match) {
-                        buf = [match[1], match[2] - 1, match[3]];
-                    }
-                }
-                
-                if(buf) {
-                    date = new Date(parseInt(buf[2], 10), parseInt(buf[1], 10), parseInt(buf[0], 10));
-                }
-            } else if(typeof value === 'object') {
-                if(value instanceof Date) {
-                    date = value;
-                } else if(value.year && value.day) {
-                    date = new Date(value.year, value.month - 1, value.day, 12, 0, 0, 0);
-                }
-            } else if(typeof number === 'number') {
-                date = new Date(value);
-            }
-        }
-        
-        return date;
-    },
-    _parseDateToObj: function(value) {
-        var d = this._parseDate(value);
-        if(d) {
-            return {
-                day: d.getDate(),
-                month: d.getMonth(),
-                year: d.getFullYear()
-            };
-        } else {
-            return {};
-        }
-    },
     _updateSelection: function() {
         var el = this._elem('day', 'selected'),
             months,

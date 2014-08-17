@@ -105,7 +105,8 @@
     color: #000;
 }
 
-.calendula_theme_metro .calendula__day_minmax
+.calendula_theme_metro .calendula__day_minmax,
+.calendula_theme_metro .calendula__days-title-month_minmax
 {
     color: #aaa;
 }

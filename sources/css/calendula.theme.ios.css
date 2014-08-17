@@ -113,7 +113,8 @@
     color: #000;
 }
 
-.calendula_theme_ios .calendula__day_minmax
+.calendula_theme_ios .calendula__day_minmax,
+.calendula_theme_ios .calendula__days-title-month_minmax
 {
     color: #aaa;
 }
