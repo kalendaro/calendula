@@ -9,9 +9,9 @@
 + поддержка тач-устройств;
 + отсутствие зависимостей от сторонних библиотек;
 + отложенная инициализация;
-+ темы: `default`, `black`, `ios` и `metro`;
++ темы оформления;
 + подсветка праздничных дней: `ru`, `tr` и `uk`;
-+ локализация: `be`, `de`, `en`, `es`, `fr`, `it`, `pl`, `ru`, `tr` и `uk`.
++ локализация.
 
 Поддержка в браузерах:
 + Internet Explorer 9 и выше;
@@ -50,10 +50,10 @@ var c = new Calendula({
 | 1. | autoclose | `Boolean`            | `true`        | Закрытие календаря при клике мимо него.     |
 | 2. | button    | `DOMElement`         |               | Кнопка, при клике на которую открывается и позиционируется календарь. |
 | 3. | closeAfterSelection| `Boolean`   | `true`        | Закрытие календаря при выборе даты.         |
-| 4. | locale    | `String`             | `en`          | Язык интерфейса.                            |
+| 4. | locale    | `String`             | `en`          | Язык интерфейса.<br>`be` `de` `en` `es` `fr` `it` `pl` `ru` `tr` `uk` |
 | 5. | max       | `String`<br>`Date`<br>`Number` |               | Максимальная дата.                          |
 | 6. | min       | `String`<br>`Date`<br>`Number` |               | Mинимальная дата.                           |
-| 7. | theme     | `String`               | `default`     | Тема оформления.                            |
+| 7. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` |
 | 8. | value     | `String`<br>`Date`<br>`Number` | текущая дата   | Выбранная дата.                            |
 | 9. | years     | `String`               | `-11:1`       | Установка диапозона для списка лет.         |
 
