@@ -175,10 +175,15 @@ extend(Calendula.prototype, {
         this._templates.parent = this;
                 
         var that = this,
+            id = this.setting('id'),
             container = document.createElement('div');
             
         this._container = container;
 
+        if(id) {
+            container.id = id;
+        }
+        
         addClass(container, NS);
         addClass(container, mod('theme', this._data.theme));
                 
