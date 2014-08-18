@@ -20,6 +20,12 @@
             top: 100px;
         }
         
+        .page 
+        {
+            -webkit-transition: background-color .3s linear 0s;
+                    transition: background-color .3s linear 0s;
+        }
+        
         .page_theme_normal
         {
             background-color: none;
@@ -38,7 +44,7 @@
         }
     </style>
 </head>
-<body class="page_theme_normal">
+<body class="page page_theme_normal">
 
     <div id="api-methods">
         <input type="button" value="open" id="cl-open" />
@@ -98,6 +104,11 @@
                     <input type="checkbox" checked="checked" id="cl-closeAfterSelection" /> <label for="cl-closeAfterSelection">close after selection</label>
                 </td>
             </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="checkbox" checked="checked" id="cl-daysAfterMonths" /> <label for="cl-daysAfterMonths">days after months</label>
+                </td>
+            </tr>
         </table>
         
         <br />
@@ -148,6 +159,7 @@ window.addEventListener('load', function() {
         clMaxSet = getById('cl-max-set'),
         clAutoclose = getById('cl-autoclose'),
         clCloseAfterSelection = getById('cl-closeAfterSelection'),
+        clDaysAfterMonths = getById('cl-daysAfterMonths'),
         button = getById('example-button'),
         minDate = new Date(),
         maxDate = new Date();
@@ -168,6 +180,7 @@ window.addEventListener('load', function() {
             max: clMax.value,
             button: button,
             autoclose: clAutoclose.checked,
+            daysAfterMonths: clDaysAfterMonths.checked,
             theme: clTheme.value
         }),
         updateButton = function() {
@@ -187,7 +200,7 @@ window.addEventListener('load', function() {
     
     clTheme.addEventListener('change', function() {
         cl.setting('theme', this.value);
-        document.body.className = 'page_theme_' + this.value;
+        document.body.className = 'page page_theme_' + this.value;
         
         setTimeout(function() {
             cl.open();
@@ -214,6 +227,10 @@ window.addEventListener('load', function() {
         cl.setting('closeAfterSelection', this.checked);
     }, false);
     
+    clDaysAfterMonths.addEventListener('change', function() {
+        cl.setting('daysAfterMonths', this.checked);
+    }, false);
+
     document.body.className = 'page_theme_' + clTheme.value;
 
     clLocale.addEventListener('change', function() {

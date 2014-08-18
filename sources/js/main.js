@@ -114,6 +114,7 @@ extend(Calendula.prototype, {
         
         var oldValue = this._data[name],
             container = this._container,
+            m,
             rebuild = {
                 min: true,
                 max: true,
@@ -130,6 +131,15 @@ extend(Calendula.prototype, {
             if(name === 'theme') {
                 removeClass(container, mod('theme', oldValue));
                 addClass(container, mod('theme', value));
+            }
+            
+            if(name === 'daysAfterMonths') {
+                var m = mod('days-after-months');
+                if(value) {
+                    addClass(container, m);
+                } else {
+                    removeClass(container, m);
+                }
             }
             
             if(rebuild[name]) {
@@ -186,7 +196,11 @@ extend(Calendula.prototype, {
         
         addClass(container, NS);
         addClass(container, mod('theme', this._data.theme));
-                
+        
+        if(this.setting('daysAfterMonths')) {
+            addClass(container, mod('days-after-months'));
+        }
+        
         this._rebuild();
 
         document.body.appendChild(container);

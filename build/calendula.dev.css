@@ -46,6 +46,12 @@
     cursor: default;
 }
 
+
+.calendula_days-after-months .calendula__short-weekdays
+{
+    left: 79px;
+}
+
 .calendula__short-weekdays-cell
 {
     float: left;
@@ -69,6 +75,11 @@
     height: 100%;
 
     cursor: default;
+}
+
+.calendula_days-after-months .calendula__days
+{
+    left: 67px;
 }
 
 .calendula__days_noanim .calendula__days-container,
@@ -183,6 +194,11 @@
     left: 166px;
 
     width: 67px;
+}
+
+.calendula_days-after-months .calendula__months
+{
+    left: 0;
 }
 
 .calendula__years
