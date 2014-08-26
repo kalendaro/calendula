@@ -4,7 +4,7 @@
 ![Calendula](https://raw.githubusercontent.com/hcodes/calendula/master/examples/theme.default.png)
 
 Возможности:
-+ эргономичный дизайн от [Артёма Горбунова](http://artgorbunov.ru/bb/soviet/20070628/);
++ эргономичный дизайн;
 + анимация с помощью CSS;
 + поддержка тач-устройств;
 + отсутствие зависимостей от сторонних библиотек;
