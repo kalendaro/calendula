@@ -685,7 +685,10 @@ extend(Calendula.prototype, {
     },
     _elemAllContext: function(context, name, mod, val) {
         return context.querySelectorAll('.' + elem(name, mod, val));
-    },
+    }
+});
+
+extend(Calendula.prototype, {
     _left: function(elem, x) {
         elem.style.left = x + 'px';
     },
@@ -711,7 +714,6 @@ extend(Calendula.prototype, {
         };
     }
 });
-
 var Timeout = function() {};
 
 extend(Timeout.prototype, {
