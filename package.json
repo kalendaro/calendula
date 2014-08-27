@@ -3,6 +3,8 @@
   "version": "0.8.0",
   "devDependencies": {
     "csscomb": "~3.0.0-5",
+    "jshint": "^2.5.1",
+    "jscs": "^1.5.2",    
     "gulp": "~3.8.5",
     "gulp-cleancss": "^0.2.2",
     "gulp-concat": "~2.2.0",

@@ -21,7 +21,7 @@ extend(Calendula.prototype, {
             var first = this.parent.text('firstWeekDay') || 0;
             var w = {
                 first: first,
-                last: !first ? 6 : first - 1,
+                last: !first ? 6 : first - 1
             };
             
             var n = first;
@@ -162,8 +162,7 @@ extend(Calendula.prototype, {
             return buf;
         },
         main: function() {
-            var shortWeekDays = this.parent.text('shortWeekDays'),
-                wd = this.parent.text('firstWeekDay') || 0,
+            var wd = this.parent.text('firstWeekDay') || 0,
                 weekdays = '';
                 
             this.parent.text('shortWeekDays').forEach(function(el, i, data) {
@@ -174,16 +173,13 @@ extend(Calendula.prototype, {
                 }
             }, this);
         
-return this.prepare('\
-<div class="$short-weekdays">' + weekdays + '</div>\
-<div class="$container">\
-<div class="$days">\
-    <div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>\
-</div>\
-<div class="$months">' + this.months() + '</div>\
-<div class="$years"><div class="$years-container">' + this.years() + '</div></div>\
-</div>\
-');
+            return this.prepare('<div class="$short-weekdays">' + weekdays + '</div>'
+                + '<div class="$container">'
+                + '<div class="$days"><div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>'
+                + '</div>'
+                + '<div class="$months">' + this.months() + '</div>'
+                + '<div class="$years"><div class="$years-container">' + this.years() + '</div></div>'
+                + '</div>');
         }
     }
 });

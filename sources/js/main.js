@@ -1,8 +1,7 @@
 var Calendula = function(data) {
     data = extend({}, data || {});
     
-    var current = new Date(),
-        years = this._prepareYears(data.years),
+    var years = this._prepareYears(data.years),
         that = this;
         
     this._data = extend(data, {
@@ -134,7 +133,7 @@ extend(Calendula.prototype, {
             }
             
             if(name === 'daysAfterMonths') {
-                var m = mod('days-after-months');
+                m = mod('days-after-months');
                 if(value) {
                     addClass(container, m);
                 } else {
@@ -184,8 +183,7 @@ extend(Calendula.prototype, {
 
         this._templates.parent = this;
                 
-        var that = this,
-            id = this.setting('id'),
+        var id = this.setting('id'),
             container = document.createElement('div');
             
         this._container = container;
@@ -360,7 +358,7 @@ extend(Calendula.prototype, {
                         day: cd.day,
                         month: cd.month,
                         year: cd.year
-                    })
+                    });
                     
                     if(that.setting('closeAfterSelection')) {
                         that.close();
@@ -443,8 +441,6 @@ extend(Calendula.prototype, {
             yearsContainer = this._elem('years-container'),
             yearHeight = this._elem('year').offsetHeight,
             selector = this._elem('year-selector'),
-            startYear = this._data._startYear,
-            endYear = this._data._endYear,
             noAnim = elem('years', 'noanim');
             
         if(!anim) {
@@ -572,8 +568,7 @@ extend(Calendula.prototype, {
     },
     _updateSelection: function() {
         var el = this._elem('day', 'selected'),
-            months,
-            days;
+            months;
        
         if(el) {
             removeClass(el, elem('day', 'selected'));

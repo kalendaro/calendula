@@ -20,8 +20,7 @@ var extend = function(container, obj) {
 var Calendula = function(data) {
     data = extend({}, data || {});
     
-    var current = new Date(),
-        years = this._prepareYears(data.years),
+    var years = this._prepareYears(data.years),
         that = this;
         
     this._data = extend(data, {
@@ -153,7 +152,7 @@ extend(Calendula.prototype, {
             }
             
             if(name === 'daysAfterMonths') {
-                var m = mod('days-after-months');
+                m = mod('days-after-months');
                 if(value) {
                     addClass(container, m);
                 } else {
@@ -203,8 +202,7 @@ extend(Calendula.prototype, {
 
         this._templates.parent = this;
                 
-        var that = this,
-            id = this.setting('id'),
+        var id = this.setting('id'),
             container = document.createElement('div');
             
         this._container = container;
@@ -379,7 +377,7 @@ extend(Calendula.prototype, {
                         day: cd.day,
                         month: cd.month,
                         year: cd.year
-                    })
+                    });
                     
                     if(that.setting('closeAfterSelection')) {
                         that.close();
@@ -462,8 +460,6 @@ extend(Calendula.prototype, {
             yearsContainer = this._elem('years-container'),
             yearHeight = this._elem('year').offsetHeight,
             selector = this._elem('year-selector'),
-            startYear = this._data._startYear,
-            endYear = this._data._endYear,
             noAnim = elem('years', 'noanim');
             
         if(!anim) {
@@ -591,8 +587,7 @@ extend(Calendula.prototype, {
     },
     _updateSelection: function() {
         var el = this._elem('day', 'selected'),
-            months,
-            days;
+            months;
        
         if(el) {
             removeClass(el, elem('day', 'selected'));
@@ -714,6 +709,7 @@ extend(Calendula.prototype, {
         };
     }
 });
+
 var Timeout = function() {};
 
 extend(Timeout.prototype, {
@@ -897,7 +893,7 @@ extend(Calendula.prototype, {
             var first = this.parent.text('firstWeekDay') || 0;
             var w = {
                 first: first,
-                last: !first ? 6 : first - 1,
+                last: !first ? 6 : first - 1
             };
             
             var n = first;
@@ -1038,8 +1034,7 @@ extend(Calendula.prototype, {
             return buf;
         },
         main: function() {
-            var shortWeekDays = this.parent.text('shortWeekDays'),
-                wd = this.parent.text('firstWeekDay') || 0,
+            var wd = this.parent.text('firstWeekDay') || 0,
                 weekdays = '';
                 
             this.parent.text('shortWeekDays').forEach(function(el, i, data) {
@@ -1050,16 +1045,13 @@ extend(Calendula.prototype, {
                 }
             }, this);
         
-return this.prepare('\
-<div class="$short-weekdays">' + weekdays + '</div>\
-<div class="$container">\
-<div class="$days">\
-    <div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>\
-</div>\
-<div class="$months">' + this.months() + '</div>\
-<div class="$years"><div class="$years-container">' + this.years() + '</div></div>\
-</div>\
-');
+            return this.prepare('<div class="$short-weekdays">' + weekdays + '</div>'
+                + '<div class="$container">'
+                + '<div class="$days"><div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>'
+                + '</div>'
+                + '<div class="$months">' + this.months() + '</div>'
+                + '<div class="$years"><div class="$years-container">' + this.years() + '</div></div>'
+                + '</div>');
         }
     }
 });
@@ -1156,22 +1148,74 @@ Calendula.prototype.text = function(id) {
 };
 
 Calendula.addLocale('be', {
-    months: ['студзень', 'люты', 'сакавік', 'красавік', 'май', 'чэрвень', 'ліпень', 'жнівень', 'верасень', 'кастрычнік', 'лістапад', 'снежань'],
-    caseMonths: ['студзеня', 'лютага', 'сакавіка', 'красавіка', 'траўня', 'траўня', 'ліпеня', 'жніўня', 'верасня', 'кастрычніка', 'лістапада', 'снежня'],
+    months: [
+    	'студзень',
+    	'люты',
+    	'сакавік',
+    	'красавік',
+    	'май',
+    	'чэрвень',
+    	'ліпень',
+    	'жнівень',
+    	'верасень',
+    	'кастрычнік',
+    	'лістапад',
+    	'снежань'
+	],
+    caseMonths: [
+        'студзеня',
+        'лютага',
+        'сакавіка',
+        'красавіка',
+        'траўня',
+        'траўня',
+        'ліпеня',
+        'жніўня',
+        'верасня',
+        'кастрычніка',
+        'лістапада',
+        'снежня'
+    ],
     shortWeekDays: ['Н', 'П', 'А', 'С', 'Ч', 'П', 'С'],
     today: 'Сення',
     firstWeekDay: 1
 });
 
 Calendula.addLocale('de', {
-    months: ['Januar', 'Februar', 'Marz', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+    months: [
+    	'Januar',
+    	'Februar',
+    	'Marz',
+    	'April',
+    	'Mai',
+    	'Juni',
+    	'Juli',
+    	'August',
+    	'September',
+    	'Oktober',
+    	'November',
+    	'Dezember'
+	],
     shortWeekDays: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
     today: 'Heute',
     firstWeekDay: 1
 });
 
 Calendula.addLocale('en', {
-    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    months: [
+    	'January',
+    	'February',
+    	'March',
+    	'April',
+    	'May',
+    	'June',
+    	'July',
+    	'August',
+    	'September',
+    	'October',
+    	'November',
+    	'December'
+	],
     shortWeekDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     today: 'Today',
     firstWeekDay: 0,
@@ -1179,62 +1223,442 @@ Calendula.addLocale('en', {
 });
 
 Calendula.addLocale('es', {
-    months: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+    months: [
+    	'enero',
+    	'febrero',
+    	'marzo',
+    	'abril',
+    	'mayo',
+    	'junio',
+    	'julio',
+    	'agosto',
+    	'septiembre',
+    	'octubre',
+    	'noviembre',
+    	'diciembre'
+	],
     shortWeekDays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
     today: 'Hoy',
     firstWeekDay: 1
 });
 
 Calendula.addLocale('fr', {
-    months: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+    months: [
+    	'janvier',
+    	'février',
+    	'mars',
+    	'avril',
+    	'mai',
+    	'juin',
+    	'juillet',
+    	'août',
+    	'septembre',
+    	'octobre',
+    	'novembre',
+    	'décembre'
+	],
     shortWeekDays: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'],
     today: 'Aujourd’hui',
     firstWeekDay: 1
 });
 
 Calendula.addLocale('it', {
-    months: ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
+    months: [
+    	'gennaio',
+    	'febbraio',
+    	'marzo',
+    	'aprile',
+    	'maggio',
+    	'giugno',
+    	'luglio',
+    	'agosto',
+    	'settembre',
+    	'ottobre',
+    	'novembre',
+    	'dicembre'
+	],
     shortWeekDays: ['Do', 'Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa'],
     today: 'Oggi',
     firstWeekDay: 1
 });
 
 Calendula.addLocale('pl', {
-    months: ['styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień'],
-    caseMonths: ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'],
+    months: [
+    	'styczeń',
+    	'luty',
+    	'marzec',
+    	'kwiecień',
+    	'maj',
+    	'czerwiec',
+    	'lipiec',
+    	'sierpień',
+    	'wrzesień',
+    	'październik',
+    	'listopad',
+    	'grudzień'
+	],
+    caseMonths: [
+        'stycznia',
+        'lutego',
+        'marca',
+        'kwietnia',
+        'maja',
+        'czerwca',
+        'lipca',
+        'sierpnia',
+        'września',
+        'października',
+        'listopada',
+        'grudnia'
+    ],
     shortWeekDays: ['N', 'P', 'W', 'Ś', 'C', 'P', 'S'],
     today: 'Dziś',
     firstWeekDay: 1
 });
 
 Calendula.addLocale('ru', {
-    months: ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'],
-    caseMonths: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
+    months: [
+    	'январь',
+    	'февраль',
+    	'март',
+    	'апрель',
+    	'май',
+    	'июнь',
+    	'июль',
+    	'август',
+    	'сентябрь',
+    	'октябрь',
+    	'ноябрь',
+    	'декабрь'
+	],
+    caseMonths: [
+    	'января',
+    	'февраля',
+    	'марта',
+    	'апреля',
+    	'мая',
+    	'июня',
+    	'июля',
+    	'августа',
+    	'сентября',
+    	'октября',
+    	'ноября',
+    	'декабря'
+	],
     shortWeekDays: ['В', 'П', 'В', 'С', 'Ч', 'П', 'С'],
     today: 'Сегодня',
     firstWeekDay: 1
 });
 
 Calendula.addLocale('tr', {
-    months: ['ocak', 'şubat', 'mart', 'nisan', 'mayıs', 'haziran', 'temmuz', 'ağustos', 'eylül', 'ekim', 'kasım', 'aralık'],
+    months: [
+    	'ocak',
+    	'şubat',
+    	'mart',
+    	'nisan',
+    	'mayıs',
+    	'haziran',
+    	'temmuz',
+    	'ağustos',
+    	'eylül',
+    	'ekim',
+    	'kasım',
+    	'aralık'
+	],
     shortWeekDays:['Pa', 'PT', 'Sa', 'Çarş', 'Per', 'CU', 'Ctesi'],
     today: 'Bugün',
     firstWeekDay: 1
 });
 
 Calendula.addLocale('uk', {
-    months:['січень', 'лютий', 'березень', 'квітень', 'травень', 'червень', 'липень', 'серпень', 'вересень', 'жовтень', 'листопад', 'грудень'],
-    caseMonths: ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'],
+    months:[
+    	'січень',
+    	'лютий',
+    	'березень',
+    	'квітень',
+    	'травень',
+    	'червень',
+    	'липень',
+    	'серпень',
+    	'вересень',
+    	'жовтень',
+    	'листопад',
+    	'грудень'
+	],
+    caseMonths: [
+    	'січня',
+    	'лютого',
+    	'березня',
+    	'квітня',
+    	'травня',
+    	'червня',
+    	'липня',
+    	'серпня',
+    	'вересня',
+    	'жовтня',
+    	'листопада',
+    	'грудня'
+	],
     shortWeekDays: ['Н', 'П', 'В', 'С', 'Ч', 'П', 'С'],
     today: 'Сьогодні',
     firstWeekDay: 1
 });
 
-Calendula.addHolidays('ru', {"2011":{"1-1":1,"2-1":1,"3-1":1,"4-1":1,"5-1":1,"6-1":1,"7-1":1,"10-1":1,"23-2":1,"5-3":0,"7-3":1,"8-3":1,"1-5":1,"2-5":1,"9-5":1,"12-6":1,"13-6":1,"4-11":1},"2012":{"1-1":1,"2-1":1,"3-1":1,"4-1":1,"5-1":1,"6-1":1,"7-1":1,"9-1":1,"23-2":1,"8-3":1,"9-3":1,"11-3":0,"28-4":0,"30-4":1,"1-5":1,"5-5":0,"7-5":1,"8-5":1,"9-5":1,"12-5":0,"9-6":0,"11-6":1,"12-6":1,"4-11":1,"5-11":1,"29-12":0,"31-12":1},"2013":{"1-1":1,"2-1":1,"3-1":1,"4-1":1,"5-1":1,"6-1":1,"7-1":1,"8-1":1,"23-2":1,"8-3":1,"1-5":1,"2-5":1,"3-5":1,"9-5":1,"10-5":1,"12-6":1,"4-11":1},"2014":{"1-1":1,"2-1":1,"3-1":1,"4-1":1,"5-1":1,"6-1":1,"7-1":1,"8-1":1,"23-2":1,"8-3":1,"10-3":1,"1-5":1,"2-5":1,"9-5":1,"12-6":1,"13-6":1,"3-11":1,"4-11":1},"2015":{"1-1":1,"2-1":1,"3-1":1,"4-1":1,"5-1":1,"6-1":1,"7-1":1,"8-1":1,"23-2":1,"8-3":1,"1-5":1,"9-5":1,"12-6":1,"4-11":1}});
+Calendula.addHolidays('ru', {
+	'2011': {
+		'1-1': 1,
+		'2-1': 1,
+		'3-1': 1,
+		'4-1': 1,
+		'5-1': 1,
+		'6-1': 1,
+		'7-1': 1,
+		'10-1': 1,
+		'23-2': 1,
+		'5-3': 0,
+		'7-3': 1,
+		'8-3': 1,
+		'1-5': 1,
+		'2-5': 1,
+		'9-5': 1,
+		'12-6': 1,
+		'13-6': 1,
+		'4-11': 1
+	},'2012': {
+		'1-1': 1,
+		'2-1': 1,
+		'3-1': 1,
+		'4-1': 1,
+		'5-1': 1,
+		'6-1': 1,
+		'7-1': 1,
+		'9-1': 1,
+		'23-2': 1,
+		'8-3': 1,
+		'9-3': 1,
+		'11-3': 0,
+		'28-4': 0,
+		'30-4': 1,
+		'1-5': 1,
+		'5-5': 0,
+		'7-5': 1,
+		'8-5': 1,
+		'9-5': 1,
+		'12-5': 0,
+		'9-6': 0,
+		'11-6': 1,
+		'12-6': 1,
+		'4-11': 1,
+		'5-11': 1,
+		'29-12': 0,
+		'31-12': 1
+	}, '2013': {
+		'1-1': 1,
+		'2-1': 1,
+		'3-1': 1,
+		'4-1': 1,
+		'5-1': 1,
+		'6-1': 1,
+		'7-1': 1,
+		'8-1': 1,
+		'23-2': 1,
+		'8-3': 1,
+		'1-5': 1,
+		'2-5': 1,
+		'3-5': 1,
+		'9-5': 1,
+		'10-5': 1,
+		'12-6': 1,
+		'4-11': 1
+	}, '2014': {
+		'1-1': 1,
+		'2-1': 1,
+		'3-1': 1,
+		'4-1': 1,
+		'5-1': 1,
+		'6-1': 1,
+		'7-1': 1,
+		'8-1': 1,
+		'23-2': 1,
+		'8-3': 1,
+		'10-3': 1,
+		'1-5': 1,
+		'2-5': 1,
+		'9-5': 1,
+		'12-6': 1,
+		'13-6': 1,
+		'3-11': 1,
+		'4-11': 1
+	}, '2015': {
+		'1-1': 1,
+		'2-1': 1,
+		'3-1': 1,
+		'4-1': 1,
+		'5-1': 1,
+		'6-1': 1,
+		'7-1': 1,
+		'8-1': 1,
+		'23-2': 1,
+		'8-3': 1,
+		'1-5': 1,
+		'9-5': 1,
+		'12-6': 1,
+		'4-11': 1
+	}
+});
 
-Calendula.addHolidays('tr', {"2011":{"1-1":1,"23-4":1,"1-5":1,"19-5":1,"30-8":1,"31-8":1,"1-9":1,"29-10":1,"6-11":1,"7-11":1,"8-11":1,"9-11":1},"2012":{"1-1":1,"23-4":1,"1-5":1,"19-5":1,"30-8":1,"29-10":1},"2013":{"1-1":1,"23-4":1,"1-5":1,"19-5":1,"7-8":1,"8-8":1,"9-8":1,"10-8":1,"30-8":1,"14-10":1,"15-10":1,"16-10":1,"17-10":1,"18-10":1,"28-10":1,"29-10":1},"2014":{"1-1":1,"23-4":1,"1-5":1,"19-5":1,"27-7":1,"28-7":1,"29-7":1,"30-7":1,"30-8":1,"3-10":1,"4-10":1,"5-10":1,"6-10":1,"28-10":1,"29-10":1},"2015":{"1-1":1,"23-4":1,"1-5":1,"19-5":1,"30-8":1,"29-10":1}});
+Calendula.addHolidays('tr', {
+	'2011': {
+		'1-1': 1,
+		'23-4': 1,
+		'1-5': 1,
+		'19-5': 1,
+		'30-8': 1,
+		'31-8': 1,
+		'1-9': 1,
+		'29-10': 1,
+		'6-11': 1,
+		'7-11': 1,
+		'8-11': 1,
+		'9-11': 1
+	}, '2012': {
+		'1-1': 1,
+		'23-4': 1,
+		'1-5': 1,
+		'19-5': 1,
+		'30-8': 1,
+		'29-10': 1
+	}, '2013': {
+		'1-1': 1,
+		'23-4': 1,
+		'1-5': 1,
+		'19-5': 1,
+		'7-8': 1,
+		'8-8': 1,
+		'9-8': 1,
+		'10-8': 1,
+		'30-8': 1,
+		'14-10': 1,
+		'15-10': 1,
+		'16-10': 1,
+		'17-10': 1,
+		'18-10': 1,
+		'28-10': 1,
+		'29-10':1
+	}, '2014': {
+		'1-1': 1,
+		'23-4': 1,
+		'1-5': 1,
+		'19-5': 1,
+		'27-7': 1,
+		'28-7': 1,
+		'29-7': 1,
+		'30-7': 1,
+		'30-8': 1,
+		'3-10': 1,
+		'4-10': 1,
+		'5-10': 1,
+		'6-10': 1,
+		'28-10': 1,
+		'29-10': 1
+	}, '2015': {
+		'1-1': 1,
+		'23-4': 1,
+		'1-5': 1,
+		'19-5': 1,
+		'30-8': 1,
+		'29-10': 1
+	}
+});
 
-Calendula.addHolidays('uk', {"2011":{"1-1":1,"3-1":1,"7-1":1,"8-3":1,"15-4":1,"24-4":1,"25-4":1,"1-5":1,"2-5":1,"3-5":1,"9-5":1,"3-6":1,"12-6":1,"13-6":1,"28-6":1,"24-8":1},"2012":{"1-1":1,"2-1":1,"6-1":1,"7-1":1,"3-3":0,"8-3":1,"9-3":1,"16-4":1,"28-4":0,"30-4":1,"1-5":1,"2-5":1,"9-5":1,"4-6":1,"28-6":1,"29-6":1,"7-7":0,"24-8":1},"2013":{"1-1":1,"7-1":1,"8-3":1,"1-5":1,"2-5":1,"3-5":1,"5-5":1,"6-5":1,"9-5":1,"10-5":1,"18-5":0,"1-6":0,"23-6":1,"24-6":1,"28-6":1,"24-8":1,"26-8":1},"2014":{"1-1":1,"2-1":1,"3-1":1,"6-1":1,"7-1":1,"11-1":0,"25-1":0,"8-2":0,"8-3":1,"10-3":1,"20-4":1,"21-4":1,"1-5":1,"2-5":1,"9-5":1,"8-6":1,"9-6":1,"28-6":1,"30-6":1,"24-8":1,"25-8":1},"2015":{"1-1":1,"7-1":1,"8-3":1,"1-5":1,"2-5":1,"9-5":1,"28-6":1,"24-8":1}});
+Calendula.addHolidays('uk', {
+	'2011': {
+		'1-1': 1,
+		'3-1': 1,
+		'7-1': 1,
+		'8-3': 1,
+		'15-4': 1,
+		'24-4': 1,
+		'25-4': 1,
+		'1-5': 1,
+		'2-5': 1,
+		'3-5': 1,
+		'9-5': 1,
+		'3-6': 1,
+		'12-6': 1,
+		'13-6': 1,
+		'28-6': 1,
+		'24-8': 1
+	}, '2012': {
+		'1-1': 1,
+		'2-1': 1,
+		'6-1': 1,
+		'7-1': 1,
+		'3-3': 0,
+		'8-3': 1,
+		'9-3': 1,
+		'16-4': 1,
+		'28-4': 0,
+		'30-4': 1,
+		'1-5': 1,
+		'2-5': 1,
+		'9-5': 1,
+		'4-6': 1,
+		'28-6': 1,
+		'29-6': 1,
+		'7-7': 0,
+		'24-8': 1
+	}, '2013': {
+		'1-1': 1,
+		'7-1': 1,
+		'8-3': 1,
+		'1-5': 1,
+		'2-5': 1,
+		'3-5': 1,
+		'5-5': 1,
+		'6-5': 1,
+		'9-5': 1,
+		'10-5': 1,
+		'18-5': 0,
+		'1-6': 0,
+		'23-6': 1,
+		'24-6': 1,
+		'28-6': 1,
+		'24-8': 1,
+		'26-8': 1
+	}, '2014': {
+		'1-1': 1,
+		'2-1': 1,
+		'3-1': 1,
+		'6-1': 1,
+		'7-1': 1,
+		'11-1': 0,
+		'25-1': 0,
+		'8-2': 0,
+		'8-3': 1,
+		'10-3': 1,
+		'20-4': 1,
+		'21-4': 1,
+		'1-5': 1,
+		'2-5': 1,
+		'9-5': 1,
+		'8-6': 1,
+		'9-6': 1,
+		'28-6': 1,
+		'30-6': 1,
+		'24-8': 1,
+		'25-8': 1
+	}, '2015': {
+		'1-1': 1,
+		'7-1': 1,
+		'8-3': 1,
+		'1-5': 1,
+		'2-5': 1,
+		'9-5': 1,
+		'28-6': 1,
+		'24-8': 1
+	}
+});
 
 
 return Calendula;
