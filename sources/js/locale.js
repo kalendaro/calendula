@@ -1,4 +1,4 @@
-extend(Calendula, {
+extend(Cln, {
     _texts: {},
     _locales: [],
     addLocale: function(locale, texts) {
@@ -11,6 +11,6 @@ extend(Calendula, {
     }
 });
 
-Calendula.prototype.text = function(id) {
-    return Calendula._texts[this._data.locale][id];
+Cln.prototype.text = function(id) {
+    return Cln._texts[this._data.locale][id];
 };

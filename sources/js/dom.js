@@ -40,7 +40,7 @@ var elem = function(name, mod, val) {
         return elem.className.search(re) !== -1;
     };
 
-extend(Calendula.prototype, {
+extend(Cln.prototype, {
     _elem: function(name, mod, val) {
         return this._container.querySelector('.' + elem(name, mod, val));
     },

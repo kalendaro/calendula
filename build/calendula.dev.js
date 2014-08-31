@@ -17,7 +17,7 @@ var extend = function(container, obj) {
     return container;
 };
 
-var Calendula = function(data) {
+var Cln = function(data) {
     data = extend({}, data || {});
     
     var years = this._prepareYears(data.years),
@@ -26,7 +26,7 @@ var Calendula = function(data) {
     this._data = extend(data, {
         autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
         closeAfterSelection: typeof data.closeAfterSelection === 'undefined' ? true : data.closeAfterSelection,
-        locale: data.locale || Calendula._defaultLocale,
+        locale: data.locale || Cln._defaultLocale,
         theme: data.theme || 'default',
         min: this._parseDateToObj(data.min),
         max: this._parseDateToObj(data.max),
@@ -46,9 +46,9 @@ var Calendula = function(data) {
     }
 };
 
-Calendula.version = '0.9.0';
+Cln.version = '0.9.0';
 
-extend(Calendula.prototype, {
+extend(Cln.prototype, {
     isOpened: function() {
         return this._isOpened;
     },
@@ -249,7 +249,7 @@ extend(Calendula.prototype, {
         this._container.innerHTML = this.template('main');
     },
     _rebuildDays: function() {
-        this._elem('days-container').innerHTML = this._templates.prepare(this._templates.days(this._currentDate.year));
+        this._elem('days-container').innerHTML = this.template('days');
         this._monthSelector(this._currentDate.month, false);
     },
     _openedEvents: function() {
@@ -398,6 +398,7 @@ extend(Calendula.prototype, {
         var months = this._elem('months'),
             monthHeight = this._elem('month').offsetHeight,
             monthsElems = this._elemAll('days-month'),
+            monthElem = monthsElems[month],
             selector = this._elem('month-selector'),
             daysContainer = this._elem('days-container'),
             days = this._elem('days'),
@@ -410,7 +411,7 @@ extend(Calendula.prototype, {
             addClass(months, noAnimMonths);
         }
         
-        var top = Math.floor(this._currentDate.month * monthHeight - (monthHeight / 2));
+        var top = Math.floor(this._currentDate.month * monthHeight - monthHeight / 2);
         if(top <= 0) {
             top = 1;
         }
@@ -421,7 +422,7 @@ extend(Calendula.prototype, {
         
         this._top(selector, top);
         
-        daysContainerTop = -Math.floor(monthsElems[month].offsetTop - days.offsetHeight / 2 + monthsElems[month].offsetHeight / 2);
+        daysContainerTop = -Math.floor(monthElem.offsetTop - days.offsetHeight / 2 + monthElem.offsetHeight / 2);
         if(daysContainerTop > 0) {
             daysContainerTop = 0;
         }
@@ -566,8 +567,8 @@ extend(Calendula.prototype, {
         
         if(typeof y === 'string') {
             buf = y.trim().split(/[:,; ]/);
-            startYear = parseInt(buf[0], 10);
-            endYear = parseInt(buf[1], 10);
+            startYear = parseNum(buf[0]);
+            endYear = parseNum(buf[1]);
             
             if(!isNaN(startYear) && !isNaN(endYear)) {
                 if(Math.abs(startYear) < 1000) {
@@ -668,7 +669,7 @@ var elem = function(name, mod, val) {
         return elem.className.search(re) !== -1;
     };
 
-extend(Calendula.prototype, {
+extend(Cln.prototype, {
     _elem: function(name, mod, val) {
         return this._container.querySelector('.' + elem(name, mod, val));
     },
@@ -683,7 +684,12 @@ extend(Calendula.prototype, {
     }
 });
 
-extend(Calendula.prototype, {
+var isArray = Array.isArray;
+var isPlainObj = function(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
+};
+
+extend(Cln.prototype, {
     _left: function(elem, x) {
         elem.style.left = x + 'px';
     },
@@ -709,6 +715,75 @@ extend(Calendula.prototype, {
         };
     }
 });
+
+var parseNum = function(str) {
+    return parseInt(str, 10);
+};
+
+var jshtml = (function() {
+    var buildItem = function(data) {
+        if(data === null || data === undefined) {
+            return '';
+        }
+
+        var buf = [];
+
+        if(isPlainObj(data)) {
+            return tag(data);
+        } else if(isArray(data)) {
+            for(var i = 0, len = data.length; i < len; i++) {
+                buf.push(buildItem(data[i]));
+            }
+
+            return buf.join('');
+        } else {
+            return '' + data;
+        }
+    };
+
+    var tag = function(data) {
+        var t = data.t || 'div',
+            text = '<' + t + attrs(data) + '>';
+
+        if(data.c) {
+            text += buildItem(data.c);
+        }
+
+        text += '</' + t + '>';
+
+        return text;
+    };
+
+    var attrs = function(data) {
+        var keys = Object.keys(data),
+            ignoredItems = ['cl', 'class', 'c', 't'],
+            cl = data['cl'] || data['class'],
+            text = [],
+            buf = '';
+
+        if(cl) {
+            text.push(attr('class', cl));
+        }
+
+        for(var i = 0, len = keys.length; i < len; i++) {
+            var item = keys[i];
+            if(ignoredItems.indexOf(item) === -1) {
+                text.push(attr(item, data[item]));
+            }
+        }
+
+        buf = text.join(' ');
+
+        return buf ? ' ' + buf : '';
+    };
+
+    var attr = function(name, value) {
+        return value !== null && value !== undefined ?
+            name + '="' + (isArray(value) ? value.join(' ') : value) + '"' : '';
+    };
+
+    return buildItem;
+})();
 
 var Timeout = function() {};
 
@@ -754,7 +829,7 @@ var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Mod
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
     'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
 
-extend(Calendula.prototype, {
+extend(Cln.prototype, {
     on: function(type, callback) {
         if(type && callback) {
             this._eventBuf = this._eventBuf || [];
@@ -870,42 +945,44 @@ extend(DomEvent.prototype, {
     }
 });
 
-extend(Calendula.prototype, {
+var SATURDAY = 6,
+    SUNDAY = 0;
+
+extend(Cln.prototype, {
     template: function(name) {
-        return this._templates[name]();
+        var t = this._templates;
+        return t._prepare(jshtml(t[name]()));
     },
     _templates: {
-        prepare: function(text) {
-            return text.replace(/\$/g, NS + '__');
+        _prepare: function(str) {
+            return str.replace(/\$/g, NS + '__');
         },
-        attr: function(name, value) {
-            return name === '' || name === null || name === undefined ? '' : ' ' + name + '="' + value + '"';
-        },
-        days: function(year) {
-            var text = '';
+        days: function() {
+            var buf = [];
+
             for(var m = MIN_MONTH; m <= MAX_MONTH; m++) {
-                text += this.month(m, year);
+                buf.push(this.month(m, this.parent._currentDate.year));
             }
-        
-            return text;
+
+            return buf;
         },
         weekdays: function() {
             var first = this.parent.text('firstWeekDay') || 0;
             var w = {
                 first: first,
-                last: !first ? 6 : first - 1
+                last: !first ? SATURDAY : first - 1
             };
-            
+
             var n = first;
             for(var i = 0; i < 7; i++) {
                 w[n] = i;
-                
+
                 n++;
-                if(n > 6) {
-                    n = 0;
+                if(n > SATURDAY) {
+                    n = SUNDAY;
                 }
             }
-            
+
             return w;
         },
         month: function(m, y) {
@@ -920,27 +997,33 @@ extend(Calendula.prototype, {
                     if(!d.year) {
                         return null;
                     }
-                    
+
                     return new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime();
                 },
                 getTitleMonth = function() {
-                    var isMinMax = false,
-                        min = parseInt('' + minSetting.year + leadZero(minSetting.month), 10),
-                        max = parseInt('' + maxSetting.year + leadZero(maxSetting.month), 10),
-                        cur = parseInt('' + y + leadZero(m), 10);
-                        
+                    var getValue = function(setting) {
+                            return parseNum('' + setting.year + leadZero(setting.month));
+                        },
+                        min = getValue(minSetting),
+                        max = getValue(maxSetting),
+                        cur = parseNum('' + y + leadZero(m)),
+                        clMinMax = '';
+
                     if((minSetting && cur < min) || (maxSetting && cur > max)) {
-                        isMinMax = true;
+                        clMinMax = '$days-title-month_minmax';
                     }
-                    
-                    return '<div class="$days-title-month' + (isMinMax ? ' $days-title-month_minmax' : '') + '">' + month + '</div>';
+
+                    return {
+                        cl: ['$days-title-month', clMinMax],
+                        c: month
+                    };
                 };
-                
+
             current.setHours(12);
             current.setMinutes(0);
             current.setSeconds(0);
             current.setMilliseconds(0);
-            
+
             var par = this.parent,
                 weekday = date.getDay(),
                 weekdays = this.weekdays(),
@@ -952,120 +1035,180 @@ extend(Calendula.prototype, {
                 minTs = getTs(minSetting),
                 maxTs = getTs(maxSetting),
                 currentTs = current.getTime(),
-                hasTr,
                 title,
                 holiday,
                 className,
-                text = [];
-                
-            text.push('<div class="$days-month">');
-            
-            if(dayIndex < 3) {
-                text.push(getTitleMonth());
-            }
-            
-            text.push('<table class="$days-table"><tr>');
-            
-            if(weekday !== weekdays.first) {
-                text.push('<td colspan="' + dayIndex + '" class="$empty">' + (dayIndex < 3 ? '' : getTitleMonth()) + '</td>');
-            }
-            
+                objFirstRow = {
+                    t: 'tr',
+                    c: [
+                        weekday !== weekdays.first ? {
+                            t: 'td',
+                            colspan: dayIndex,
+                            cl: '$empty',
+                            c: dayIndex < 3 ? '' : getTitleMonth()
+                        } : ''
+                    ]
+                },
+                objRow = objFirstRow,
+                obj = {
+                    cl: '$days-month',
+                    c: [
+                        dayIndex < 3 ? getTitleMonth() : '',
+                        {
+                            t: 'table',
+                            cl: '$days-table',
+                            c: [objRow]
+                        }
+                    ]
+                };
+
             for(var day = 1; day <= daysMonth[m]; day++) {
                 title = '';
-                hasTr = false;
                 date.setDate(day);
                 weekday = date.getDay();
                 holiday = this.parent.getHoliday(day, m, y);
-                className = ['$day'];
+                className = [
+                    '$day',
+                    (weekday === SUNDAY || weekday === SATURDAY) ? '$day_holiday' : '$day_workday'
+                ];
 
-                // 0 - Sunday, 6 - Saturday
-                className.push((weekday === 0 || weekday === 6) ? '$day_holiday' : '$day_workday');
                 if(holiday === 0) {
                     className.push('$day_nonholiday');
                 } else if(holiday === 1) {
                     className.push('$day_highday');
                 }
-                
+
                 if(isSelected(day, m, y)) {
                     className.push('$day_selected');
                 }
-                
+
                 if(currentTs === dateTs) {
                     className.push('$day_now');
                     title = par.text('today');
                 }
-                
+
                 if((minTs && dateTs < minTs) || (maxTs && dateTs > maxTs)) {
                     className.push('$day_minmax');
                 }
-                
-                text.push('<td' + this.attr('title', title) + ' class="' + className.join(' ') + '" data-month="' + m + '" data-day="' + day + '">' + day + '</td>');
-                if(weekday === weekdays.last) {
-                    text.push('</tr>');
-                    hasTr = true;
+
+                if(weekday === weekdays.first) {
+                    objRow = {
+                        t: 'tr',
+                        c: []
+                    };
+
+                    obj.c[1].c.push(objRow);
                 }
+
+                objRow.c.push({
+                    t: 'td',
+                    cl: className,
+                    title: title,
+                    'data-month': m,
+                    'data-day': day,
+                    c: day
+                });
             }
-                
-            if(!hasTr) {
-                text.push('</tr>');
-            }
-            
-            text.push('</table></div>');
-            
-            return text.join('');
+
+            return obj;
         },
         years: function() {
-            var buf = '<div class="$year-selector"><div class="$year-selector-i"></div></div>',
-                startYear = this.parent._data._startYear,
-                endYear = this.parent._data._endYear;
-                
+            var data = this.parent._data,
+                startYear = data._startYear,
+                endYear = data._endYear,
+                buf = [{
+                    cl: '$year-selector',
+                    c: {
+                        cl: '$year-selector-i'
+                    }
+                }];
+
             for(var i = startYear; i <= endYear; i++) {
-                buf += '<div class="$year" data-year="' + i + '">' + i + '</div>';
-            }
-            
+                buf.push({
+                    cl: '$year',
+                    'data-year': i,
+                    c: i
+                });
+             }
+
             return buf;
         },
         months: function() {
-            var buf = '<div class="$month-selector"><div class="$month-selector-i"></div></div>';
+            var buf = [{
+                cl: '$month-selector',
+                c: {
+                    cl: '$month-selector-i'
+                }
+            }];
+
             this.parent.text('months').forEach(function(el, i) {
-                buf += '<div class="$month" data-month="' + i + '">' + el + '</div>';
+                buf.push({
+                    cl: '$month',
+                    'data-month': i,
+                    c: el
+                });
             });
-            
+
             return buf;
         },
         main: function() {
-            var wd = this.parent.text('firstWeekDay') || 0,
-                weekdays = '';
-                
+            var wd = this.parent.text('firstWeekDay') || SUNDAY,
+                weekdays = [];
+
             this.parent.text('shortWeekDays').forEach(function(el, i, data) {
-                weekdays += '<div class="$short-weekdays-cell $short-weekdays-cell_n_' + wd + '"' + this.attr('title', data[wd]) + '>' + data[wd] + '</div>';
+                weekdays.push({
+                    cl: ['$short-weekdays-cell', '$short-weekdays-cell_n_' + wd],
+                    title: data[wd],
+                    c: data[wd]
+                });
+
                 wd++;
-                if(wd > 6) { // Saturday
-                    wd = 0;
+                if(wd > SATURDAY) {
+                    wd = SUNDAY;
                 }
             }, this);
-        
-            return this.prepare('<div class="$short-weekdays">' + weekdays + '</div>'
-                + '<div class="$container">'
-                + '<div class="$days"><div class="$days-container">' + this.days(this.parent._currentDate.year) + '</div>'
-                + '</div>'
-                + '<div class="$months">' + this.months() + '</div>'
-                + '<div class="$years"><div class="$years-container">' + this.years() + '</div></div>'
-                + '</div>');
+
+            return [
+                {
+                    cl: '$short-weekdays',
+                    c: weekdays
+                }, {
+                    cl: '$container',
+                    c: [{
+                            cl: '$days',
+                            c: {
+                                cl: '$days-container',
+                                c: this.days()
+                            }
+                        },
+                        {
+                            cl: '$months',
+                            c: this.months()
+                        },
+                        {
+                            cl: '$years',
+                            c: {
+                                cl: '$years-container',
+                                c: this.years()
+                            }
+                        }
+                    ]
+                }
+            ];
         }
     }
 });
 
-extend(Calendula, {
+extend(Cln, {
     addHolidays: function(locale, data) {
         this._holidays = this._holidays || {};
         this._holidays[locale] = data;
     }
 });
 
-Calendula.prototype.getHoliday = function(d, m, y) {
+Cln.prototype.getHoliday = function(d, m, y) {
     var locale = this._data.locale,
-        c = Calendula._holidays;
+        c = Cln._holidays;
         
     return c && c[locale] && c[locale][y] ? c[locale][y][d + '-' + (m + 1)] : undefined;
 };
@@ -1082,7 +1225,7 @@ function isLeapYear(y) {
     return false;
 }
 
-extend(Calendula.prototype, {
+extend(Cln.prototype, {
     _parseDate: function(value) {
         var date = null,
             match,
@@ -1101,7 +1244,7 @@ extend(Calendula.prototype, {
                 }
                 
                 if(buf) {
-                    date = new Date(parseInt(buf[2], 10), parseInt(buf[1], 10), parseInt(buf[0], 10));
+                    date = new Date(parseNum(buf[2]), parseNum(buf[1]), parseNum(buf[0]));
                 }
             } else if(typeof value === 'object') {
                 if(value instanceof Date) {
@@ -1130,7 +1273,7 @@ extend(Calendula.prototype, {
     }
 });
 
-extend(Calendula, {
+extend(Cln, {
     _texts: {},
     _locales: [],
     addLocale: function(locale, texts) {
@@ -1143,25 +1286,29 @@ extend(Calendula, {
     }
 });
 
-Calendula.prototype.text = function(id) {
-    return Calendula._texts[this._data.locale][id];
+Cln.prototype.text = function(id) {
+    return Cln._texts[this._data.locale][id];
 };
+
+return Cln;
+
+})(this, this.document);
 
 Calendula.addLocale('be', {
     months: [
-    	'студзень',
-    	'люты',
-    	'сакавік',
-    	'красавік',
-    	'май',
-    	'чэрвень',
-    	'ліпень',
-    	'жнівень',
-    	'верасень',
-    	'кастрычнік',
-    	'лістапад',
-    	'снежань'
-	],
+        'студзень',
+        'люты',
+        'сакавік',
+        'красавік',
+        'май',
+        'чэрвень',
+        'ліпень',
+        'жнівень',
+        'верасень',
+        'кастрычнік',
+        'лістапад',
+        'снежань'
+    ],
     caseMonths: [
         'студзеня',
         'лютага',
@@ -1183,19 +1330,19 @@ Calendula.addLocale('be', {
 
 Calendula.addLocale('de', {
     months: [
-    	'Januar',
-    	'Februar',
-    	'Marz',
-    	'April',
-    	'Mai',
-    	'Juni',
-    	'Juli',
-    	'August',
-    	'September',
-    	'Oktober',
-    	'November',
-    	'Dezember'
-	],
+        'Januar',
+        'Februar',
+        'Marz',
+        'April',
+        'Mai',
+        'Juni',
+        'Juli',
+        'August',
+        'September',
+        'Oktober',
+        'November',
+        'Dezember'
+    ],
     shortWeekDays: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
     today: 'Heute',
     firstWeekDay: 1
@@ -1203,19 +1350,19 @@ Calendula.addLocale('de', {
 
 Calendula.addLocale('en', {
     months: [
-    	'January',
-    	'February',
-    	'March',
-    	'April',
-    	'May',
-    	'June',
-    	'July',
-    	'August',
-    	'September',
-    	'October',
-    	'November',
-    	'December'
-	],
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ],
     shortWeekDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
     today: 'Today',
     firstWeekDay: 0,
@@ -1224,19 +1371,19 @@ Calendula.addLocale('en', {
 
 Calendula.addLocale('es', {
     months: [
-    	'enero',
-    	'febrero',
-    	'marzo',
-    	'abril',
-    	'mayo',
-    	'junio',
-    	'julio',
-    	'agosto',
-    	'septiembre',
-    	'octubre',
-    	'noviembre',
-    	'diciembre'
-	],
+        'enero',
+        'febrero',
+        'marzo',
+        'abril',
+        'mayo',
+        'junio',
+        'julio',
+        'agosto',
+        'septiembre',
+        'octubre',
+        'noviembre',
+        'diciembre'
+    ],
     shortWeekDays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
     today: 'Hoy',
     firstWeekDay: 1
@@ -1244,19 +1391,19 @@ Calendula.addLocale('es', {
 
 Calendula.addLocale('fr', {
     months: [
-    	'janvier',
-    	'février',
-    	'mars',
-    	'avril',
-    	'mai',
-    	'juin',
-    	'juillet',
-    	'août',
-    	'septembre',
-    	'octobre',
-    	'novembre',
-    	'décembre'
-	],
+        'janvier',
+        'février',
+        'mars',
+        'avril',
+        'mai',
+        'juin',
+        'juillet',
+        'août',
+        'septembre',
+        'octobre',
+        'novembre',
+        'décembre'
+    ],
     shortWeekDays: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'],
     today: 'Aujourd’hui',
     firstWeekDay: 1
@@ -1264,19 +1411,19 @@ Calendula.addLocale('fr', {
 
 Calendula.addLocale('it', {
     months: [
-    	'gennaio',
-    	'febbraio',
-    	'marzo',
-    	'aprile',
-    	'maggio',
-    	'giugno',
-    	'luglio',
-    	'agosto',
-    	'settembre',
-    	'ottobre',
-    	'novembre',
-    	'dicembre'
-	],
+        'gennaio',
+        'febbraio',
+        'marzo',
+        'aprile',
+        'maggio',
+        'giugno',
+        'luglio',
+        'agosto',
+        'settembre',
+        'ottobre',
+        'novembre',
+        'dicembre'
+    ],
     shortWeekDays: ['Do', 'Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa'],
     today: 'Oggi',
     firstWeekDay: 1
@@ -1284,19 +1431,19 @@ Calendula.addLocale('it', {
 
 Calendula.addLocale('pl', {
     months: [
-    	'styczeń',
-    	'luty',
-    	'marzec',
-    	'kwiecień',
-    	'maj',
-    	'czerwiec',
-    	'lipiec',
-    	'sierpień',
-    	'wrzesień',
-    	'październik',
-    	'listopad',
-    	'grudzień'
-	],
+        'styczeń',
+        'luty',
+        'marzec',
+        'kwiecień',
+        'maj',
+        'czerwiec',
+        'lipiec',
+        'sierpień',
+        'wrzesień',
+        'październik',
+        'listopad',
+        'grudzień'
+    ],
     caseMonths: [
         'stycznia',
         'lutego',
@@ -1318,33 +1465,33 @@ Calendula.addLocale('pl', {
 
 Calendula.addLocale('ru', {
     months: [
-    	'январь',
-    	'февраль',
-    	'март',
-    	'апрель',
-    	'май',
-    	'июнь',
-    	'июль',
-    	'август',
-    	'сентябрь',
-    	'октябрь',
-    	'ноябрь',
-    	'декабрь'
-	],
+        'январь',
+        'февраль',
+        'март',
+        'апрель',
+        'май',
+        'июнь',
+        'июль',
+        'август',
+        'сентябрь',
+        'октябрь',
+        'ноябрь',
+        'декабрь'
+    ],
     caseMonths: [
-    	'января',
-    	'февраля',
-    	'марта',
-    	'апреля',
-    	'мая',
-    	'июня',
-    	'июля',
-    	'августа',
-    	'сентября',
-    	'октября',
-    	'ноября',
-    	'декабря'
-	],
+        'января',
+        'февраля',
+        'марта',
+        'апреля',
+        'мая',
+        'июня',
+        'июля',
+        'августа',
+        'сентября',
+        'октября',
+        'ноября',
+        'декабря'
+    ],
     shortWeekDays: ['В', 'П', 'В', 'С', 'Ч', 'П', 'С'],
     today: 'Сегодня',
     firstWeekDay: 1
@@ -1352,19 +1499,19 @@ Calendula.addLocale('ru', {
 
 Calendula.addLocale('tr', {
     months: [
-    	'ocak',
-    	'şubat',
-    	'mart',
-    	'nisan',
-    	'mayıs',
-    	'haziran',
-    	'temmuz',
-    	'ağustos',
-    	'eylül',
-    	'ekim',
-    	'kasım',
-    	'aralık'
-	],
+        'ocak',
+        'şubat',
+        'mart',
+        'nisan',
+        'mayıs',
+        'haziran',
+        'temmuz',
+        'ağustos',
+        'eylül',
+        'ekim',
+        'kasım',
+        'aralık'
+    ],
     shortWeekDays:['Pa', 'PT', 'Sa', 'Çarş', 'Per', 'CU', 'Ctesi'],
     today: 'Bugün',
     firstWeekDay: 1
@@ -1372,295 +1519,290 @@ Calendula.addLocale('tr', {
 
 Calendula.addLocale('uk', {
     months:[
-    	'січень',
-    	'лютий',
-    	'березень',
-    	'квітень',
-    	'травень',
-    	'червень',
-    	'липень',
-    	'серпень',
-    	'вересень',
-    	'жовтень',
-    	'листопад',
-    	'грудень'
-	],
+        'січень',
+        'лютий',
+        'березень',
+        'квітень',
+        'травень',
+        'червень',
+        'липень',
+        'серпень',
+        'вересень',
+        'жовтень',
+        'листопад',
+        'грудень'
+    ],
     caseMonths: [
-    	'січня',
-    	'лютого',
-    	'березня',
-    	'квітня',
-    	'травня',
-    	'червня',
-    	'липня',
-    	'серпня',
-    	'вересня',
-    	'жовтня',
-    	'листопада',
-    	'грудня'
-	],
+        'січня',
+        'лютого',
+        'березня',
+        'квітня',
+        'травня',
+        'червня',
+        'липня',
+        'серпня',
+        'вересня',
+        'жовтня',
+        'листопада',
+        'грудня'
+    ],
     shortWeekDays: ['Н', 'П', 'В', 'С', 'Ч', 'П', 'С'],
     today: 'Сьогодні',
     firstWeekDay: 1
 });
 
 Calendula.addHolidays('ru', {
-	'2011': {
-		'1-1': 1,
-		'2-1': 1,
-		'3-1': 1,
-		'4-1': 1,
-		'5-1': 1,
-		'6-1': 1,
-		'7-1': 1,
-		'10-1': 1,
-		'23-2': 1,
-		'5-3': 0,
-		'7-3': 1,
-		'8-3': 1,
-		'1-5': 1,
-		'2-5': 1,
-		'9-5': 1,
-		'12-6': 1,
-		'13-6': 1,
-		'4-11': 1
-	},'2012': {
-		'1-1': 1,
-		'2-1': 1,
-		'3-1': 1,
-		'4-1': 1,
-		'5-1': 1,
-		'6-1': 1,
-		'7-1': 1,
-		'9-1': 1,
-		'23-2': 1,
-		'8-3': 1,
-		'9-3': 1,
-		'11-3': 0,
-		'28-4': 0,
-		'30-4': 1,
-		'1-5': 1,
-		'5-5': 0,
-		'7-5': 1,
-		'8-5': 1,
-		'9-5': 1,
-		'12-5': 0,
-		'9-6': 0,
-		'11-6': 1,
-		'12-6': 1,
-		'4-11': 1,
-		'5-11': 1,
-		'29-12': 0,
-		'31-12': 1
-	}, '2013': {
-		'1-1': 1,
-		'2-1': 1,
-		'3-1': 1,
-		'4-1': 1,
-		'5-1': 1,
-		'6-1': 1,
-		'7-1': 1,
-		'8-1': 1,
-		'23-2': 1,
-		'8-3': 1,
-		'1-5': 1,
-		'2-5': 1,
-		'3-5': 1,
-		'9-5': 1,
-		'10-5': 1,
-		'12-6': 1,
-		'4-11': 1
-	}, '2014': {
-		'1-1': 1,
-		'2-1': 1,
-		'3-1': 1,
-		'4-1': 1,
-		'5-1': 1,
-		'6-1': 1,
-		'7-1': 1,
-		'8-1': 1,
-		'23-2': 1,
-		'8-3': 1,
-		'10-3': 1,
-		'1-5': 1,
-		'2-5': 1,
-		'9-5': 1,
-		'12-6': 1,
-		'13-6': 1,
-		'3-11': 1,
-		'4-11': 1
-	}, '2015': {
-		'1-1': 1,
-		'2-1': 1,
-		'3-1': 1,
-		'4-1': 1,
-		'5-1': 1,
-		'6-1': 1,
-		'7-1': 1,
-		'8-1': 1,
-		'23-2': 1,
-		'8-3': 1,
-		'1-5': 1,
-		'9-5': 1,
-		'12-6': 1,
-		'4-11': 1
-	}
+    '2011': {
+        '1-1': 1,
+        '2-1': 1,
+        '3-1': 1,
+        '4-1': 1,
+        '5-1': 1,
+        '6-1': 1,
+        '7-1': 1,
+        '10-1': 1,
+        '23-2': 1,
+        '5-3': 0,
+        '7-3': 1,
+        '8-3': 1,
+        '1-5': 1,
+        '2-5': 1,
+        '9-5': 1,
+        '12-6': 1,
+        '13-6': 1,
+        '4-11': 1
+    }, '2012': {
+        '1-1': 1,
+        '2-1': 1,
+        '3-1': 1,
+        '4-1': 1,
+        '5-1': 1,
+        '6-1': 1,
+        '7-1': 1,
+        '9-1': 1,
+        '23-2': 1,
+        '8-3': 1,
+        '9-3': 1,
+        '11-3': 0,
+        '28-4': 0,
+        '30-4': 1,
+        '1-5': 1,
+        '5-5': 0,
+        '7-5': 1,
+        '8-5': 1,
+        '9-5': 1,
+        '12-5': 0,
+        '9-6': 0,
+        '11-6': 1,
+        '12-6': 1,
+        '4-11': 1,
+        '5-11': 1,
+        '29-12': 0,
+        '31-12': 1
+    }, '2013': {
+        '1-1': 1,
+        '2-1': 1,
+        '3-1': 1,
+        '4-1': 1,
+        '5-1': 1,
+        '6-1': 1,
+        '7-1': 1,
+        '8-1': 1,
+        '23-2': 1,
+        '8-3': 1,
+        '1-5': 1,
+        '2-5': 1,
+        '3-5': 1,
+        '9-5': 1,
+        '10-5': 1,
+        '12-6': 1,
+        '4-11': 1
+    }, '2014': {
+        '1-1': 1,
+        '2-1': 1,
+        '3-1': 1,
+        '4-1': 1,
+        '5-1': 1,
+        '6-1': 1,
+        '7-1': 1,
+        '8-1': 1,
+        '23-2': 1,
+        '8-3': 1,
+        '10-3': 1,
+        '1-5': 1,
+        '2-5': 1,
+        '9-5': 1,
+        '12-6': 1,
+        '13-6': 1,
+        '3-11': 1,
+        '4-11': 1
+    }, '2015': {
+        '1-1': 1,
+        '2-1': 1,
+        '3-1': 1,
+        '4-1': 1,
+        '5-1': 1,
+        '6-1': 1,
+        '7-1': 1,
+        '8-1': 1,
+        '23-2': 1,
+        '8-3': 1,
+        '1-5': 1,
+        '9-5': 1,
+        '12-6': 1,
+        '4-11': 1
+    }
 });
 
 Calendula.addHolidays('tr', {
-	'2011': {
-		'1-1': 1,
-		'23-4': 1,
-		'1-5': 1,
-		'19-5': 1,
-		'30-8': 1,
-		'31-8': 1,
-		'1-9': 1,
-		'29-10': 1,
-		'6-11': 1,
-		'7-11': 1,
-		'8-11': 1,
-		'9-11': 1
-	}, '2012': {
-		'1-1': 1,
-		'23-4': 1,
-		'1-5': 1,
-		'19-5': 1,
-		'30-8': 1,
-		'29-10': 1
-	}, '2013': {
-		'1-1': 1,
-		'23-4': 1,
-		'1-5': 1,
-		'19-5': 1,
-		'7-8': 1,
-		'8-8': 1,
-		'9-8': 1,
-		'10-8': 1,
-		'30-8': 1,
-		'14-10': 1,
-		'15-10': 1,
-		'16-10': 1,
-		'17-10': 1,
-		'18-10': 1,
-		'28-10': 1,
-		'29-10':1
-	}, '2014': {
-		'1-1': 1,
-		'23-4': 1,
-		'1-5': 1,
-		'19-5': 1,
-		'27-7': 1,
-		'28-7': 1,
-		'29-7': 1,
-		'30-7': 1,
-		'30-8': 1,
-		'3-10': 1,
-		'4-10': 1,
-		'5-10': 1,
-		'6-10': 1,
-		'28-10': 1,
-		'29-10': 1
-	}, '2015': {
-		'1-1': 1,
-		'23-4': 1,
-		'1-5': 1,
-		'19-5': 1,
-		'30-8': 1,
-		'29-10': 1
-	}
+    '2011': {
+        '1-1': 1,
+        '23-4': 1,
+        '1-5': 1,
+        '19-5': 1,
+        '30-8': 1,
+        '31-8': 1,
+        '1-9': 1,
+        '29-10': 1,
+        '6-11': 1,
+        '7-11': 1,
+        '8-11': 1,
+        '9-11': 1
+    }, '2012': {
+        '1-1': 1,
+        '23-4': 1,
+        '1-5': 1,
+        '19-5': 1,
+        '30-8': 1,
+        '29-10': 1
+    }, '2013': {
+        '1-1': 1,
+        '23-4': 1,
+        '1-5': 1,
+        '19-5': 1,
+        '7-8': 1,
+        '8-8': 1,
+        '9-8': 1,
+        '10-8': 1,
+        '30-8': 1,
+        '14-10': 1,
+        '15-10': 1,
+        '16-10': 1,
+        '17-10': 1,
+        '18-10': 1,
+        '28-10': 1,
+        '29-10':1
+    }, '2014': {
+        '1-1': 1,
+        '23-4': 1,
+        '1-5': 1,
+        '19-5': 1,
+        '27-7': 1,
+        '28-7': 1,
+        '29-7': 1,
+        '30-7': 1,
+        '30-8': 1,
+        '3-10': 1,
+        '4-10': 1,
+        '5-10': 1,
+        '6-10': 1,
+        '28-10': 1,
+        '29-10': 1
+    }, '2015': {
+        '1-1': 1,
+        '23-4': 1,
+        '1-5': 1,
+        '19-5': 1,
+        '30-8': 1,
+        '29-10': 1
+    }
 });
 
 Calendula.addHolidays('uk', {
-	'2011': {
-		'1-1': 1,
-		'3-1': 1,
-		'7-1': 1,
-		'8-3': 1,
-		'15-4': 1,
-		'24-4': 1,
-		'25-4': 1,
-		'1-5': 1,
-		'2-5': 1,
-		'3-5': 1,
-		'9-5': 1,
-		'3-6': 1,
-		'12-6': 1,
-		'13-6': 1,
-		'28-6': 1,
-		'24-8': 1
-	}, '2012': {
-		'1-1': 1,
-		'2-1': 1,
-		'6-1': 1,
-		'7-1': 1,
-		'3-3': 0,
-		'8-3': 1,
-		'9-3': 1,
-		'16-4': 1,
-		'28-4': 0,
-		'30-4': 1,
-		'1-5': 1,
-		'2-5': 1,
-		'9-5': 1,
-		'4-6': 1,
-		'28-6': 1,
-		'29-6': 1,
-		'7-7': 0,
-		'24-8': 1
-	}, '2013': {
-		'1-1': 1,
-		'7-1': 1,
-		'8-3': 1,
-		'1-5': 1,
-		'2-5': 1,
-		'3-5': 1,
-		'5-5': 1,
-		'6-5': 1,
-		'9-5': 1,
-		'10-5': 1,
-		'18-5': 0,
-		'1-6': 0,
-		'23-6': 1,
-		'24-6': 1,
-		'28-6': 1,
-		'24-8': 1,
-		'26-8': 1
-	}, '2014': {
-		'1-1': 1,
-		'2-1': 1,
-		'3-1': 1,
-		'6-1': 1,
-		'7-1': 1,
-		'11-1': 0,
-		'25-1': 0,
-		'8-2': 0,
-		'8-3': 1,
-		'10-3': 1,
-		'20-4': 1,
-		'21-4': 1,
-		'1-5': 1,
-		'2-5': 1,
-		'9-5': 1,
-		'8-6': 1,
-		'9-6': 1,
-		'28-6': 1,
-		'30-6': 1,
-		'24-8': 1,
-		'25-8': 1
-	}, '2015': {
-		'1-1': 1,
-		'7-1': 1,
-		'8-3': 1,
-		'1-5': 1,
-		'2-5': 1,
-		'9-5': 1,
-		'28-6': 1,
-		'24-8': 1
-	}
+    '2011': {
+        '1-1': 1,
+        '3-1': 1,
+        '7-1': 1,
+        '8-3': 1,
+        '15-4': 1,
+        '24-4': 1,
+        '25-4': 1,
+        '1-5': 1,
+        '2-5': 1,
+        '3-5': 1,
+        '9-5': 1,
+        '3-6': 1,
+        '12-6': 1,
+        '13-6': 1,
+        '28-6': 1,
+        '24-8': 1
+    }, '2012': {
+        '1-1': 1,
+        '2-1': 1,
+        '6-1': 1,
+        '7-1': 1,
+        '3-3': 0,
+        '8-3': 1,
+        '9-3': 1,
+        '16-4': 1,
+        '28-4': 0,
+        '30-4': 1,
+        '1-5': 1,
+        '2-5': 1,
+        '9-5': 1,
+        '4-6': 1,
+        '28-6': 1,
+        '29-6': 1,
+        '7-7': 0,
+        '24-8': 1
+    }, '2013': {
+        '1-1': 1,
+        '7-1': 1,
+        '8-3': 1,
+        '1-5': 1,
+        '2-5': 1,
+        '3-5': 1,
+        '5-5': 1,
+        '6-5': 1,
+        '9-5': 1,
+        '10-5': 1,
+        '18-5': 0,
+        '1-6': 0,
+        '23-6': 1,
+        '24-6': 1,
+        '28-6': 1,
+        '24-8': 1,
+        '26-8': 1
+    }, '2014': {
+        '1-1': 1,
+        '2-1': 1,
+        '3-1': 1,
+        '6-1': 1,
+        '7-1': 1,
+        '11-1': 0,
+        '25-1': 0,
+        '8-2': 0,
+        '8-3': 1,
+        '10-3': 1,
+        '20-4': 1,
+        '21-4': 1,
+        '1-5': 1,
+        '2-5': 1,
+        '9-5': 1,
+        '8-6': 1,
+        '9-6': 1,
+        '28-6': 1,
+        '30-6': 1,
+        '24-8': 1,
+        '25-8': 1
+    }, '2015': {
+        '1-1': 1,
+        '7-1': 1,
+        '8-3': 1,
+        '1-5': 1,
+        '2-5': 1,
+        '9-5': 1,
+        '28-6': 1,
+        '24-8': 1
+    }
 });
-
-
-return Calendula;
-
-})(this, this.document);

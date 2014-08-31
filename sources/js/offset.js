@@ -1,4 +1,4 @@
-extend(Calendula.prototype, {
+extend(Cln.prototype, {
     _left: function(elem, x) {
         elem.style.left = x + 'px';
     },

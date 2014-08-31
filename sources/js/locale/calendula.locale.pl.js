@@ -1,18 +1,18 @@
 Calendula.addLocale('pl', {
     months: [
-    	'styczeń',
-    	'luty',
-    	'marzec',
-    	'kwiecień',
-    	'maj',
-    	'czerwiec',
-    	'lipiec',
-    	'sierpień',
-    	'wrzesień',
-    	'październik',
-    	'listopad',
-    	'grudzień'
-	],
+        'styczeń',
+        'luty',
+        'marzec',
+        'kwiecień',
+        'maj',
+        'czerwiec',
+        'lipiec',
+        'sierpień',
+        'wrzesień',
+        'październik',
+        'listopad',
+        'grudzień'
+    ],
     caseMonths: [
         'stycznia',
         'lutego',

@@ -11,13 +11,17 @@ var paths = {
         'sources/js/vars.js',
         'sources/js/main.js',
         'sources/js/dom.js',
+        'sources/js/object.js',
         'sources/js/offset.js',
+        'sources/js/number.js',
+        'sources/js/jshtml.js',
         'sources/js/timeout.js',
         'sources/js/event.js',
         'sources/js/template.js',
         'sources/js/holiday.js',
         'sources/js/date.js',
-        'sources/js/locale.js'
+        'sources/js/locale.js',
+        'sources/js/end.js'
     ],
     mainCss: [
         'sources/css/calendula.css'
@@ -33,9 +37,9 @@ var paths = {
     ]
 };
 
-paths.devJs = paths.mainJs.concat('sources/js/locale/*.js', 'sources/js/holiday/*.js', 'sources/js/end.js');
-paths.prodJsBase = paths.mainJs.concat('sources/js/end.js');
-paths.prodJsAll = paths.mainJs.concat('sources/js/locale/calendula.locale.*.js', 'sources/js/locale/calendula.holiday.*.js', 'sources/js/end.js');
+paths.devJs = paths.mainJs.concat('sources/js/locale/*.js', 'sources/js/holiday/*.js');
+paths.prodJsBase = paths.mainJs;
+paths.prodJsAll = paths.mainJs.concat('sources/js/locale/calendula.locale.*.js', 'sources/js/locale/calendula.holiday.*.js');
 
 paths.devCss = paths.mainCss.concat('sources/css/calendula.theme.*.css');
 paths.prodCssAll = paths.mainCss.concat('sources/css/calendula.theme.*.css');

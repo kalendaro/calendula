@@ -2,7 +2,7 @@ var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Mod
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
     'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
 
-extend(Calendula.prototype, {
+extend(Cln.prototype, {
     on: function(type, callback) {
         if(type && callback) {
             this._eventBuf = this._eventBuf || [];

@@ -10,7 +10,7 @@ function isLeapYear(y) {
     return false;
 }
 
-extend(Calendula.prototype, {
+extend(Cln.prototype, {
     _parseDate: function(value) {
         var date = null,
             match,
@@ -29,7 +29,7 @@ extend(Calendula.prototype, {
                 }
                 
                 if(buf) {
-                    date = new Date(parseInt(buf[2], 10), parseInt(buf[1], 10), parseInt(buf[0], 10));
+                    date = new Date(parseNum(buf[2]), parseNum(buf[1]), parseNum(buf[0]));
                 }
             } else if(typeof value === 'object') {
                 if(value instanceof Date) {
