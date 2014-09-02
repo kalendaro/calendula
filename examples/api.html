@@ -95,6 +95,24 @@
                 </td>
             </tr>
             <tr>
+                <td>
+                    position
+                <td>
+                    <select id="cl-position">
+                        <option value="auto">auto</option>
+                        <option value="left-top">left-top</option>
+                        <option value="center-top">center-top</option>
+                        <option value="right-top">right-top</option>
+                        <option value="right-middle">right-middle</option>
+                        <option value="right-bottom">right-bottom</option>
+                        <option value="center-bottom">center-bottom</option>
+                        <option value="left-bottom">left-bottom</option>
+                        <option value="left-middle">left-middle</option>
+                        <option value="object">{left: 10, top: 10}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
                 <td colspan="2">
                     <input type="checkbox" checked="checked" id="cl-autoclose" /> <label for="cl-autoclose">autoclose</label>
                 </td>
@@ -160,6 +178,7 @@ window.addEventListener('load', function() {
         clAutoclose = getById('cl-autoclose'),
         clCloseAfterSelection = getById('cl-closeAfterSelection'),
         clDaysAfterMonths = getById('cl-daysAfterMonths'),
+        clPosition = getById('cl-position'),
         button = getById('example-button'),
         minDate = new Date(),
         maxDate = new Date();
@@ -218,6 +237,13 @@ window.addEventListener('load', function() {
     clMaxSet.addEventListener('click', function() {
         cl.setting('max', clMax.value);
     }, false);
+
+    clPosition.addEventListener('change', function() {
+        var val = this.value;
+        val = val === 'object' ? {left: 100, top: 100} : val;
+
+        cl.setting('position', val);
+    });
 
     clAutoclose.addEventListener('change', function() {
         cl.setting('autoclose', this.checked);
