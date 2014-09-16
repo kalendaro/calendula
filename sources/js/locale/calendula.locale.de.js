@@ -13,7 +13,16 @@ Calendula.addLocale('de', {
         'November',
         'Dezember'
     ],
-    shortWeekDays: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+    shortDayNames: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+    dayNames: [
+        'Sonntag',
+        'Montag',
+        'Dienstag',
+        'Mittwoch',
+        'Donnerstag',
+        'Freitag',
+        'Samstag'
+    ],
     today: 'Heute',
-    firstWeekDay: 1
+    firstWeekday: 1
 });

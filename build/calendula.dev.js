@@ -1,5 +1,5 @@
 /*! Calendula | (c) 2014 Denis Seleznev | https://github.com/hcodes/calendula/ */
-var Calendula = (function(window, document) {
+var Calendula = (function(window, document, Date, undefined) {
 
 'use strict';
 
@@ -21,32 +21,35 @@ var Cln = function(data) {
     data = extend({}, data || {});
     
     var years = this._prepareYears(data.years),
-        that = this;
-        
-    this._data = extend(data, {
-        autoclose: typeof data.autoclose === 'undefined' ? true : data.autoclose,
-        closeAfterSelection: typeof data.closeAfterSelection === 'undefined' ? true : data.closeAfterSelection,
-        locale: data.locale || Cln._defaultLocale,
-        theme: data.theme || 'default',
-        min: this._parseDateToObj(data.min),
-        max: this._parseDateToObj(data.max),
-        _startYear: years.start,
-        _endYear: years.end
-    });
-    
-    this._domEvent = new DomEvent();
-    
-    this.val(this._data.value);
+        d = extend(data, {
+            autoclosable: isUndefined(data.autoclosable) ? true : data.autoclosable,
+            closeAfterSelection: isUndefined(data.closeAfterSelection) ? true : data.closeAfterSelection,
+            locale: data.locale || Cln._defaultLocale,
+            min: this._parseDateToObj(data.min),
+            max: this._parseDateToObj(data.max),
+            showOn: data.showOn || 'click',
+            theme: data.theme || 'default',
+            _startYear: years.start,
+            _endYear: years.end
+        });
 
-    var button = this.setting('button');
-    if(button) {
-        this._domEvent.on(button, 'click', function() {
-            that.toggle();
-        }, 'init');
-    }
+    this._data = d;
+    
+    this._initPlugins([
+        ['event', Event],
+        ['domEvent', DomEvent],
+        ['template', Template],
+        ['timeout', Timeout],
+        ['title', Title],
+        ['tooltip', Tooltip]
+    ]);
+
+    this.val(d.value);
+
+    this._addSwitcherEvents(d.showOn);
 };
 
-Cln.version = '0.9.0';
+Cln.version = '0.9.9';
 
 extend(Cln.prototype, {
     isOpened: function() {
@@ -61,8 +64,8 @@ extend(Cln.prototype, {
         
         if(!this.isOpened()) {
             // For Firefox CSS3 animation
-            this._timeout.set(function() {
-                addClass(that._container, mod('opened'));
+            this.timeout.set(function() {
+                setMod(that._container, 'opened');
                 that._update();
                 that._monthSelector(that._currentDate.month, false);
                 that._yearSelector(that._currentDate.year, false);
@@ -71,7 +74,7 @@ extend(Cln.prototype, {
             
             this._isOpened = true;
             
-            this.trigger('open');
+            this.event.trigger('open');
         }
         
         return this;
@@ -82,29 +85,25 @@ extend(Cln.prototype, {
         if(this.isOpened()) {
             this._ignoreDocumentClick = false;
 
-            this._timeout.clearAll('open');
+            this.timeout.clearAll('open');
             
             this._update();
 
             this._delOpenedEvents();
 
-            removeClass(this._container, mod('opened'));
+            delMod(this._container, 'opened');
 
             this._isOpened = false;
+
+            this.tooltip.hide();
             
-            this.trigger('close');
+            this.event.trigger('close');
         }
         
         return this;
     },
     toggle: function() {
-        if(this.isOpened()) {
-            this.close();
-        } else {
-            this.open();
-        }
-        
-        return this;
+        return this.isOpened() ? this.close : this.open();
     },
     val: function(value) {
         if(!arguments.length) {
@@ -123,40 +122,41 @@ extend(Cln.prototype, {
             this._updateSelection();
         }
         
-        this._updateButton();
+        this._updateSwitcher();
     },
     setting: function(name, value) {
-        if(arguments.length === 1) {
-            return this._data[name];
-        }
-        
-        var oldValue = this._data[name],
+        var d = this._data,
             container = this._container,
-            m,
             rebuild = {
                 min: true,
                 max: true,
                 locale: true
             };
-        
+
+        if(arguments.length === 1) {
+            return d[name];
+        }
+                
         if(name === 'min' || name === 'max' || name === 'value') {
-            this._data[name] = this._parseDateToObj(value);
+            d[name] = this._parseDateToObj(value);
         } else {
-            this._data[name] = value;
+            d[name] = value;
+        }
+
+        if(name === 'showOn') {
+            this._addSwitcherEvents(value);
         }
         
         if(container) {
             if(name === 'theme') {
-                removeClass(container, mod('theme', oldValue));
-                addClass(container, mod('theme', value));
+                setMod(container, 'theme', value);
             }
             
             if(name === 'daysAfterMonths') {
-                m = mod('days-after-months');
                 if(value) {
-                    addClass(container, m);
+                    setMod(container, 'days-after-months');
                 } else {
-                    removeClass(container, m);
+                    delMod(container, 'days-after-months');
                 }
             }
             
@@ -171,21 +171,16 @@ extend(Cln.prototype, {
         if(this._isInited) {
             this.close();
             
-            this._timeout.clearAll();
-            
-            this._eventBuf = [];
-            this._domEvent.offAll();
+            this._removePlugins();
             
             document.body.removeChild(this._container);
             
             [
                 '_container',
                 '_data',
-                '_domEvent',
                 '_ignoreDocumentClick',
                 '_isInited',
-                '_isOpened',
-                '_timeout'
+                '_isOpened'
             ].forEach(function(el) {
                 delete this[el];
             }, this);
@@ -197,10 +192,6 @@ extend(Cln.prototype, {
         }
         
         this._isInited = true;
-
-        this._timeout = new Timeout();
-
-        this._templates.parent = this;
                 
         var id = this.setting('id'),
             container = document.createElement('div');
@@ -212,10 +203,10 @@ extend(Cln.prototype, {
         }
         
         addClass(container, NS);
-        addClass(container, mod('theme', this._data.theme));
+        setMod(container, 'theme', this._data.theme);
         
         if(this.setting('daysAfterMonths')) {
-            addClass(container, mod('days-after-months'));
+            setMod(container, 'days-after-months');
         }
         
         this._rebuild();
@@ -234,22 +225,18 @@ extend(Cln.prototype, {
     _update: function() {
         this._init();
         
-        var button = this.setting('button'),
-            offset;
-        if(button) {
-            offset = this._offset(button);
-            offset.top += button.offsetHeight;
-            this._position(this._container, offset);
+        if(this.setting('switcher')) {
+            this.position();
         }
     },
     _resize: function() {
         this._update();
     },
     _rebuild: function() {
-        this._container.innerHTML = this.template('main');
+        this._container.innerHTML = this.template.get('main');
     },
     _rebuildDays: function() {
-        this._elem('days-container').innerHTML = this.template('days');
+        this._elem('days-container').innerHTML = this.template.get('days');
         this._monthSelector(this._currentDate.month, false);
     },
     _openedEvents: function() {
@@ -257,8 +244,8 @@ extend(Cln.prototype, {
         
         this._ignoreDocumentClick = false;
         
-        this._domEvent.on(document, 'click', function(e) {
-            if(e.button || !that.setting('autoclose')) {
+        this.domEvent.on(document, 'click', function(e) {
+            if(e.button || !that.setting('autoclosable')) {
                 return;
             }
             
@@ -269,36 +256,41 @@ extend(Cln.prototype, {
             }
         }, 'open');
         
-        this._domEvent.on(window, 'resize', function() {
-            that._resize();
-        }, 'open');
-        
-        this._domEvent.on(document, 'keypress', function(e) {
-            if(e.keyCode === 27) { // ESC
-                that.close();
-            }
-        }, 'open');
-        
-        this._domEvent.on(this._container, 'click', function(e) {
-            if(e.button) {
-                return;
-            }
-            
-            that._ignoreDocumentClick = true;
-        }, 'open');
+        this.domEvent
+            .on(window, 'resize', function() {
+                that._resize();
+            }, 'open')
+            .on(document, 'keypress', function(e) {
+                if(e.keyCode === 27) { // ESC
+                    that.close();
+                }
+            }, 'open')
+            .on(this._container, 'click', function(e) {
+                if(e.button) {
+                    return;
+                }
+
+                that._ignoreDocumentClick = true;
+
+                that.tooltip.hide();
+            }, 'open');
         
         var days = this._elem('days'),
             months = this._elem('months'),
-            years = this._elem('years');
+            years = this._elem('years'),
+            getK = function(e) {
+                var k = 0;
+                if(e.deltaY > 0) {
+                    k = 1;
+                } else if(e.deltaY < 0) {
+                    k = -1;
+                }
+
+                return k;
+            };
         
         this._onwheelmonths = function(e) {
-            var k = 0;
-            if(e.deltaY > 0) {
-                k = 1;
-            } else if(e.deltaY < 0) {
-                k = -1;
-            }
-            
+            var k = getK(e);
             if(k) {
                 that._monthSelector(that._currentDate.month + k, true);
                 e.preventDefault();
@@ -306,34 +298,29 @@ extend(Cln.prototype, {
         };
         
         this._onwheelyears = function(e) {
-            var k = 0;
-            if(e.deltaY > 0) {
-                k = 1;
-            } else if(e.deltaY < 0) {
-                k = -1;
-            }
-            
+            var k = getK(e);            
             if(k) {
                 that._yearSelector(that._currentDate.year + k, true);
                 e.preventDefault();
             }
         };
         
-        this._domEvent.onWheel(days, this._onwheelmonths, 'open');
-        this._domEvent.onWheel(months, this._onwheelmonths, 'open');
-        this._domEvent.onWheel(years, this._onwheelyears, 'open');
+        this.domEvent
+            .onWheel(days, this._onwheelmonths, 'open')
+            .onWheel(months, this._onwheelmonths, 'open')
+            .onWheel(years, this._onwheelyears, 'open');
         
-        this._domEvent.on(months, 'click', function(e) {
+        this.domEvent.on(months, 'click', function(e) {
             if(e.button) {
                 return;
             }
 
-            if(hasClass(e.target, elem('month'))) {
+            if(hasElem(e.target, 'month')) {
                 that._monthSelector(+dataAttr(e.target, 'month'), true);
             }
         }, 'open');
         
-        this._domEvent.on(years, 'click', function(e) {
+        this.domEvent.on(years, 'click', function(e) {
             if(e.button) {
                 return;
             }
@@ -343,37 +330,51 @@ extend(Cln.prototype, {
                 that._yearSelector(+y, true);
             }
         }, 'open');
-        
-        this._domEvent.on(days, 'click', function(e) {
+
+        this.domEvent.on(days, 'mouseover', function(e) {
+            var target = e.target,
+                d = dataAttr(target, 'day'),
+                m = dataAttr(target, 'month'),
+                y = that._currentDate.year;
+
+            if(hasElem(target, 'day') && hasMod(target, 'has-title')) {
+                that.tooltip.show(target, that.title.get(that._internalDate(y, m, d)));
+            }
+        }, 'open');
+
+        this.domEvent.on(days, 'mouseout', function(e) {
+            if(hasElem(e.target, 'day')) {
+                that.tooltip.hide();
+            }
+        }, 'open');
+
+        this.domEvent.on(days, 'click', function(e) {
             if(e.button) {
                 return;
             }
 
-            var cl = elem('day', 'selected'),
-                cd = that._currentDate,
+            var cd = that._currentDate,
                 target = e.target,
                 day = dataAttr(target, 'day'),
                 month = dataAttr(target, 'month');
             
-            
-                
             if(day) {
-                if(hasClass(target, elem('day', 'minmax'))) {
+                if(hasMod(target, 'minmax')) {
                     return;
                 }
                 
-                if(!hasClass(target, cl)) {
+                if(!hasMod(target, 'selected')) {
                     cd.day = +day;
                     cd.month = +month;
                     
-                    var selected = days.querySelector('.' + cl);
+                    var selected = days.querySelector('.' + elem('day', 'selected'));
                     if(selected) {
-                        removeClass(selected, cl);
+                        delMod(selected, 'selected');
                     }
                     
-                    addClass(target, cl);
+                    setMod(target, 'selected');
                     
-                    that.trigger('select', {
+                    that.event.trigger('select', {
                         day: cd.day,
                         month: cd.month,
                         year: cd.year
@@ -385,6 +386,9 @@ extend(Cln.prototype, {
                 }
             }
         }, 'open');
+    },
+    _internalDate: function(y, m, d) {
+        return [y, leadZero(m), leadZero(d)].join('-');
     },
     _monthSelector: function(month, anim) {
         if(month < MIN_MONTH) {
@@ -402,13 +406,11 @@ extend(Cln.prototype, {
             selector = this._elem('month-selector'),
             daysContainer = this._elem('days-container'),
             days = this._elem('days'),
-            daysContainerTop,
-            noAnimDays = elem('days', 'noanim'),
-            noAnimMonths = elem('months', 'noanim');
+            daysContainerTop;
             
         if(!anim) {
-            addClass(days, noAnimDays);
-            addClass(months, noAnimMonths);
+            setMod(days, 'noanim');
+            setMod(months, 'noanim');
         }
         
         var top = Math.floor(this._currentDate.month * monthHeight - monthHeight / 2);
@@ -420,7 +422,7 @@ extend(Cln.prototype, {
             top = months.offsetHeight - selector.offsetHeight - 1;
         }
         
-        this._top(selector, top);
+        setTop(selector, top);
         
         daysContainerTop = -Math.floor(monthElem.offsetTop - days.offsetHeight / 2 + monthElem.offsetHeight / 2);
         if(daysContainerTop > 0) {
@@ -432,14 +434,14 @@ extend(Cln.prototype, {
             daysContainerTop = deltaHeight;
         }
         
-        this._top(daysContainer, daysContainerTop);
+        setTop(daysContainer, daysContainerTop);
         
         this._colorizeMonths(month);
         
         if(!anim) {
-            this._timeout.set(function() {
-                removeClass(days, noAnimDays);
-                removeClass(months, noAnimMonths);
+            this.timeout.set(function() {
+                delMod(days, 'noanim');
+                delMod(months, 'noanim');
             }, 0, 'anim');
         }
     },
@@ -464,7 +466,7 @@ extend(Cln.prototype, {
             noAnim = elem('years', 'noanim');
             
         if(!anim) {
-            addClass(years, noAnim);
+            setMod(years, 'noanim');
         }
         
         var topSelector = Math.floor((this._currentDate.year - startYear) * yearHeight),
@@ -491,14 +493,14 @@ extend(Cln.prototype, {
             this._rebuildDays(year);
         }
         
-        this._top(selector, topSelector);
-        this._top(yearsContainer, topContainer);
+        setTop(selector, topSelector);
+        setTop(yearsContainer, topContainer);
         
         this._colorizeYears(year);
         
         if(!anim) {
-            this._timeout.set(function() {
-                removeClass(years, noAnim);
+            this.timeout.set(function() {
+                delMod(years, 'noanim');
             }, 0, 'anim');
         }
     },
@@ -508,29 +510,28 @@ extend(Cln.prototype, {
         for(var c = 0; c < MAX_COLOR; c++) {
             var elems = this._elemAll('month', 'color', c);
             for(var i = 0, len = elems.length; i < len; i++) {
-                removeClass(elems[i], elem('month', 'color', c));
+                delMod(elems[i], 'color', c);
             }
         }
         
-        var cl0 = elem('month', 'color', '0');
-        addClass(months[month], cl0);
+        setMod(months[month], 'color', '0');
         
         if(month - 1 >= MIN_MONTH) {
-            addClass(months[month - 1], cl0);
+            setMod(months[month - 1], 'color', '0');
         }
         
         if(month + 1 <= MAX_MONTH) {
-            addClass(months[month + 1], cl0);
+            setMod(months[month + 1], 'color', '0');
         }
         
         var n = 1;
         for(c = month - 2; c >= MIN_MONTH && n < MAX_COLOR; c--, n++) {
-            addClass(months[c], elem('month', 'color', n));
+            setMod(months[c], 'color', n);
         }
         
         n = 1;
         for(c = month + 2; c <= MAX_MONTH && n < MAX_COLOR; c++, n++) {
-            addClass(months[c], elem('month', 'color', n));
+            setMod(months[c], 'color', n);
         }
     },
     _colorizeYears: function(year) {
@@ -540,24 +541,24 @@ extend(Cln.prototype, {
         for(var c = 0; c < MAX_COLOR; c++) {
             var elems = this._elemAll('year', 'color', c);
             for(var i = 0, len = elems.length; i < len; i++) {
-                removeClass(elems[i], elem('year', 'color', c));
+                delMod(elems[i], 'color', c);
             }
         }
         
-        addClass(years[year - startYear], elem('year', 'color', '0'));
+        setMod(years[year - startYear], 'color', '0');
         
         var n = 1;
         for(c = year - 1; c >= this._data._startYear && n < MAX_COLOR; c--, n++) {
-            addClass(years[c - startYear], elem('year', 'color', n));
+            setMod(years[c - startYear], 'color', n);
         }
         
         n = 1;
         for(c = year + 1; c <= this._data._endYear && n < MAX_COLOR; c++, n++) {
-            addClass(years[c - startYear], elem('year', 'color', n));
+            setMod(years[c - startYear], 'color', n);
         }
     },
     _delOpenedEvents: function() {
-        this._domEvent.offAll('open');
+        this.domEvent.offAll('open');
     },
     _prepareYears: function(y) {
         var current = this._current(),
@@ -565,7 +566,7 @@ extend(Cln.prototype, {
             startYear,
             endYear;
         
-        if(typeof y === 'string') {
+        if(isString(y)) {
             buf = y.trim().split(/[:,; ]/);
             startYear = parseNum(buf[0]);
             endYear = parseNum(buf[1]);
@@ -591,7 +592,7 @@ extend(Cln.prototype, {
             months;
        
         if(el) {
-            removeClass(el, elem('day', 'selected'));
+            delMod(el, 'selected');
         }
         
         if(this._currentDate.year === this._val.year) {
@@ -599,14 +600,29 @@ extend(Cln.prototype, {
             if(months && months[this._val.month]) {
                 el = this._elemAllContext(months[this._val.month], 'day');
                 if(el && el[this._val.day - 1]) {
-                    addClass(el[this._val.day - 1], elem('day', 'selected'));
+                    setMod(el[this._val.day - 1], 'selected');
                 }
             }
         }
     },
-    _updateButton: function() {
-        var el = this.setting('button'),
-            text = this._buttonText(),
+    _addSwitcherEvents: function(showOn) {
+        var switcher = this.setting('switcher'),
+            that = this,
+            events = isArray(showOn) ? showOn : [showOn || 'click'];
+            
+        this.domEvent.offAll('switcher');
+
+        if(switcher) {
+            events.forEach(function(el) {
+                that.domEvent.on(switcher, el, function() {
+                    that.open();
+                }, 'switcher');
+            });
+        }
+    },
+    _updateSwitcher: function() {
+        var el = this.setting('switcher'),
+            text = this._switcherText(),
             tagName;
             
         if(el) {
@@ -618,7 +634,7 @@ extend(Cln.prototype, {
             }
         }
     },
-    _buttonText: function() {
+    _switcherText: function() {
         var date = this._currentDate,
             m = this.text('months'),
             cm = this.text('caseMonths');
@@ -627,92 +643,191 @@ extend(Cln.prototype, {
     }
 });
 
-var elem = function(name, mod, val) {
-        if(val === null || val === undefined) {
+var div = document.createElement('div'),
+    dataAttr = div.dataset ? function(el, name) {
+        return el.dataset[name];
+    } : function(el, name) { // support IE9
+        return el.getAttribute('data-' + name);
+    },
+    hasClassList = !!div.classList,
+    addClass = hasClassList ? function(el, name) {
+        return el.classList.add(name);
+    } : function(el, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        if(!re.test(name.className)) {
+            el.className = (el.className + ' ' + name).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+        }
+    },
+    removeClass = hasClassList ? function(el, name) {
+        return el.classList.remove(name);    
+    } : function(el, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        el.className = el.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+    },
+    hasClass = hasClassList ? function(el, name) {
+        return el.classList.contains(name);
+    } : function(el, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        return el.className.search(re) !== -1;
+    };
+
+var elem = function(name, m, val) {
+        if(val === null || val === false) {
+            name = '';
+        } else if(val === true || val === undefined) {
             val = '';
         }
         
-        return NS + '__' + name + (mod ? '_' + mod + (val === '' ? '' : '_' + val) : '');
+        return NS + '__' + name + (m ? '_' + m + (val === '' ? '' : '_' + val) : '');
     },
     mod = function(name, val) {
-        if(val === null || val === undefined) {
+        if(val === null || val === false) {
+            name = '';
+        } else if(val === true || val === undefined) {
             val = '';
         }
         
         return NS + '_' + name + (val === '' ? '' : '_' + val);
     },
-    div = document.createElement('div'),
-    dataAttr = div.dataset ? function(elem, name) {
-        return elem.dataset[name];
-    } : function(elem, name) { // support IE9
-        return elem.getAttribute('data-' + name);
+    delMod = function(el, m) {
+        var e = getElemName(el),
+            selector = e ? elem(e, m) : mod(m),
+            classes = (el.className || '').split(' ');
+
+        classes.forEach(function(cl) {
+            if(cl === selector || cl.search(selector + '_') !== -1) {
+                removeClass(el, cl);
+            }
+        });
     },
-    hasClassList = !!div.classList,
-    addClass = hasClassList ? function(elem, name) {
-        return elem.classList.add(name);
-    } : function(elem, name) { // support IE9
-        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
-        if(!re.test(name.className)) {
-            elem.className = (elem.className + ' ' + name).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
-        }
+    setMod = function(el, m, val) {
+        var e = getElemName(el);
+        delMod(el, m);
+        addClass(el, e ? elem(e, m, val) : mod(m, val));
     },
-    removeClass = hasClassList ? function(elem, name) {
-        return elem.classList.remove(name);    
-    } : function(elem, name) { // support IE9
-        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
-        elem.className = elem.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+    hasMod = function(el, m, val) {
+        var e = getElemName(el);
+
+        return hasClass(el, e ? elem(e, m, val) : mod(m, val));
     },
-    hasClass = hasClassList ? function(elem, name) {
-        return elem.classList.contains(name);
-    } : function(elem, name) { // support IE9
-        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
-        return elem.className.search(re) !== -1;
+    hasElem = function(el, e) {
+        return hasClass(el, elem(e));
+    },
+    getElemName = function(el) {
+        var buf = el.className.match(/__([^ _$]+)/);
+        return buf ? buf[1] : '';
     };
 
-extend(Cln.prototype, {
-    _elem: function(name, mod, val) {
-        return this._container.querySelector('.' + elem(name, mod, val));
+var _Em = {
+    _elem: function(e, m, val) {
+        return this._container.querySelector('.' + elem(e, m, val));
     },
-    _elemContext: function(context, name, mod, val) {
-        return context.querySelector('.' + elem(name, mod, val));
+    /*_elemContext: function(context, e, m, val) {
+        return context.querySelector('.' + elem(e, m, val));
+    },*/
+    _elemAll: function(e, m, val) {
+        return this._container.querySelectorAll('.' + elem(e, m, val));
     },
-    _elemAll: function(name, mod, val) {
-        return this._container.querySelectorAll('.' + elem(name, mod, val));
-    },
-    _elemAllContext: function(context, name, mod, val) {
-        return context.querySelectorAll('.' + elem(name, mod, val));
+    _elemAllContext: function(context, e, m, val) {
+        return context.querySelectorAll('.' + elem(e, m, val));
     }
-});
+};
+
+extend(Cln.prototype, _Em);
 
 var isArray = Array.isArray;
+
 var isPlainObj = function(obj) {
     return Object.prototype.toString.call(obj) === '[object Object]';
 };
 
-extend(Cln.prototype, {
-    _left: function(elem, x) {
-        elem.style.left = x + 'px';
-    },
-    _top: function(elem, y) {
-        elem.style.top = y + 'px';
-    },
-    _position: function(elem, coords) {
-        this._left(elem, coords.left);
-        this._top(elem, coords.top);
-    },
-    _offset: function(elem) {
-        var box = {top: 0, left: 0};
+var isString = function(obj) {
+    return typeof obj === 'string';
+};
 
-        // If we don't have gBCR, just use 0,0 rather than error
-        // BlackBerry 5, iOS 3 (original iPhone)
-        if(typeof elem.getBoundingClientRect !== 'undefined') {
-            box = elem.getBoundingClientRect();
+var isNumber = function(obj) {
+    return typeof obj === 'number';
+};
+
+var isObject = function(obj) {
+    return typeof obj === 'object';
+};
+
+var isUndefined = function(obj) {
+    return typeof obj === 'undefined';
+};
+
+var getOffset = function(el) {
+    var box = {top: 0, left: 0};
+
+    // If we don't have gBCR, just use 0,0 rather than error
+    // BlackBerry 5, iOS 3 (original iPhone)
+    if(!isUndefined(el.getBoundingClientRect)) {
+        box = el.getBoundingClientRect();
+    }
+    
+    return {
+        top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
+        left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
+    };
+};
+
+var setPosition = function(elem, x, y) {
+    setLeft(elem, x);
+    setTop(elem, y);
+};
+
+var setLeft = function(elem, x) {
+    elem.style.left = isNumber(x) ? x + 'px' : x;
+};
+
+var setTop = function(elem, y) {
+    elem.style.top = isNumber(y) ? y + 'px' : y;
+};
+
+extend(Cln.prototype, {
+    position: function() {
+        var pos = this.setting('position') || 'left bottom',
+            switcher = this.setting('switcher'),
+            p = getOffset(switcher),
+            buf, x, y,
+            con = this._container,
+            conWidth = con.offsetWidth,
+            conHeight = con.offsetHeight,
+            switcherWidth = switcher.offsetWidth,
+            switcherHeight = switcher.offsetHeight;
+
+        if(isString(pos)) {
+            buf = pos.trim().split(/ +/);
+            x = p.left;
+            y = p.top;
+
+            switch(buf[0]) {
+                case 'center':
+                    x += -(conWidth - switcherWidth) / 2;
+                break;
+                case 'right':
+                    x += switcherWidth - conWidth;
+                break;
+            }
+
+            switch(buf[1]) {
+                case 'top':
+                    y += -conHeight;
+                break;
+                case 'center':
+                    y += -(conHeight - switcherHeight) / 2;
+                break;
+                case 'bottom':
+                    y += switcherHeight;
+                break;
+            }
+        } else {
+            x = p.left;
+            y = p.top;
         }
-        
-        return {
-            top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
-            left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
-        };
+
+        setPosition(this._container, x, y);
     }
 });
 
@@ -756,13 +871,34 @@ var jshtml = (function() {
 
     var attrs = function(data) {
         var keys = Object.keys(data),
-            ignoredItems = ['cl', 'class', 'c', 't'],
-            cl = data['cl'] || data['class'],
+            ignoredItems = ['c', 't', 'e', 'm'],
             text = [],
+            classes = [],
+            i,
             buf = '';
 
-        if(cl) {
-            text.push(attr('class', cl));
+        if(data.e) {
+            classes.push(elem(data.e));
+        }
+
+        if(data.m) {
+            if(data.e) {
+                for(i in data.m) {
+                    if(data.m.hasOwnProperty(i)) {
+                        classes.push(elem(data.e, i, data.m[i]));
+                    }
+                } 
+            } else {
+                for(i in data.m) {
+                    if(data.m.hasOwnProperty(i)) {
+                        classes.push(mod(i, data.m[i]));
+                    }
+                } 
+            }
+        }
+
+        if(classes.length) {
+            text.push(attr('class', classes));
         }
 
         for(var i = 0, len = keys.length; i < len; i++) {
@@ -785,13 +921,18 @@ var jshtml = (function() {
     return buildItem;
 })();
 
-var Timeout = function() {};
+function Timeout() {
+    this._buf = [];
+}
 
 extend(Timeout.prototype, {
     set: function(callback, time, ns) {
-        this._buf = this._buf || [];
+        var that = this,
+            id = setTimeout(function() {
+                callback();
+                that.clear(id);
+            }, time);
 
-        var id = setTimeout(callback, time);
         this._buf.push({
             id: id,
             ns: ns
@@ -800,28 +941,49 @@ extend(Timeout.prototype, {
         return id;
     },
     clear: function(id) {
-        if(this._buf) {
-            this._buf.forEach(function(el, i) {
+        var buf = this._buf,
+            index = -1;
+
+        if(buf) {
+            buf.some(function(el, i) {
                 if(el.id === id) {
-                    clearTimeout(id);
-                    this._buf.slice(i, 1);
+                    index = i;
+                    return true;
                 }
-            }, this);
+
+                return false;
+            });
+
+            if(index >= 0) {
+                clearTimeout(buf[index].id);
+                buf.splice(index, 1);
+            }
         }
     },
     clearAll: function(ns) {
-        if(this._buf) {
-            this._buf.forEach(function(el, i) {
+        var oldBuf = this._buf,
+            newBuf = [];
+
+        if(oldBuf) {
+            oldBuf.forEach(function(el, i) {
                 if(ns) {
                     if(ns === el.ns) {
                         clearTimeout(el.id);
-                        this._buf.slice(i, 1);
+                    } else {
+                        newBuf.push(el);
                     }
                 } else {
-                    this._buf.slice(i, 1);
+                    clearTimeout(el.id);
                 }
             }, this);
+
+            this._buf = ns ? newBuf : [];
         }
+    },
+    destroy: function() {
+        this.clearAll();
+
+        delete this._buf;
     }
 });
 
@@ -829,12 +991,14 @@ var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Mod
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
     'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
 
-extend(Cln.prototype, {
+function Event() {
+    this._buf = [];
+}
+
+extend(Event.prototype, {
     on: function(type, callback) {
-        if(type && callback) {
-            this._eventBuf = this._eventBuf || [];
-            
-            this._eventBuf.push({
+        if(type && callback) {            
+            this._buf.push({
                 type: type,
                 callback: callback
             });
@@ -843,35 +1007,41 @@ extend(Cln.prototype, {
         return this;
     },
     off: function(type, callback) {
-        if(this._eventBuf) {
-            this._eventBuf.forEach(function(el, i) {
-                if(type === el.type && callback === el.callback) {
-                    this._eventBuf.slice(i, 1);
-                }
-            });
+        var buf = this._buf;
+        
+        for(var i = 0; i < buf.length; i++) {
+            if(callback === buf[i].callback && type === buf[i].type) {
+                buf.splice(i, 1);
+                i--;
+            }
         }
         
         return this;
     },
     trigger: function(type) {
-        var args = arguments;
-        if(type && this._eventBuf) {
-            this._eventBuf.forEach(function(el, i) {
-                if(type === el.type) {
-                    el.callback.apply(this, [{type: type}].concat(Array.prototype.slice.call(args, 1)));
-                }
-            }, this);
+        var buf = this._buf;
+
+        for(var i = 0; i < buf.length; i++) {
+            if(type === buf[i].type) {
+                buf[i].callback.apply(this, [{type: type}].concat(Array.prototype.slice.call(arguments, 1)));
+            }
         }
         
         return this;
+    },
+    destroy: function() {
+        delete this._buf;
     }
 });
 
-var DomEvent = function() {};
+function DomEvent() {
+    this._buf = [];
+}
+
 extend(DomEvent.prototype, {
     onWheel: function(elem, callback, ns) {
         // handle MozMousePixelScroll in older Firefox
-        this.on(elem,
+        return this.on(elem,
             supportWheel === 'DOMMouseScroll' ? 'MozMousePixelScroll' : supportWheel,
             supportWheel === 'wheel' ? callback : function(originalEvent) {
                 if(!originalEvent) {
@@ -904,298 +1074,328 @@ extend(DomEvent.prototype, {
 
                 return callback(event);
         }, ns);
-        
-        return this;
     },    
     on: function(elem, type, callback, ns) {
         if(elem && type && callback) {                
             elem.addEventListener(type, callback, false);
-            this._buf = this._buf || [];
-            this._buf.push({elem: elem, type: type, callback: callback, ns: ns});
+
+            this._buf.push({
+                elem: elem,
+                type: type,
+                callback: callback,
+                ns: ns
+            });
         }
         
         return this;
     },
     off: function(elem, type, callback, ns) {
-        if(elem && type && callback && this._buf) {
-            this._buf.forEach(function(el, i) {
-                if(el && el.type === type && el.elem === elem && el.callback === callback && el.ns === ns) {
-                    elem.removeEventListener(type, callback, false);
-                    this._buf.slice(i, 1);
-                }
-            }, this);
+        var buf = this._buf;
+
+        for(var i = 0; i < buf.length; i++) {
+            var el = buf[i];
+            if(el && el.elem === elem && el.callback === callback && el.type === type && el.ns === ns) {
+                elem.removeEventListener(type, callback, false);
+                buf.splice(i, 1);
+                i--;
+            }
         }
         
         return this;
     },
     offAll: function(ns) {
-        if(this._buf) {
-            this._buf.forEach(function(el) {
-                if(el) {
-                    this.off(el.elem, el.type, el.callback, ns || el.ns);
+        var buf = this._buf;
+
+        for(var i = 0; i < buf.length; i++) {
+            var el = buf[i];
+
+            if(ns) {
+                if(ns === el.ns) {
+                    el.elem.removeEventListener(el.type, el.callback, false);
+                    buf.splice(i, 1);
+                    i--;
                 }
-            }, this);
-            
-            if(!ns) {
-                this._buf = [];
+            } else {
+                el.elem.removeEventListener(el.type, el.callback, false);
             }
         }
         
+        if(!ns) {
+            this._buf = [];
+        }
+        
         return this;
+    },
+    destroy: function() {
+        this.offAll();
+
+        delete this._buf;
     }
 });
 
 var SATURDAY = 6,
     SUNDAY = 0;
 
-extend(Cln.prototype, {
-    template: function(name) {
-        var t = this._templates;
-        return t._prepare(jshtml(t[name]()));
+function Template() {}
+
+extend(Template.prototype, {
+    get: function(name) {
+        return jshtml(this[name]());
     },
-    _templates: {
-        _prepare: function(str) {
-            return str.replace(/\$/g, NS + '__');
-        },
-        days: function() {
-            var buf = [];
+    days: function() {
+        var buf = [];
 
-            for(var m = MIN_MONTH; m <= MAX_MONTH; m++) {
-                buf.push(this.month(m, this.parent._currentDate.year));
-            }
+        for(var m = MIN_MONTH; m <= MAX_MONTH; m++) {
+            buf.push(this.month(m, this.parent._currentDate.year));
+        }
 
-            return buf;
-        },
-        weekdays: function() {
-            var first = this.parent.text('firstWeekDay') || 0;
-            var w = {
+        return buf;
+    },
+    dayNames: function() {
+        var first = this.parent.text('firstWeekday') || 0,
+            w = {
                 first: first,
                 last: !first ? SATURDAY : first - 1
+            },
+            n = first;
+
+        for(var i = 0; i < 7; i++) {
+            w[n] = i;
+
+            n++;
+            if(n > SATURDAY) {
+                n = SUNDAY;
+            }
+        }
+
+        return w;
+    },
+    month: function(m, y) {
+        var date = new Date(y, m, 1, 12, 0, 0, 0),
+            dateTs = date.getTime(),
+            current = new Date(),
+            isSelected = function(d, m, y) {
+                var val = par._val;
+                return d === val.day && m === val.month && y === val.year;
+            },
+            getTs = function(d) {
+                if(!d.year) {
+                    return null;
+                }
+
+                return new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime();
+            },
+            getTitleMonth = function() {
+                var getValue = function(setting) {
+                        return parseNum('' + setting.year + leadZero(setting.month));
+                    },
+                    min = getValue(minSetting),
+                    max = getValue(maxSetting),
+                    mods = {},
+                    cur = parseNum('' + y + leadZero(m));
+
+                if((minSetting && cur < min) || (maxSetting && cur > max)) {
+                    mods.minmax = true;
+                }
+
+                return {
+                    e: 'days-title-month',
+                    m: mods,
+                    c: month
+                };
             };
 
-            var n = first;
-            for(var i = 0; i < 7; i++) {
-                w[n] = i;
+        current.setHours(12);
+        current.setMinutes(0);
+        current.setSeconds(0);
+        current.setMilliseconds(0);
 
-                n++;
-                if(n > SATURDAY) {
-                    n = SUNDAY;
-                }
+        var par = this.parent,
+            weekday = date.getDay(),
+            dayNames = this.dayNames(),
+            dayIndex = dayNames[weekday],
+            month = par.text('months')[m],
+            daysMonth = [31, isLeapYear(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+            minSetting = par.setting('min'),
+            maxSetting = par.setting('max'),
+            minTs = getTs(minSetting),
+            maxTs = getTs(maxSetting),
+            currentTs = current.getTime(),
+            title,
+            holiday,
+            mods,
+            objFirstRow = {
+                t: 'tr',
+                c: [
+                    weekday !== dayNames.first ? {
+                        t: 'td',
+                        colspan: dayIndex,
+                        e: 'empty',
+                        c: dayIndex < 3 ? '' : getTitleMonth()
+                    } : ''
+                ]
+            },
+            objRow = objFirstRow,
+            obj = {
+                e: 'days-month',
+                c: [
+                    dayIndex < 3 ? getTitleMonth() : '',
+                    {
+                        t: 'table',
+                        e: 'days-table',
+                        c: [objRow]
+                    }
+                ]
+            };
+
+        for(var day = 1; day <= daysMonth[m]; day++) {
+            title = '';
+            date.setDate(day);
+            weekday = date.getDay();
+            holiday = par.getHoliday(day, m, y);
+            mods = {};
+
+            if(weekday === SUNDAY || weekday === SATURDAY) {
+                mods.holiday = true;
+            } else {
+                mods.workday = true;
             }
 
-            return w;
-        },
-        month: function(m, y) {
-            var date = new Date(y, m, 1, 12, 0, 0, 0),
-                dateTs = date.getTime(),
-                current = new Date(),
-                isSelected = function(d, m, y) {
-                    var val = par._val;
-                    return d === val.day && m === val.month && y === val.year;
-                },
-                getTs = function(d) {
-                    if(!d.year) {
-                        return null;
-                    }
+            if(holiday === 0) {
+                mods.nonholiday = true;
+            } else if(holiday === 1) {
+                mods.highday = true;
+            }
 
-                    return new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime();
-                },
-                getTitleMonth = function() {
-                    var getValue = function(setting) {
-                            return parseNum('' + setting.year + leadZero(setting.month));
-                        },
-                        min = getValue(minSetting),
-                        max = getValue(maxSetting),
-                        cur = parseNum('' + y + leadZero(m)),
-                        clMinMax = '';
+            if(isSelected(day, m, y)) {
+                mods.selected = true;
+            }
 
-                    if((minSetting && cur < min) || (maxSetting && cur > max)) {
-                        clMinMax = '$days-title-month_minmax';
-                    }
+            if(currentTs === dateTs) {
+                mods.now = true;
+                title = par.text('today');
+            }
 
-                    return {
-                        cl: ['$days-title-month', clMinMax],
-                        c: month
-                    };
-                };
+            if((minTs && dateTs < minTs) || (maxTs && dateTs > maxTs)) {
+                mods.minmax = true;
+            }
 
-            current.setHours(12);
-            current.setMinutes(0);
-            current.setSeconds(0);
-            current.setMilliseconds(0);
+            var tt = par.title.get(par._internalDate(y, m, day));
+            if(tt) {
+                mods['has-title'] = true;
+                mods['title-color'] = tt.color || 'default';
+            }
 
-            var par = this.parent,
-                weekday = date.getDay(),
-                weekdays = this.weekdays(),
-                dayIndex = weekdays[weekday],
-                month = par.text('months')[m],
-                daysMonth = [31, isLeapYear(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-                minSetting = par.setting('min'),
-                maxSetting = par.setting('max'),
-                minTs = getTs(minSetting),
-                maxTs = getTs(maxSetting),
-                currentTs = current.getTime(),
-                title,
-                holiday,
-                className,
-                objFirstRow = {
+            if(weekday === dayNames.first) {
+                objRow = {
                     t: 'tr',
-                    c: [
-                        weekday !== weekdays.first ? {
-                            t: 'td',
-                            colspan: dayIndex,
-                            cl: '$empty',
-                            c: dayIndex < 3 ? '' : getTitleMonth()
-                        } : ''
-                    ]
-                },
-                objRow = objFirstRow,
-                obj = {
-                    cl: '$days-month',
-                    c: [
-                        dayIndex < 3 ? getTitleMonth() : '',
-                        {
-                            t: 'table',
-                            cl: '$days-table',
-                            c: [objRow]
-                        }
-                    ]
+                    c: []
                 };
 
-            for(var day = 1; day <= daysMonth[m]; day++) {
-                title = '';
-                date.setDate(day);
-                weekday = date.getDay();
-                holiday = this.parent.getHoliday(day, m, y);
-                className = [
-                    '$day',
-                    (weekday === SUNDAY || weekday === SATURDAY) ? '$day_holiday' : '$day_workday'
-                ];
-
-                if(holiday === 0) {
-                    className.push('$day_nonholiday');
-                } else if(holiday === 1) {
-                    className.push('$day_highday');
-                }
-
-                if(isSelected(day, m, y)) {
-                    className.push('$day_selected');
-                }
-
-                if(currentTs === dateTs) {
-                    className.push('$day_now');
-                    title = par.text('today');
-                }
-
-                if((minTs && dateTs < minTs) || (maxTs && dateTs > maxTs)) {
-                    className.push('$day_minmax');
-                }
-
-                if(weekday === weekdays.first) {
-                    objRow = {
-                        t: 'tr',
-                        c: []
-                    };
-
-                    obj.c[1].c.push(objRow);
-                }
-
-                objRow.c.push({
-                    t: 'td',
-                    cl: className,
-                    title: title,
-                    'data-month': m,
-                    'data-day': day,
-                    c: day
-                });
+                obj.c[1].c.push(objRow);
             }
 
-            return obj;
-        },
-        years: function() {
-            var data = this.parent._data,
-                startYear = data._startYear,
-                endYear = data._endYear,
-                buf = [{
-                    cl: '$year-selector',
-                    c: {
-                        cl: '$year-selector-i'
-                    }
-                }];
+            objRow.c.push({
+                t: 'td',
+                e: 'day',
+                m: mods,
+                title: title,
+                'data-month': m,
+                'data-day': day,
+                c: day
+            });
+        }
 
-            for(var i = startYear; i <= endYear; i++) {
-                buf.push({
-                    cl: '$year',
-                    'data-year': i,
-                    c: i
-                });
-             }
-
-            return buf;
-        },
-        months: function() {
-            var buf = [{
-                cl: '$month-selector',
+        return obj;
+    },
+    years: function() {
+        var data = this.parent._data,
+            startYear = data._startYear,
+            endYear = data._endYear,
+            buf = [{
+                e: 'year-selector',
                 c: {
-                    cl: '$month-selector-i'
+                    e: 'year-selector-i'
                 }
             }];
 
-            this.parent.text('months').forEach(function(el, i) {
-                buf.push({
-                    cl: '$month',
-                    'data-month': i,
-                    c: el
-                });
+        for(var i = startYear; i <= endYear; i++) {
+            buf.push({
+                e: 'year',
+                'data-year': i,
+                c: i
+            });
+         }
+
+        return buf;
+    },
+    months: function() {
+        var buf = [{
+            e: 'month-selector',
+            c: {
+                e: 'month-selector-i'
+            }
+        }];
+
+        this.parent.text('months').forEach(function(el, i) {
+            buf.push({
+                e: 'month',
+                'data-month': i,
+                c: el
+            });
+        });
+
+        return buf;
+    },
+    main: function() {
+        var par = this.parent,
+            wd = par.text('firstWeekday') || SUNDAY,
+            dayNames = par.text('dayNames') || [],
+            bufDayNames = [];
+
+        par.text('shortDayNames').forEach(function(el, i, data) {
+            bufDayNames.push({
+                e: 'short-daynames-cell',
+                m: {
+                    n: wd
+                },
+                title: dayNames[wd] || data[wd],
+                c: data[wd]
             });
 
-            return buf;
-        },
-        main: function() {
-            var wd = this.parent.text('firstWeekDay') || SUNDAY,
-                weekdays = [];
+            wd++;
+            if(wd > SATURDAY) {
+                wd = SUNDAY;
+            }
+        }, this);
 
-            this.parent.text('shortWeekDays').forEach(function(el, i, data) {
-                weekdays.push({
-                    cl: ['$short-weekdays-cell', '$short-weekdays-cell_n_' + wd],
-                    title: data[wd],
-                    c: data[wd]
-                });
-
-                wd++;
-                if(wd > SATURDAY) {
-                    wd = SUNDAY;
-                }
-            }, this);
-
-            return [
-                {
-                    cl: '$short-weekdays',
-                    c: weekdays
-                }, {
-                    cl: '$container',
-                    c: [{
-                            cl: '$days',
-                            c: {
-                                cl: '$days-container',
-                                c: this.days()
-                            }
-                        },
-                        {
-                            cl: '$months',
-                            c: this.months()
-                        },
-                        {
-                            cl: '$years',
-                            c: {
-                                cl: '$years-container',
-                                c: this.years()
-                            }
+        return [
+            {
+                e: 'short-daynames',
+                c: bufDayNames
+            }, {
+                e: 'container',
+                c: [{
+                        e: 'days',
+                        c: {
+                            e: 'days-container',
+                            c: this.days()
                         }
-                    ]
-                }
-            ];
-        }
+                    },
+                    {
+                        e: 'months',
+                        c: this.months()
+                    },
+                    {
+                        e: 'years',
+                        c: {
+                            e: 'years-container',
+                            c: this.years()
+                        }
+                    }
+                ]
+            }
+        ];
     }
 });
 
@@ -1232,27 +1432,31 @@ extend(Cln.prototype, {
             buf;
         
         if(value) {
-            if(typeof value === 'string') {
+            if(isString(value)) {
+                if(value === 'today') {
+                    return new Date();
+                }
+
                 match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
                 if(match) {
-                        buf = [match[3], match[2] - 1, match[1]];
+                        buf = [match[3], match[2], match[1]];
                 } else {
                     match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
                     if(match) {
-                        buf = [match[1], match[2] - 1, match[3]];
+                        buf = [match[1], match[2], match[3]];
                     }
                 }
                 
                 if(buf) {
-                    date = new Date(parseNum(buf[2]), parseNum(buf[1]), parseNum(buf[0]));
+                    date = new Date(parseNum(buf[2]), parseNum(buf[1] - 1), parseNum(buf[0]));
                 }
-            } else if(typeof value === 'object') {
+            } else if(isObject(value)) {
                 if(value instanceof Date) {
                     date = value;
                 } else if(value.year && value.day) {
                     date = new Date(value.year, value.month - 1, value.day, 12, 0, 0, 0);
                 }
-            } else if(typeof number === 'number') {
+            } else if(isNumber(value)) {
                 date = new Date(value);
             }
         }
@@ -1290,9 +1494,127 @@ Cln.prototype.text = function(id) {
     return Cln._texts[this._data.locale][id];
 };
 
+function Title() {
+    this._title = {};
+}
+
+extend(Title.prototype, {
+    init: function(data) {
+        this.set(data.title);
+    },
+    get: function(date) {
+        return this._title[date];
+    },
+    set: function(data) {
+        var tt = this._title;
+
+        function save(el) {
+            tt[el.date] = {text: el.text, color: el.color};
+        };
+
+        if(!data) {
+            return;
+        }
+        
+        if(isArray(data)) {
+            data.forEach(function(el) {
+                save(el);
+            });
+        } else {
+            save(data);
+        }
+    },
+    remove: function(date) {
+        delete this._title[date];
+    },
+    removeAll: function() {
+        this._title = {};
+    },
+    destroy: function() {
+        delete this._title;
+    }
+});
+
+function Tooltip() {}
+
+extend(Tooltip.prototype, {
+    create: function() {
+        if(this._container) {
+            return;
+        }
+
+        var el = document.createElement('div');
+        addClass(el, elem('tooltip'));
+        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}])
+
+        document.body.appendChild(el);
+
+        this._container = el;
+    },
+    show: function(target, data) {
+        var dataBuf = data || {};
+
+        this.create();
+        setMod(this._container, 'theme', this.parent.setting('theme'));
+        setMod(this._container, 'visible');
+
+        this._elem('tooltip-text').innerHTML = jshtml({c: dataBuf.text, e: 'tooltip-row'});
+
+        setMod(this._container, 'color', dataBuf.color || 'default');
+
+        this._isOpened = true;
+
+        var offset = getOffset(target),
+            x = offset.left - (this._container.offsetWidth - target.offsetWidth) / 2,
+            y = offset.top - this._container.offsetHeight - 5;
+
+        setPosition(this._container, x, y);
+    },
+    hide: function() {
+        if(this._isOpened) {
+            delMod(this._container, 'visible');
+            this._isOpened = false;
+        }
+    },
+    destroy: function() {
+        if(this._container) {
+            this.hide();
+            document.body.removeChild(this._container);
+            delete this._container;
+        }
+    }
+});
+
+extend(Cln.prototype, {
+    _initPlugins: function(data) {
+        this._plugins = data;
+
+        data.forEach(function(el) {
+            var name = el[0],
+                Cls = el[1];
+
+            this[name] = new Cls();
+
+            extend(this[name], _Em);
+
+            this[name]['parent'] = this;
+            this[name]['init'] && this[name]['init'](this._data, this._container);
+        }, this);
+    },
+    _removePlugins: function() {
+        this._plugins.forEach(function(el) {
+            var plugin = el[0];
+            this[plugin].destroy();
+            delete this[plugin];
+        }, this);
+
+        delete this._plugins;
+    }
+});
+
 return Cln;
 
-})(this, this.document);
+})(this, this.document, Date);
 
 Calendula.addLocale('be', {
     months: [
@@ -1323,9 +1645,18 @@ Calendula.addLocale('be', {
         'лістапада',
         'снежня'
     ],
-    shortWeekDays: ['Н', 'П', 'А', 'С', 'Ч', 'П', 'С'],
+    shortDayNames: ['Н', 'П', 'А', 'С', 'Ч', 'П', 'С'],
+    dayNames: [
+        'Нядзеля',
+        'Панядзелак',
+        'Аўторак',
+        'Серада',
+        'Чацьвер',
+        'Пятніца',
+        'Субота'
+    ],
     today: 'Сення',
-    firstWeekDay: 1
+    firstWeekday: 1
 });
 
 Calendula.addLocale('de', {
@@ -1343,9 +1674,18 @@ Calendula.addLocale('de', {
         'November',
         'Dezember'
     ],
-    shortWeekDays: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+    shortDayNames: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+    dayNames: [
+        'Sonntag',
+        'Montag',
+        'Dienstag',
+        'Mittwoch',
+        'Donnerstag',
+        'Freitag',
+        'Samstag'
+    ],
     today: 'Heute',
-    firstWeekDay: 1
+    firstWeekday: 1
 });
 
 Calendula.addLocale('en', {
@@ -1363,9 +1703,18 @@ Calendula.addLocale('en', {
         'November',
         'December'
     ],
-    shortWeekDays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    shortDayNames: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    dayNames: [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday'
+    ],
     today: 'Today',
-    firstWeekDay: 0,
+    firstWeekday: 0,
     def: true
 });
 
@@ -1384,9 +1733,18 @@ Calendula.addLocale('es', {
         'noviembre',
         'diciembre'
     ],
-    shortWeekDays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+    shortDayNames: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'S?'],
+    dayNames: [
+        'Domingo',
+        'Lunes',
+        'Martes',
+        'Mi?rcoles',
+        'Jueves',
+        'Viernes',
+        'S?bado'
+    ],
     today: 'Hoy',
-    firstWeekDay: 1
+    firstWeekday: 1
 });
 
 Calendula.addLocale('fr', {
@@ -1404,9 +1762,18 @@ Calendula.addLocale('fr', {
         'novembre',
         'décembre'
     ],
-    shortWeekDays: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'],
+    shortDayNames: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'],
+    dayNames: [
+        'Dimanche',
+        'Lundi',
+        'Mardi',
+        'Mercredi',
+        'Jeudi',
+        'Vendredi',
+        'Samedi'
+    ],
     today: 'Aujourd’hui',
-    firstWeekDay: 1
+    firstWeekday: 1
 });
 
 Calendula.addLocale('it', {
@@ -1424,9 +1791,18 @@ Calendula.addLocale('it', {
         'novembre',
         'dicembre'
     ],
-    shortWeekDays: ['Do', 'Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa'],
+    shortDayNames: ['Do', 'Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa'],
+    dayNames: [
+        'Domenica',
+        'Lunedì',
+        'Martedì',
+        'Mercoledì',
+        'Giovedì',
+        'Venerdì',
+        'Sabato'
+    ],
     today: 'Oggi',
-    firstWeekDay: 1
+    firstWeekday: 1
 });
 
 Calendula.addLocale('pl', {
@@ -1458,9 +1834,18 @@ Calendula.addLocale('pl', {
         'listopada',
         'grudnia'
     ],
-    shortWeekDays: ['N', 'P', 'W', 'Ś', 'C', 'P', 'S'],
+    shortDayNames: ['N', 'P', 'W', 'Ś', 'C', 'P', 'S'],
+    dayNames: [
+        'Niedziela',
+        'Poniedziałek',
+        'Wtorek',
+        'Środa',
+        'Czwartek',
+        'Piątek',
+        'Sobota'
+    ],
     today: 'Dziś',
-    firstWeekDay: 1
+    firstWeekday: 1
 });
 
 Calendula.addLocale('ru', {
@@ -1492,9 +1877,18 @@ Calendula.addLocale('ru', {
         'ноября',
         'декабря'
     ],
-    shortWeekDays: ['В', 'П', 'В', 'С', 'Ч', 'П', 'С'],
+    shortDayNames: ['В', 'П', 'В', 'С', 'Ч', 'П', 'С'],
+    dayNames: [
+        'Воскресенье',
+        'Понедельник',
+        'Вторник',
+        'Среда',
+        'Четверг',
+        'Пятница',
+        'Суббота'
+    ],
     today: 'Сегодня',
-    firstWeekDay: 1
+    firstWeekday: 1
 });
 
 Calendula.addLocale('tr', {
@@ -1512,9 +1906,18 @@ Calendula.addLocale('tr', {
         'kasım',
         'aralık'
     ],
-    shortWeekDays:['Pa', 'PT', 'Sa', 'Çarş', 'Per', 'CU', 'Ctesi'],
+    shortDayNames:['Pa', 'PT', 'Sa', 'Çarş', 'Per', 'CU', 'Ctesi'],
+    dayNames: [
+        'Pazar',
+        'Pazartesi',
+        'Salı',
+        'Çarşamba',
+        'Perşembe',
+        'Cuma',
+        'Cumartesi'
+    ],
     today: 'Bugün',
-    firstWeekDay: 1
+    firstWeekday: 1
 });
 
 Calendula.addLocale('uk', {
@@ -1546,9 +1949,18 @@ Calendula.addLocale('uk', {
         'листопада',
         'грудня'
     ],
-    shortWeekDays: ['Н', 'П', 'В', 'С', 'Ч', 'П', 'С'],
+    shortDayNames: ['Н', 'П', 'В', 'С', 'Ч', 'П', 'С'],
+    dayNames: [
+        'Неділя',
+        'Понеділок',
+        'Вівторок',
+        'Середа',
+        'Четвер',
+        'П’ятниця',
+        'Субота'
+    ],
     today: 'Сьогодні',
-    firstWeekDay: 1
+    firstWeekday: 1
 });
 
 Calendula.addHolidays('ru', {

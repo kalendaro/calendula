@@ -17,32 +17,23 @@
 <button id="example-button4" style="position: absolute; left: 450px; top: 360px;"></button>
 
 <script>
-function init(name, theme) {
-    var button = document.getElementById(name),
-        cl = new Calendula({
-            button: button,
-            theme: theme
-        }),
-        updateButton = function() {
-            button.innerHTML = cl._buttonText();
-        };
+    function init(name, theme) {
+        var button = document.getElementById(name),
+            cl = new Calendula({
+                switcher: button,
+                theme: theme,
+                value: 'today'
+            });
 
-    cl.on('select', function(e, value) {
-        updateButton();
-    });
-    
-    cl.open();
-    
-    updateButton();
+        cl.open();
+        
+        window[name + '__'] = cl;
+    }
 
-    window[name + '__'] = cl;
-}
-
-init('example-button1', 'default');
-init('example-button2', 'black');
-init('example-button3', 'ios');
-init('example-button4', 'metro');
-
+    init('example-button1', 'default');
+    init('example-button2', 'black');
+    init('example-button3', 'ios');
+    init('example-button4', 'metro');
 </script>
 
 </body>

@@ -1,4 +1,5 @@
-.calendula_theme_metro
+.calendula_theme_metro,
+.calendula__tooltip_theme_metro
 {
     font-family: Segoe UI, sans-serif;
     font-size: 12px;
@@ -92,8 +93,8 @@
     outline: 1px solid #ccc;
 }
 
-.calendula_theme_metro .calendula__short-weekdays-cell_n_0,
-.calendula_theme_metro .calendula__short-weekdays-cell_n_6,
+.calendula_theme_metro .calendula__short-daynames-cell_n_0,
+.calendula_theme_metro .calendula__short-daynames-cell_n_6,
 .calendula_theme_metro .calendula__day_holiday,
 .calendula_theme_metro .calendula__day_highday
 {

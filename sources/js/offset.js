@@ -1,59 +1,73 @@
+var getOffset = function(el) {
+    var box = {top: 0, left: 0};
+
+    // If we don't have gBCR, just use 0,0 rather than error
+    // BlackBerry 5, iOS 3 (original iPhone)
+    if(!isUndefined(el.getBoundingClientRect)) {
+        box = el.getBoundingClientRect();
+    }
+    
+    return {
+        top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
+        left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
+    };
+};
+
+var setPosition = function(elem, x, y) {
+    setLeft(elem, x);
+    setTop(elem, y);
+};
+
+var setLeft = function(elem, x) {
+    elem.style.left = isNumber(x) ? x + 'px' : x;
+};
+
+var setTop = function(elem, y) {
+    elem.style.top = isNumber(y) ? y + 'px' : y;
+};
+
 extend(Cln.prototype, {
-    _left: function(elem, x) {
-        elem.style.left = typeof x === 'number' ? x + 'px' : x;
-    },
-    _top: function(elem, y) {
-        elem.style.top = typeof y === 'number' ? y + 'px' : y;
-    },
-    _position: function(elem, coords) {
-        this._left(elem, coords.left);
-        this._top(elem, coords.top);
-    },
-    position: function(pos) {
-        var p = {left: 0, top: 0},
-            buttonWidth, buttonHeight,
-            buttonLeft, buttonTop;
+    position: function() {
+        var pos = this.setting('position') || 'left bottom',
+            switcher = this.setting('switcher'),
+            p = getOffset(switcher),
+            buf, x, y,
+            con = this._container,
+            conWidth = con.offsetWidth,
+            conHeight = con.offsetHeight,
+            switcherWidth = switcher.offsetWidth,
+            switcherHeight = switcher.offsetHeight;
 
-        if(typeof pos === 'string') {
-            b = pos.split('-');
+        if(isString(pos)) {
+            buf = pos.trim().split(/ +/);
+            x = p.left;
+            y = p.top;
 
-            p.left = buttonLeft;
-            switch(b[0]) {
-                case 'right':
-                    p.left += buttonWidth;
-                break;
+            switch(buf[0]) {
                 case 'center':
-                    p.left += buttonWidth / 2;
+                    x += -(conWidth - switcherWidth) / 2;
+                break;
+                case 'right':
+                    x += switcherWidth - conWidth;
                 break;
             }
 
-            p.top = buttonTop;
-            switch(b[0]) {
-                case 'bottom':
-                    p.top += buttonHeight;
+            switch(buf[1]) {
+                case 'top':
+                    y += -conHeight;
                 break;
                 case 'center':
-                    p.top += buttonHeight / 2;
+                    y += -(conHeight - switcherHeight) / 2;
+                break;
+                case 'bottom':
+                    y += switcherHeight;
                 break;
             }
         } else {
-            p = pos;
+            x = p.left;
+            y = p.top;
         }
 
-        this._position(this._elem, pos);
-    },
-    _offset: function(elem) {
-        var box = {top: 0, left: 0};
-
-        // If we don't have gBCR, just use 0,0 rather than error
-        // BlackBerry 5, iOS 3 (original iPhone)
-        if(typeof elem.getBoundingClientRect !== 'undefined') {
-            box = elem.getBoundingClientRect();
-        }
-        
-        return {
-            top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
-            left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
-        };
+        setPosition(this._container, x, y);
     }
 });

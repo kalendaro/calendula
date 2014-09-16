@@ -34,13 +34,34 @@ var jshtml = (function() {
 
     var attrs = function(data) {
         var keys = Object.keys(data),
-            ignoredItems = ['cl', 'class', 'c', 't'],
-            cl = data['cl'] || data['class'],
+            ignoredItems = ['c', 't', 'e', 'm'],
             text = [],
+            classes = [],
+            i,
             buf = '';
 
-        if(cl) {
-            text.push(attr('class', cl));
+        if(data.e) {
+            classes.push(elem(data.e));
+        }
+
+        if(data.m) {
+            if(data.e) {
+                for(i in data.m) {
+                    if(data.m.hasOwnProperty(i)) {
+                        classes.push(elem(data.e, i, data.m[i]));
+                    }
+                } 
+            } else {
+                for(i in data.m) {
+                    if(data.m.hasOwnProperty(i)) {
+                        classes.push(mod(i, data.m[i]));
+                    }
+                } 
+            }
+        }
+
+        if(classes.length) {
+            text.push(attr('class', classes));
         }
 
         for(var i = 0, len = keys.length; i < len; i++) {

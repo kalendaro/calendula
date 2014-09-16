@@ -17,27 +17,31 @@ extend(Cln.prototype, {
             buf;
         
         if(value) {
-            if(typeof value === 'string') {
+            if(isString(value)) {
+                if(value === 'today') {
+                    return new Date();
+                }
+
                 match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
                 if(match) {
-                        buf = [match[3], match[2] - 1, match[1]];
+                        buf = [match[3], match[2], match[1]];
                 } else {
                     match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
                     if(match) {
-                        buf = [match[1], match[2] - 1, match[3]];
+                        buf = [match[1], match[2], match[3]];
                     }
                 }
                 
                 if(buf) {
-                    date = new Date(parseNum(buf[2]), parseNum(buf[1]), parseNum(buf[0]));
+                    date = new Date(parseNum(buf[2]), parseNum(buf[1] - 1), parseNum(buf[0]));
                 }
-            } else if(typeof value === 'object') {
+            } else if(isObject(value)) {
                 if(value instanceof Date) {
                     date = value;
                 } else if(value.year && value.day) {
                     date = new Date(value.year, value.month - 1, value.day, 12, 0, 0, 0);
                 }
-            } else if(typeof number === 'number') {
+            } else if(isNumber(value)) {
                 date = new Date(value);
             }
         }

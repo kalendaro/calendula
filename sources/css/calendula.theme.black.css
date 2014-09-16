@@ -1,4 +1,5 @@
-.calendula_theme_black
+.calendula_theme_black,
+.calendula__tooltip_theme_black
 {
     font-family: Arial, sans-serif;
     font-size: 12px;
@@ -100,8 +101,8 @@
     box-shadow: inset 0 0 5px 0 rgba(255,255,255,.2);
 }
 
-.calendula_theme_black .calendula__short-weekdays-cell_n_0,
-.calendula_theme_black .calendula__short-weekdays-cell_n_6,
+.calendula_theme_black .calendula__short-daynames-cell_n_0,
+.calendula_theme_black .calendula__short-daynames-cell_n_6,
 .calendula_theme_black .calendula__day_holiday,
 .calendula_theme_black .calendula__day_highday
 {

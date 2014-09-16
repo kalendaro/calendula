@@ -1,4 +1,5 @@
-.calendula_theme_ios
+.calendula_theme_ios,
+.calendula__tooltip_theme_ios
 {
     font-family: Helvetica, sans-serif;
     font-size: 12px;
@@ -100,8 +101,8 @@
     background-color: #eee;
 }
 
-.calendula_theme_ios .calendula__short-weekdays-cell_n_0,
-.calendula_theme_ios .calendula__short-weekdays-cell_n_6,
+.calendula_theme_ios .calendula__short-daynames-cell_n_0,
+.calendula_theme_ios .calendula__short-daynames-cell_n_6,
 .calendula_theme_ios .calendula__day_holiday,
 .calendula_theme_ios .calendula__day_highday
 {
