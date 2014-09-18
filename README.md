@@ -53,7 +53,7 @@ var c = new Calendula({
 | 4. | locale    | `String`             | `en`          | Язык интерфейса.<br>`be` `de` `en` `es` `fr` `it` `pl` `ru` `tr` `uk` |
 | 5. | max       | `String`<br>`Date`<br>`Number` |               | Максимальная дата.                          |
 | 6. | min       | `String`<br>`Date`<br>`Number` |               | Mинимальная дата.                           |
-| 7. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` |
+| 7. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` `android`|
 | 8. | value     | `String`<br>`Date`<br>`Number` | текущая дата   | Выбранная дата.                            |
 | 9. | years     | `String`               | `-11:1`       | Установка диапозона для списка лет.         |
 

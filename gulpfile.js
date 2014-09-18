@@ -10,7 +10,7 @@ var paths = {
         'sources/js/start.js',
         'sources/js/vars.js',
         'sources/js/main.js',
-        'sources/js/dom.js',        
+        'sources/js/dom.js',
         'sources/js/em.js',
         'sources/js/object.js',
         'sources/js/offset.js',
@@ -25,11 +25,12 @@ var paths = {
         'sources/js/locale.js',
         'sources/js/title.js',
         'sources/js/tooltip.js',
-        'sources/js/plugin.js',        
+        'sources/js/plugin.js',
         'sources/js/end.js'
     ],
     mainCss: [
-        'sources/css/calendula.css'
+        'sources/css/calendula.css',
+        'sources/css/calendula__tooltip.css'
     ],
     prodJsLocales: [
         'sources/js/locale/*.js'
@@ -52,7 +53,7 @@ paths.prodCssAll = paths.mainCss.concat('sources/css/calendula.theme.*.css');
 var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolidays'],
     cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
     allTasks = [].concat(cssTasks, jsTasks, 'watch');
-    
+
 gulp.task('devJs', function() {
     return gulp.src(paths.devJs)
         .pipe(concat('calendula.dev.js'))
