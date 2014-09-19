@@ -1,7 +1,8 @@
 .calendula__tooltip
 {
-    display: none;
     position: absolute;
+
+    display: none;
 
     border: 2px solid transparent;
 }
@@ -14,46 +15,46 @@
 .calendula__tooltip-tail
 {
     position: absolute;
-
-    left: 50%;
     bottom: -5px;
-    margin-left: -5px;
-    width: 10px;
-    height: 5px;
+    left: 50%;
 
     overflow: hidden;
+
+    width: 10px;
+    height: 5px;
+    margin-left: -5px;
 }
 
 .calendula__tooltip-tail:after
 {
     position: absolute;
-
-    left: 0;
     top: -5px;
+    left: 0;
+
     width: 6px;
     height: 6px;
-    border: 2px solid transparent;
 
-    background: #fff;
     content: '';
-    
     transform: rotate(45deg);
-    transform: rotate(45deg);
+
+    border: 2px solid transparent;
+    background: #fff;
 }
 
 .calendula__day_has-title:after
 {
     position: absolute;
-    right: 0;
     top: 0;
+    right: 0;
+
     width: 0;
     height: 0;
-    
-    border-style: solid;
-    border-width: 0 5px 5px 0;
-    border-color: transparent blue transparent;
-    
+
     content: '';
+
+    border-width: 0 5px 5px 0;
+    border-style: solid;
+    border-color: transparent blue transparent;
 }
 
 .calendula__day_title-color_red:after
@@ -79,23 +80,23 @@
 .calendula__tooltip_color_default .calendula__tooltip-tail:after,
 .calendula__tooltip_color_default
 {
-    border-color: rgba(0, 0, 255, 0.3);
+    border-color: rgba(0, 0, 255, .3);
 }
 
 .calendula__tooltip_color_red .calendula__tooltip-tail:after,
 .calendula__tooltip_color_red
 {
-    border-color: rgba(255, 0, 0, 0.3);
+    border-color: rgba(255, 0, 0, .3);
 }
 
 .calendula__tooltip_color_green .calendula__tooltip-tail:after,
 .calendula__tooltip_color_green
 {
-    border-color: rgba(0, 255, 0, 0.3);
+    border-color: rgba(0, 255, 0, .3);
 }
 
 .calendula__tooltip_color_orange .calendula__tooltip-tail:after,
 .calendula__tooltip_color_orange
 {
-    border-color: rgba(255, 165, 0, 0.3);
+    border-color: rgba(255, 165, 0, .3);
 }

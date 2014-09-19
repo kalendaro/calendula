@@ -8,14 +8,19 @@
     height: 310px;
     margin-top: 1px;
 
-    -moz-user-select: none;
-         user-select: none;
+    -webkit-user-select: none;
 
-    -webkit-transition: visibility 0s linear .2s, opacity .2s linear, transform 0.2s linear;
-            transition: visibility 0s linear .2s, opacity .2s linear, transform 0.2s linear;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+       -moz-user-select: none;
+
+        -ms-user-select: none;
+
+            user-select: none;
+    -webkit-transition: visibility 0s linear .2s, opacity .2s linear, -webkit-transform .2s linear;
+            transition: visibility 0s linear .2s, opacity .2s linear, transform .2s linear;
 
     opacity: 0;
+
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .calendula_opened
@@ -23,6 +28,7 @@
     visibility: visible;
 
     -webkit-transition-delay: 0s;
+
             transition-delay: 0s;
 
     opacity: 1;
@@ -37,6 +43,7 @@
     left: 6px;
 
     -webkit-backface-visibility: hidden;
+
             backface-visibility: hidden;
 }
 
@@ -107,7 +114,6 @@
     width: 157px;
 
     table-layout: fixed;
-
     border-spacing: 0 0;
     border-collapse: collapse;
 }
@@ -119,6 +125,7 @@
     left: 5px;
 
     -webkit-transition: top .2s linear;
+
             transition: top .2s linear;
 }
 
@@ -133,16 +140,20 @@
 
 .calendula__day
 {
-    -webkit-transition: border-radius .2s linear;
-            transition: border-radius .2s linear;
-    text-align: center;
+    position: relative;
+
+    -webkit-box-sizing: border-box;
+
+       -moz-box-sizing: border-box;
+
+            box-sizing: border-box;
+    height: 20px;
     padding: 0;
 
-    height: 20px;
+    -webkit-transition: border-radius .2s linear;
 
-    box-sizing: border-box;
-
-    position: relative;
+            transition: border-radius .2s linear;
+    text-align: center;
 }
 
 .calendula__day_minmax
@@ -160,6 +171,7 @@
     padding-left: 6px;
 
     -webkit-transition: color .2s linear;
+
             transition: color .2s linear;
     vertical-align: middle;
 }
@@ -175,6 +187,7 @@
     margin-top: 1px;
 
     -webkit-transition: top .2s linear;
+
             transition: top .2s linear;
 }
 
@@ -187,6 +200,7 @@
     left: 1px;
 
     -webkit-transition: top .2s ease-in;
+
             transition: top .2s ease-in;
 }
 
@@ -225,6 +239,7 @@
     position: relative;
 
     -webkit-transition: top .2s linear;
+
             transition: top .2s linear;
 }
 
@@ -251,14 +266,16 @@
     padding-left: 16px;
 
     -webkit-transition: color .2s linear;
+
             transition: color .2s linear;
     vertical-align: middle;
 }
 
 .calendula__tooltip
 {
-    display: none;
     position: absolute;
+
+    display: none;
 
     border: 2px solid transparent;
 }
@@ -271,46 +288,48 @@
 .calendula__tooltip-tail
 {
     position: absolute;
-
-    left: 50%;
     bottom: -5px;
-    margin-left: -5px;
-    width: 10px;
-    height: 5px;
+    left: 50%;
 
     overflow: hidden;
+
+    width: 10px;
+    height: 5px;
+    margin-left: -5px;
 }
 
 .calendula__tooltip-tail:after
 {
     position: absolute;
-
-    left: 0;
     top: -5px;
+    left: 0;
+
     width: 6px;
     height: 6px;
-    border: 2px solid transparent;
 
-    background: #fff;
     content: '';
-    
-    transform: rotate(45deg);
-    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+
+    border: 2px solid transparent;
+    background: #fff;
 }
 
 .calendula__day_has-title:after
 {
     position: absolute;
-    right: 0;
     top: 0;
+    right: 0;
+
     width: 0;
     height: 0;
-    
-    border-style: solid;
-    border-width: 0 5px 5px 0;
-    border-color: transparent blue transparent;
-    
+
     content: '';
+
+    border-width: 0 5px 5px 0;
+    border-style: solid;
+    border-color: transparent blue transparent;
 }
 
 .calendula__day_title-color_red:after
@@ -336,25 +355,25 @@
 .calendula__tooltip_color_default .calendula__tooltip-tail:after,
 .calendula__tooltip_color_default
 {
-    border-color: rgba(0, 0, 255, 0.3);
+    border-color: rgba(0, 0, 255, .3);
 }
 
 .calendula__tooltip_color_red .calendula__tooltip-tail:after,
 .calendula__tooltip_color_red
 {
-    border-color: rgba(255, 0, 0, 0.3);
+    border-color: rgba(255, 0, 0, .3);
 }
 
 .calendula__tooltip_color_green .calendula__tooltip-tail:after,
 .calendula__tooltip_color_green
 {
-    border-color: rgba(0, 255, 0, 0.3);
+    border-color: rgba(0, 255, 0, .3);
 }
 
 .calendula__tooltip_color_orange .calendula__tooltip-tail:after,
 .calendula__tooltip_color_orange
 {
-    border-color: rgba(255, 165, 0, 0.3);
+    border-color: rgba(255, 165, 0, .3);
 }
 
 .calendula_theme_android,
@@ -366,18 +385,20 @@
     color: #000;
     border-radius: 3px;
     background: #fff;
-    box-shadow: 0 0 5px #b0b0b0;
+    -webkit-box-shadow: 0 0 5px #b0b0b0;
+            box-shadow: 0 0 5px #b0b0b0;
 }
 
 .calendula_theme_android .calendula__days
 {
     border-radius: 3px;
-    outline: 1px solid rgba(0,0,0,.1);
+    outline: 1px solid rgba(0, 0, 0, .1);
 }
 
 .calendula_theme_android .calendula__days-container
 {
-    box-shadow: 1px solid rgba(0,0,0,.1);
+    -webkit-box-shadow: 1px solid rgba(0, 0, 0, .1);
+            box-shadow: 1px solid rgba(0, 0, 0, .1);
 }
 
 .calendula_theme_android .calendula__day_now
@@ -434,22 +455,22 @@
 .calendula_theme_android .calendula__month-selector,
 .calendula_theme_android .calendula__year-selector
 {
-    background: rgba(160, 216, 239, 0.3);
-    box-shadow: 1px 1px 1px #d0d0d0;
-   
+    background: rgba(160, 216, 239, .3);
+    -webkit-box-shadow: 1px 1px 1px #d0d0d0;
+            box-shadow: 1px 1px 1px #d0d0d0;
 }
 
 .calendula_theme_android .calendula__month-selector-i,
 .calendula_theme_android .calendula__year-selector-i
 {
-    background: rgba(160, 216, 239, 0.3);
+    background: rgba(160, 216, 239, .3);
 }
 
 .calendula_theme_android .calendula__years,
 .calendula_theme_android .calendula__months
 {
     border-radius: 3px;
-    outline: 1px solid rgba(0,0,0,.1);
+    outline: 1px solid rgba(0, 0, 0, .1);
     background-color: #ebeeee;
 }
 
@@ -475,7 +496,7 @@
 .calendula_theme_android .calendula__day_selected
 {
     color: #000;
-    background: #A0D8EF;
+    background: #a0d8ef;
 }
 
 .calendula_theme_black,
@@ -487,18 +508,21 @@
     color: #fff;
     border-radius: 3px;
     background: #000;
-    box-shadow: 0 0 20px #b0b0b0;
+    -webkit-box-shadow: 0 0 20px #b0b0b0;
+            box-shadow: 0 0 20px #b0b0b0;
 }
 
 .calendula_theme_black .calendula__days
 {
     border-radius: 3px;
-    box-shadow: inset 0 0 5px 0 rgba(255,255,255,.2);
+    -webkit-box-shadow: inset 0 0 5px 0 rgba(255, 255, 255, .2);
+            box-shadow: inset 0 0 5px 0 rgba(255, 255, 255, .2);
 }
 
 .calendula_theme_black .calendula__days-container
 {
-    box-shadow: 5px inset #fff;
+    -webkit-box-shadow: 5px inset #fff;
+            box-shadow: 5px inset #fff;
 }
 
 .calendula_theme_black .calendula__day_now
@@ -557,7 +581,8 @@
 {
     border-radius: 3px;
     background: #000;
-    box-shadow: 0 2px 5px #505050;
+    -webkit-box-shadow: 0 2px 5px #505050;
+            box-shadow: 0 2px 5px #505050;
 }
 
 .calendula_theme_black .calendula__month-selector-i,
@@ -565,12 +590,9 @@
 {
     border-radius: 0 0 3px 3px;
     background: #1f1f1f;
-    background:    -moz-linear-gradient(top, #1f1f1f 0%, #000 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1f1f1f), color-stop(100%,#000));
-    background: -webkit-linear-gradient(top, #1f1f1f 0%,#000 100%);
-    background:      -o-linear-gradient(top, #1f1f1f 0%,#000 100%);
-    background:     -ms-linear-gradient(top, #1f1f1f 0%,#000 100%);
-    background:         linear-gradient(to bottom, #1f1f1f 0%,#000 100%);
+    background: -webkit-gradient(linear, left top, left bottom, from(#1f1f1f), to(#000));
+    background: -webkit-linear-gradient(top, #1f1f1f 0%, #000 100%);
+    background: linear-gradient(to bottom, #1f1f1f 0%, #000 100%);
 }
 
 .calendula_theme_black .calendula__years,
@@ -578,7 +600,8 @@
 {
     border-radius: 3px;
     background-color: #151515;
-    box-shadow: inset 0 0 5px 0 rgba(255,255,255,.2);
+    -webkit-box-shadow: inset 0 0 5px 0 rgba(255, 255, 255, .2);
+            box-shadow: inset 0 0 5px 0 rgba(255, 255, 255, .2);
 }
 
 .calendula_theme_black .calendula__short-daynames-cell_n_0,
@@ -602,16 +625,13 @@
 
 .calendula_theme_black .calendula__day_selected
 {
+    color: #fff;
     border-radius: 10px;
     background: #ffec95;
-    background:    -moz-linear-gradient(top, #ffec95 0%, #ff8f56 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffec95), color-stop(100%,#ff8f56));
-    background: -webkit-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
-    background:      -o-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
-    background:     -ms-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
-    background:         linear-gradient(to bottom, #ffec95 0%,#ff8f56 100%);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffec95), to(#ff8f56));
+    background: -webkit-linear-gradient(top, #ffec95 0%, #ff8f56 100%);
+    background: linear-gradient(to bottom, #ffec95 0%,#ff8f56 100%);
     text-shadow: 1px 1px 3px #000;
-    color: #fff;
 }
 
 .calendula_theme_default,
@@ -623,7 +643,8 @@
     color: #000;
     border-radius: 3px;
     background: #fff;
-    box-shadow: 0 0 20px #b0b0b0;
+    -webkit-box-shadow: 0 0 20px #b0b0b0;
+            box-shadow: 0 0 20px #b0b0b0;
 }
 
 .calendula_theme_default .calendula__month,
@@ -665,12 +686,14 @@
 .calendula_theme_default .calendula__days
 {
     border-radius: 3px;
-    box-shadow: inset 0 0 5px 0 rgba(0,0,0,.2);
+    -webkit-box-shadow: inset 0 0 5px 0 rgba(0, 0, 0, .2);
+            box-shadow: inset 0 0 5px 0 rgba(0, 0, 0, .2);
 }
 
 .calendula_theme_default .calendula__days-container
 {
-    box-shadow: 5px inset #000;
+    -webkit-box-shadow: 5px inset #000;
+            box-shadow: 5px inset #000;
 }
 
 .calendula_theme_default .calendula__day_now
@@ -693,7 +716,8 @@
 {
     border-radius: 3px;
     background: #fff;
-    box-shadow: 0 2px 5px #b0b0b0;
+    -webkit-box-shadow: 0 2px 5px #b0b0b0;
+            box-shadow: 0 2px 5px #b0b0b0;
 }
 
 .calendula_theme_default .calendula__month-selector-i,
@@ -701,12 +725,9 @@
 {
     border-radius: 0 0 3px 3px;
     background: #efefef;
-    background:    -moz-linear-gradient(top, #efefef 0%, #fff 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#efefef), color-stop(100%,#fff));
-    background: -webkit-linear-gradient(top, #efefef 0%,#fff 100%);
-    background:      -o-linear-gradient(top, #efefef 0%,#fff 100%);
-    background:     -ms-linear-gradient(top, #efefef 0%,#fff 100%);
-    background:         linear-gradient(to bottom, #efefef 0%,#fff 100%);
+    background: -webkit-gradient(linear, left top, left bottom, from(#efefef), to(#fff));
+    background: -webkit-linear-gradient(top, #efefef 0%, #fff 100%);
+    background: linear-gradient(to bottom, #efefef 0%, #fff 100%);
 }
 
 .calendula_theme_default .calendula__years,
@@ -714,7 +735,8 @@
 {
     border-radius: 3px;
     background-color: #eee;
-    box-shadow: inset 0 0 5px 0 rgba(0,0,0,.2);
+    -webkit-box-shadow: inset 0 0 5px 0 rgba(0, 0, 0, .2);
+            box-shadow: inset 0 0 5px 0 rgba(0, 0, 0, .2);
 }
 
 .calendula_theme_default .calendula__short-daynames-cell_n_0,
@@ -738,16 +760,13 @@
 
 .calendula_theme_default .calendula__day_selected
 {
+    color: #000;
     border-radius: 10px;
     background: #ffec95;
-    background:    -moz-linear-gradient(top, #ffec95 0%, #ff8f56 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffec95), color-stop(100%,#ff8f56));
-    background: -webkit-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
-    background:      -o-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
-    background:     -ms-linear-gradient(top, #ffec95 0%,#ff8f56 100%);
-    background:         linear-gradient(to bottom, #ffec95 0%,#ff8f56 100%);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffec95), to(#ff8f56));
+    background: -webkit-linear-gradient(top, #ffec95 0%, #ff8f56 100%);
+    background: linear-gradient(to bottom, #ffec95 0%, #ff8f56 100%);
     text-shadow: 1px 1px 3px #fff;
-    color: #000;
 }
 
 .calendula_theme_ios,
@@ -759,18 +778,20 @@
     color: #000;
     border-radius: 3px;
     background: #fff;
-    box-shadow: 0 0 20px #b0b0b0;
+    -webkit-box-shadow: 0 0 20px #b0b0b0;
+            box-shadow: 0 0 20px #b0b0b0;
 }
 
 .calendula_theme_ios .calendula__days
 {
     border-radius: 3px;
-    outline: 1px solid rgba(0,0,0,.1);
+    outline: 1px solid rgba(0, 0, 0, .1);
 }
 
 .calendula_theme_ios .calendula__days-container
 {
-    box-shadow: 1px solid rgba(0,0,0,.1);
+    -webkit-box-shadow: 1px solid rgba(0, 0, 0, .1);
+            box-shadow: 1px solid rgba(0, 0, 0, .1);
 }
 
 .calendula_theme_ios .calendula__day_now
@@ -829,7 +850,8 @@
 {
     border-radius: 3px;
     background: #fff;
-    box-shadow: 0 1px 2px #d0d0d0;
+    -webkit-box-shadow: 0 1px 2px #d0d0d0;
+            box-shadow: 0 1px 2px #d0d0d0;
 }
 
 .calendula_theme_ios .calendula__month-selector-i,
@@ -837,19 +859,16 @@
 {
     border-radius: 0 0 3px 3px;
     background: #efefef;
-    background:    -moz-linear-gradient(top, #efefef 0%, #fff 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#efefef), color-stop(100%,#fff));
-    background: -webkit-linear-gradient(top, #efefef 0%,#fff 100%);
-    background:      -o-linear-gradient(top, #efefef 0%,#fff 100%);
-    background:     -ms-linear-gradient(top, #efefef 0%,#fff 100%);
-    background:         linear-gradient(to bottom, #efefef 0%,#fff 100%);
+    background: -webkit-gradient(linear, left top, left bottom, from(#efefef), to(#fff));
+    background: -webkit-linear-gradient(top, #efefef 0%, #fff 100%);
+    background: linear-gradient(to bottom, #efefef 0%, #fff 100%);
 }
 
 .calendula_theme_ios .calendula__years,
 .calendula_theme_ios .calendula__months
 {
     border-radius: 3px;
-    outline: 1px solid rgba(0,0,0,.1);
+    outline: 1px solid rgba(0, 0, 0, .1);
     background-color: #eee;
 }
 
@@ -885,17 +904,21 @@
     font-family: Segoe UI, sans-serif;
     font-size: 12px;
 
-    color: #000;
-    background: #fff;
-    outline: 1px solid #ccc;
-    
     -webkit-transform: translateY(-20%);
+
+        -ms-transform: translateY(-20%);
+
             transform: translateY(-20%);
+
+    color: #000;
+    outline: 1px solid #ccc;
+    background: #fff;
 }
 
 .calendula_theme_metro.calendula_opened
 {
     -webkit-transform: translateY(0);
+        -ms-transform: translateY(0);
             transform: translateY(0);
 }
 
@@ -942,7 +965,8 @@
 
 .calendula_theme_metro .calendula__days-container
 {
-    box-shadow: 1px inset #000;
+    -webkit-box-shadow: 1px inset #000;
+            box-shadow: 1px inset #000;
 }
 
 .calendula_theme_metro .calendula__day_now
@@ -963,15 +987,15 @@
 .calendula_theme_metro .calendula__month-selector,
 .calendula_theme_metro .calendula__year-selector
 {
-    background: #fff;
     outline: 1px solid #ccc;
+    background: #fff;
 }
 
 .calendula_theme_metro .calendula__years,
 .calendula_theme_metro .calendula__months
 {
-    background-color: #eee;
     outline: 1px solid #ccc;
+    background-color: #eee;
 }
 
 .calendula_theme_metro .calendula__short-daynames-cell_n_0,
@@ -996,5 +1020,5 @@
 .calendula_theme_metro .calendula__day_selected
 {
     color: #fff;
-    background: #01B1E0;
+    background: #01b1e0;
 }

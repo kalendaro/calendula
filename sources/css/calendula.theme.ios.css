@@ -13,12 +13,12 @@
 .calendula_theme_ios .calendula__days
 {
     border-radius: 3px;
-    outline: 1px solid rgba(0,0,0,.1);
+    outline: 1px solid rgba(0, 0, 0, .1);
 }
 
 .calendula_theme_ios .calendula__days-container
 {
-    box-shadow: 1px solid rgba(0,0,0,.1);
+    box-shadow: 1px solid rgba(0, 0, 0, .1);
 }
 
 .calendula_theme_ios .calendula__day_now
@@ -85,19 +85,14 @@
 {
     border-radius: 0 0 3px 3px;
     background: #efefef;
-    background:    -moz-linear-gradient(top, #efefef 0%, #fff 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#efefef), color-stop(100%,#fff));
-    background: -webkit-linear-gradient(top, #efefef 0%,#fff 100%);
-    background:      -o-linear-gradient(top, #efefef 0%,#fff 100%);
-    background:     -ms-linear-gradient(top, #efefef 0%,#fff 100%);
-    background:         linear-gradient(to bottom, #efefef 0%,#fff 100%);
+    background: linear-gradient(to bottom, #efefef 0%, #fff 100%);
 }
 
 .calendula_theme_ios .calendula__years,
 .calendula_theme_ios .calendula__months
 {
     border-radius: 3px;
-    outline: 1px solid rgba(0,0,0,.1);
+    outline: 1px solid rgba(0, 0, 0, .1);
     background-color: #eee;
 }
 

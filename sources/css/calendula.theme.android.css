@@ -13,12 +13,12 @@
 .calendula_theme_android .calendula__days
 {
     border-radius: 3px;
-    outline: 1px solid rgba(0,0,0,.1);
+    outline: 1px solid rgba(0, 0, 0, .1);
 }
 
 .calendula_theme_android .calendula__days-container
 {
-    box-shadow: 1px solid rgba(0,0,0,.1);
+    box-shadow: 1px solid rgba(0, 0, 0, .1);
 }
 
 .calendula_theme_android .calendula__day_now
@@ -75,22 +75,21 @@
 .calendula_theme_android .calendula__month-selector,
 .calendula_theme_android .calendula__year-selector
 {
-    background: rgba(160, 216, 239, 0.3);
+    background: rgba(160, 216, 239, .3);
     box-shadow: 1px 1px 1px #d0d0d0;
-   
 }
 
 .calendula_theme_android .calendula__month-selector-i,
 .calendula_theme_android .calendula__year-selector-i
 {
-    background: rgba(160, 216, 239, 0.3);
+    background: rgba(160, 216, 239, .3);
 }
 
 .calendula_theme_android .calendula__years,
 .calendula_theme_android .calendula__months
 {
     border-radius: 3px;
-    outline: 1px solid rgba(0,0,0,.1);
+    outline: 1px solid rgba(0, 0, 0, .1);
     background-color: #ebeeee;
 }
 
@@ -116,5 +115,5 @@
 .calendula_theme_android .calendula__day_selected
 {
     color: #000;
-    background: #A0D8EF;
+    background: #a0d8ef;
 }
