@@ -422,7 +422,7 @@ extend(Cln.prototype, {
             top = months.offsetHeight - selector.offsetHeight - 1;
         }
         
-        setTop(selector, top);
+        setTranslateY(selector, top);
         
         daysContainerTop = -Math.floor(monthElem.offsetTop - days.offsetHeight / 2 + monthElem.offsetHeight / 2);
         if(daysContainerTop > 0) {
@@ -434,7 +434,7 @@ extend(Cln.prototype, {
             daysContainerTop = deltaHeight;
         }
         
-        setTop(daysContainer, daysContainerTop);
+        setTranslateY(daysContainer, daysContainerTop);
         
         this._colorizeMonths(month);
         
@@ -493,8 +493,8 @@ extend(Cln.prototype, {
             this._rebuildDays(year);
         }
         
-        setTop(selector, topSelector);
-        setTop(yearsContainer, topContainer);
+        setTranslateY(selector, topSelector);
+        setTranslateY(yearsContainer, topContainer);
         
         this._colorizeYears(year);
         
@@ -757,7 +757,7 @@ var isUndefined = function(obj) {
     return typeof obj === 'undefined';
 };
 
-var getOffset = function(el) {
+function getOffset(el) {
     var box = {top: 0, left: 0};
 
     // If we don't have gBCR, just use 0,0 rather than error
@@ -772,18 +772,36 @@ var getOffset = function(el) {
     };
 };
 
-var setPosition = function(elem, x, y) {
+function setPosition(elem, x, y) {
     setLeft(elem, x);
     setTop(elem, y);
-};
+}
 
-var setLeft = function(elem, x) {
+function setLeft(elem, x) {
     elem.style.left = isNumber(x) ? x + 'px' : x;
-};
+}
 
-var setTop = function(elem, y) {
+function setTop(elem, y) {
     elem.style.top = isNumber(y) ? y + 'px' : y;
-};
+}
+
+var setTranslateY = (function() {
+    var div = document.createElement('div'),
+        prop = false;
+    
+    ['Moz', 'Webkit', 'O', 'ms', ''].forEach(function(el) {
+        var propBuf = el + (el ? 'T' : 't') + 'ransform';
+        if(propBuf in div.style) {
+            prop = propBuf;
+        }
+    });
+    
+    return prop === false ? function(el, y) {
+        el.style.top = isNumber(y) ? y + 'px' : y;
+    } : function(el, y) {
+        el.style[prop] = 'translateY(' + (isNumber(y) ? y + 'px' : y) + ')';
+    };
+})();
 
 extend(Cln.prototype, {
     position: function() {
@@ -1520,7 +1538,7 @@ extend(Title.prototype, {
             data.forEach(function(el) {
                 save(el);
             });
-        } else {
+        } else if(isPlainObject(data)) {
             save(data);
         }
     },

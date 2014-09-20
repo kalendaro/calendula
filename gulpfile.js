@@ -6,7 +6,7 @@ var gulp = require('gulp'),
     autoprefixer = require('gulp-autoprefixer'),
     uglify = require('gulp-uglify'),
     apBrowsers = {
-        browsers: ['ie >= 9', 'Firefox >= 24', 'Chrome >= 26', 'iOS >= 5', 'Safari >= 6', 'Android > 2.3'];
+        browsers: ['ie >= 9', 'Firefox >= 24', 'Chrome >= 26', 'iOS >= 5', 'Safari >= 6', 'Android > 2.3']
     },
     destDir = './build';
     

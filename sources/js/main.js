@@ -403,7 +403,7 @@ extend(Cln.prototype, {
             top = months.offsetHeight - selector.offsetHeight - 1;
         }
         
-        setTop(selector, top);
+        setTranslateY(selector, top);
         
         daysContainerTop = -Math.floor(monthElem.offsetTop - days.offsetHeight / 2 + monthElem.offsetHeight / 2);
         if(daysContainerTop > 0) {
@@ -415,7 +415,7 @@ extend(Cln.prototype, {
             daysContainerTop = deltaHeight;
         }
         
-        setTop(daysContainer, daysContainerTop);
+        setTranslateY(daysContainer, daysContainerTop);
         
         this._colorizeMonths(month);
         
@@ -474,8 +474,8 @@ extend(Cln.prototype, {
             this._rebuildDays(year);
         }
         
-        setTop(selector, topSelector);
-        setTop(yearsContainer, topContainer);
+        setTranslateY(selector, topSelector);
+        setTranslateY(yearsContainer, topContainer);
         
         this._colorizeYears(year);
         

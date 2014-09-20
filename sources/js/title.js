@@ -24,7 +24,7 @@ extend(Title.prototype, {
             data.forEach(function(el) {
                 save(el);
             });
-        } else {
+        } else if(isPlainObject(data)) {
             save(data);
         }
     },
