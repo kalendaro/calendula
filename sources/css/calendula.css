@@ -94,7 +94,12 @@
 
 .calendula__days-month:first-child
 {
-    margin-top: 0;
+    margin-top: 4px;
+}
+
+.calendula__days-month:last-child
+{
+    padding-bottom: 8px;
 }
 
 .calendula__days-table
@@ -134,6 +139,7 @@
 
     transition: border-radius .2s linear;
     text-align: center;
+    vertical-align: middle;
 }
 
 .calendula__day_minmax
