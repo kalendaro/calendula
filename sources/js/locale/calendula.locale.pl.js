@@ -27,7 +27,16 @@ Calendula.addLocale('pl', {
         'listopada',
         'grudnia'
     ],
-    shortWeekDays: ['N', 'P', 'W', 'Ś', 'C', 'P', 'S'],
+    shortDayNames: ['N', 'P', 'W', 'Ś', 'C', 'P', 'S'],
+    dayNames: [
+        'Niedziela',
+        'Poniedziałek',
+        'Wtorek',
+        'Środa',
+        'Czwartek',
+        'Piątek',
+        'Sobota'
+    ],
     today: 'Dziś',
-    firstWeekDay: 1
+    firstWeekday: 1
 });

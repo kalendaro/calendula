@@ -12,22 +12,11 @@
 <button id="example-button" style="position: absolute; left: 30%; top: 100px;"></button>
 
 <script>
-(function() {
-    var button = document.getElementById('example-button'),
-        cl = new Calendula({
-            button: button,
-            theme: 'my'
-        }),
-        updateButton = function() {
-            button.innerHTML = cl._buttonText();
-        };
-
-    cl.on('select', function(e, value) {
-        updateButton();
+    new Calendula({
+    	value: 'today',
+        switcher: document.getElementById('example-button'),
+        theme: 'my'
     }).open();
-    
-    updateButton();
-})();
 </script>
 
 </body>

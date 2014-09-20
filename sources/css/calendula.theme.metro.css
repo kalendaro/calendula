@@ -1,20 +1,19 @@
-.calendula_theme_metro
+.calendula_theme_metro,
+.calendula__tooltip_theme_metro
 {
     font-family: Segoe UI, sans-serif;
     font-size: 12px;
 
+    transform: translateY(-20%);
+
     color: #000;
-    background: #fff;
     outline: 1px solid #ccc;
-    
-    -webkit-transform: translateY(-20%);
-            transform: translateY(-20%);
+    background: #fff;
 }
 
 .calendula_theme_metro.calendula_opened
 {
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
 }
 
 .calendula_theme_metro .calendula__month,
@@ -81,19 +80,19 @@
 .calendula_theme_metro .calendula__month-selector,
 .calendula_theme_metro .calendula__year-selector
 {
-    background: #fff;
     outline: 1px solid #ccc;
+    background: #fff;
 }
 
 .calendula_theme_metro .calendula__years,
 .calendula_theme_metro .calendula__months
 {
-    background-color: #eee;
     outline: 1px solid #ccc;
+    background-color: #eee;
 }
 
-.calendula_theme_metro .calendula__short-weekdays-cell_n_0,
-.calendula_theme_metro .calendula__short-weekdays-cell_n_6,
+.calendula_theme_metro .calendula__short-daynames-cell_n_0,
+.calendula_theme_metro .calendula__short-daynames-cell_n_6,
 .calendula_theme_metro .calendula__day_holiday,
 .calendula_theme_metro .calendula__day_highday
 {
@@ -114,5 +113,5 @@
 .calendula_theme_metro .calendula__day_selected
 {
     color: #fff;
-    background: #01B1E0;
+    background: #01b1e0;
 }

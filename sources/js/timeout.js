@@ -1,10 +1,15 @@
-var Timeout = function() {};
+function Timeout() {
+    this._buf = [];
+}
 
 extend(Timeout.prototype, {
     set: function(callback, time, ns) {
-        this._buf = this._buf || [];
+        var that = this,
+            id = setTimeout(function() {
+                callback();
+                that.clear(id);
+            }, time);
 
-        var id = setTimeout(callback, time);
         this._buf.push({
             id: id,
             ns: ns
@@ -13,27 +18,48 @@ extend(Timeout.prototype, {
         return id;
     },
     clear: function(id) {
-        if(this._buf) {
-            this._buf.forEach(function(el, i) {
+        var buf = this._buf,
+            index = -1;
+
+        if(buf) {
+            buf.some(function(el, i) {
                 if(el.id === id) {
-                    clearTimeout(id);
-                    this._buf.slice(i, 1);
+                    index = i;
+                    return true;
                 }
-            }, this);
+
+                return false;
+            });
+
+            if(index >= 0) {
+                clearTimeout(buf[index].id);
+                buf.splice(index, 1);
+            }
         }
     },
     clearAll: function(ns) {
-        if(this._buf) {
-            this._buf.forEach(function(el, i) {
+        var oldBuf = this._buf,
+            newBuf = [];
+
+        if(oldBuf) {
+            oldBuf.forEach(function(el, i) {
                 if(ns) {
                     if(ns === el.ns) {
                         clearTimeout(el.id);
-                        this._buf.slice(i, 1);
+                    } else {
+                        newBuf.push(el);
                     }
                 } else {
-                    this._buf.slice(i, 1);
+                    clearTimeout(el.id);
                 }
             }, this);
+
+            this._buf = ns ? newBuf : [];
         }
+    },
+    destroy: function() {
+        this.clearAll();
+
+        delete this._buf;
     }
 });

@@ -5,44 +5,53 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="../build/calendula.all.css" />
     <script src="../build/calendula.all.js"></script>
+    <style type="text/css">
+        body
+        {
+            padding: 30px;
+        }
+        
+        .block
+        {
+            float: left;
+            width: 360px;
+            height: 360px;
+        }
+    </style>
 </head>
 <body>
 
-<button id="example-button1" style="position: absolute; left: 100px; top: 10px;"></button>
+<div class="block">
+    <button id="example-button1"></button>
+</div>
 
-<button id="example-button2" style="position: absolute; left: 450px; top: 10px;"></button>
 
-<button id="example-button3" style="position: absolute; left: 100px; top: 360px;"></button>
+<div class="block">
+    <button id="example-button2"></button>
+</div>
 
-<button id="example-button4" style="position: absolute; left: 450px; top: 360px;"></button>
+<div class="block">
+    <button id="example-button3"></button>
+</div>
+
+<div class="block">
+    <button id="example-button4"></button>
+</div>
+
+<div class="block">
+    <button id="example-button5"></button>
+</div>
 
 <script>
-function init(name, theme) {
-    var button = document.getElementById(name),
-        cl = new Calendula({
-            button: button,
-            theme: theme
-        }),
-        updateButton = function() {
-            button.innerHTML = cl._buttonText();
-        };
+    ['default', 'black', 'ios', 'metro', 'android'].forEach(function(theme, i) {
+        var cl = new Calendula({
+                switcher: document.getElementById('example-button' + (i + 1)),
+                theme: theme,
+                value: 'today'
+            });
 
-    cl.on('select', function(e, value) {
-        updateButton();
+        cl.open();
     });
-    
-    cl.open();
-    
-    updateButton();
-
-    window[name + '__'] = cl;
-}
-
-init('example-button1', 'default');
-init('example-button2', 'black');
-init('example-button3', 'ios');
-init('example-button4', 'metro');
-
 </script>
 
 </body>

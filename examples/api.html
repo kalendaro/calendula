@@ -63,6 +63,7 @@
                         <option value="black">black</option>
                         <option value="ios">ios</option>
                         <option value="metro">metro</option>
+                        <option value="android">android</option>
                     </select>
                 </td>
             </tr>
@@ -99,16 +100,28 @@
                     position
                 <td>
                     <select id="cl-position">
-                        <option value="auto">auto</option>
-                        <option value="left-top">left-top</option>
-                        <option value="center-top">center-top</option>
-                        <option value="right-top">right-top</option>
-                        <option value="right-middle">right-middle</option>
-                        <option value="right-bottom">right-bottom</option>
-                        <option value="center-bottom">center-bottom</option>
-                        <option value="left-bottom">left-bottom</option>
-                        <option value="left-middle">left-middle</option>
+                        <option value="left bottom">left bottom</option>
+                        <option value="left top">left top</option>
+                        <option value="left center">left center</option>
+                        <option value="center top">center top</option>
+                        <option value="center center">center center</option>
+                        <option value="center bottom">center bottom</option>
+                        <option value="right top">right top</option>
+                        <option value="right center">right center</option>
+                        <option value="right bottom">right bottom</option>
                         <option value="object">{left: 10, top: 10}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    showOn
+                <td>
+                    <select id="cl-show-on">
+                        <option value="both">click and focus</option>
+                        <option value="click">click</option>
+                        <option value="focus">focus</option>
+                        <option value="mouseover">mouseover</option>
                     </select>
                 </td>
             </tr>
@@ -163,6 +176,14 @@ window.addEventListener('load', function() {
         }
         clLocale.add(opt);
     });
+
+    var getPosition = function() {
+        return clPosition.value === 'object' ? {left: 10, top: 10} : clPosition.value;
+    };
+
+    var getShowOn = function() {
+        return clShowOn.value === 'both' ? ['click', 'focus'] : clShowOn.value;
+    };
         
     var clOpen = getById('cl-open'),
         clClose = getById('cl-close'),
@@ -179,6 +200,7 @@ window.addEventListener('load', function() {
         clCloseAfterSelection = getById('cl-closeAfterSelection'),
         clDaysAfterMonths = getById('cl-daysAfterMonths'),
         clPosition = getById('cl-position'),
+        clShowOn = getById('cl-show-on'),
         button = getById('example-button'),
         minDate = new Date(),
         maxDate = new Date();
@@ -197,26 +219,30 @@ window.addEventListener('load', function() {
             value: clValue.value,
             min: clMin.value,
             max: clMax.value,
-            button: button,
-            autoclose: clAutoclose.checked,
+            switcher: button,
+            autoclosable: clAutoclose.checked,
             daysAfterMonths: clDaysAfterMonths.checked,
-            theme: clTheme.value
-        }),
-        updateButton = function() {
-            button.innerHTML = cl._buttonText();
-        };
+            theme: clTheme.value,
+            showOn: getShowOn(),
+            position: getPosition(),
+            title: [
+                {date: '2014-10-10', text: 'Hello world!'},
+                {date: '2014-10-11', color: 'red', text: 'Hello world!'},
+                {date: '2014-10-12', color: 'orange', text: 'Hello world!'},
+                {date: '2014-10-13', color: 'green', text: 'Hello world!'}
+            ]
+        });
         
-    cl.on('select', function(e, data) {
-        updateButton();
+    cl.event.on('select', function(e, data) {
         log(e.type + ' ' + JSON.stringify(data));
     }).on('open', function(e) {
         log(e.type);
     }).on('close', function(e) {
         log(e.type);
-    }).open();
+    })
+
+    cl.open();
      
-    updateButton();
-    
     clTheme.addEventListener('change', function() {
         cl.setting('theme', this.value);
         document.body.className = 'page page_theme_' + this.value;
@@ -239,16 +265,18 @@ window.addEventListener('load', function() {
     }, false);
 
     clPosition.addEventListener('change', function() {
-        var val = this.value;
-        val = val === 'object' ? {left: 100, top: 100} : val;
-
-        cl.setting('position', val);
+        cl.setting('position', getPosition());
+        cl.open();
     });
 
     clAutoclose.addEventListener('change', function() {
         cl.setting('autoclose', this.checked);
     }, false);
     
+    clShowOn.addEventListener('change', function() {
+        cl.setting('showOn', getShowOn());
+    }, false);
+
     clCloseAfterSelection.addEventListener('change', function() {
         cl.setting('closeAfterSelection', this.checked);
     }, false);

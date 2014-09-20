@@ -13,7 +13,16 @@ Calendula.addLocale('tr', {
         'kasım',
         'aralık'
     ],
-    shortWeekDays:['Pa', 'PT', 'Sa', 'Çarş', 'Per', 'CU', 'Ctesi'],
+    shortDayNames:['Pa', 'PT', 'Sa', 'Çarş', 'Per', 'CU', 'Ctesi'],
+    dayNames: [
+        'Pazar',
+        'Pazartesi',
+        'Salı',
+        'Çarşamba',
+        'Perşembe',
+        'Cuma',
+        'Cumartesi'
+    ],
     today: 'Bugün',
-    firstWeekDay: 1
+    firstWeekday: 1
 });

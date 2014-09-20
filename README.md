@@ -47,13 +47,13 @@ var c = new Calendula({
 
 | №  | Свойство  | Тип                  | По умолчанию  | Описание                                    |
 |:---|:----------|:---------------------|:--------------|:--------------------------------------------|
-| 1. | autoclose | `Boolean`            | `true`        | Закрытие календаря при клике мимо него.     |
-| 2. | button    | `DOMElement`         |               | Кнопка, при клике на которую открывается и позиционируется календарь. |
+| 1. | autoclosable | `Boolean`            | `true`        | Закрытие календаря при клике мимо него.     |
+| 2. | switcher  | `DOMElement`         |               | Кнопка, при клике на которую открывается и позиционируется календарь. |
 | 3. | closeAfterSelection| `Boolean`   | `true`        | Закрытие календаря при выборе даты.         |
 | 4. | locale    | `String`             | `en`          | Язык интерфейса.<br>`be` `de` `en` `es` `fr` `it` `pl` `ru` `tr` `uk` |
 | 5. | max       | `String`<br>`Date`<br>`Number` |               | Максимальная дата.                          |
 | 6. | min       | `String`<br>`Date`<br>`Number` |               | Mинимальная дата.                           |
-| 7. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` |
+| 7. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` `android`|
 | 8. | value     | `String`<br>`Date`<br>`Number` | текущая дата   | Выбранная дата.                            |
 | 9. | years     | `String`               | `-11:1`       | Установка диапозона для списка лет.         |
 
@@ -82,15 +82,15 @@ var c = new Calendula({
 ### .setting(name, [value])
 Получить/установить значение настройки.
 
-### .on(type, callback)
+### .event.on(type, callback)
 Установка события.
   ```JavaScript
-c.on('select', function(e, data) {
+c.event.on('select', function(e, data) {
   console.log(data.day, data.month, data.year);
 });
   ```
 
-### .off(type, callback)
+### .event.off(type, callback)
 Снятие события.
 
 ### .destroy()
