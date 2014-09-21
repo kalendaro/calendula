@@ -8,7 +8,7 @@ extend(Tooltip.prototype, {
 
         var el = document.createElement('div');
         addClass(el, elem('tooltip'));
-        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}])
+        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}]);
 
         document.body.appendChild(el);
 

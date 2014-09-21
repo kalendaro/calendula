@@ -1,21 +1,21 @@
 var isArray = Array.isArray;
 
-var isPlainObj = function(obj) {
+function isPlainObj(obj) {
     return Object.prototype.toString.call(obj) === '[object Object]';
-};
+}
 
-var isString = function(obj) {
+function isString(obj) {
     return typeof obj === 'string';
-};
+}
 
-var isNumber = function(obj) {
+function isNumber(obj) {
     return typeof obj === 'number';
-};
+}
 
-var isObject = function(obj) {
+function isObject(obj) {
     return typeof obj === 'object';
-};
+}
 
-var isUndefined = function(obj) {
+function isUndefined(obj) {
     return typeof obj === 'undefined';
-};
+}

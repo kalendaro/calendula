@@ -1,6 +1,6 @@
 extend(Cln.prototype, {
-    _initPlugins: function(data) {
-        this._plugins = data;
+    _initExts: function(data) {
+        this._exts = data;
 
         data.forEach(function(el) {
             var name = el[0],
@@ -14,13 +14,13 @@ extend(Cln.prototype, {
             this[name]['init'] && this[name]['init'](this._data, this._container);
         }, this);
     },
-    _removePlugins: function() {
-        this._plugins.forEach(function(el) {
-            var plugin = el[0];
-            this[plugin].destroy();
-            delete this[plugin];
+    _removeExts: function() {
+        this._exts.forEach(function(el) {
+            var ext = el[0];
+            this[ext].destroy();
+            delete this[ext];
         }, this);
 
-        delete this._plugins;
+        delete this._exts;
     }
 });

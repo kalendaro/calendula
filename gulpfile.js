@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
     path = require('path'),
+    less = require('gulp-less');
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
     cleancss = require('gulp-cleancss'),
@@ -11,49 +12,38 @@ var gulp = require('gulp'),
     destDir = './build';
     
 var paths = {
-    mainJs: [
-        'sources/js/start.js',
-        'sources/js/vars.js',
-        'sources/js/main.js',
-        'sources/js/dom.js',
-        'sources/js/em.js',
-        'sources/js/object.js',
-        'sources/js/offset.js',
-        'sources/js/number.js',
-        'sources/js/jshtml.js',
-        'sources/js/timeout.js',
-        'sources/js/event.js',
-        'sources/js/dom_event.js',
-        'sources/js/template.js',
-        'sources/js/holiday.js',
-        'sources/js/date.js',
-        'sources/js/locale.js',
-        'sources/js/title.js',
-        'sources/js/tooltip.js',
-        'sources/js/plugin.js',
-        'sources/js/end.js'
-    ],
     mainCss: [
-        'sources/css/calendula.css',
-        'sources/css/calendula__tooltip.css'
+        'src/less/calendula.less',
+        'src/less/calendula__tooltip.less'
+    ],
+    mainJs: [
+        'src/js/start.js',
+        
+        'src/js/main.js',
+        'src/js/template.js',
+        
+        'src/js/lib/*.js',
+        'src/js/ext/*.js',
+        
+        'src/js/end.js'
     ],
     prodJsLocales: [
-        'sources/js/locale/*.js'
+        'src/js/locale/*.js'
     ],
     prodJsHolidays: [
-        'sources/js/holiday/*.js'
+        'src/js/holiday/*.js'
     ],
     prodCssThemes: [
-        'sources/css/calendula.theme.*.css'
+        'src/less/calendula.theme.*.less'
     ]
 };
 
-paths.devJs = paths.mainJs.concat('sources/js/locale/*.js', 'sources/js/holiday/*.js');
+paths.devJs = paths.mainJs.concat('src/js/locale/*.js', 'src/js/holiday/*.js');
 paths.prodJsBase = paths.mainJs;
-paths.prodJsAll = paths.mainJs.concat('sources/js/locale/calendula.locale.*.js', 'sources/js/locale/calendula.holiday.*.js');
+paths.prodJsAll = paths.mainJs.concat('src/js/locale/calendula.locale.*.js', 'src/js/locale/calendula.holiday.*.js');
 
-paths.devCss = paths.mainCss.concat('sources/css/calendula.theme.*.css');
-paths.prodCssAll = paths.mainCss.concat('sources/css/calendula.theme.*.css');
+paths.devCss = paths.mainCss.concat('src/less/calendula.theme.*.less');
+paths.prodCssAll = paths.mainCss.concat('src/less/calendula.theme.*.less');
 
 var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolidays'],
     cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
@@ -94,6 +84,7 @@ gulp.task('prodJsHolidays', function() {
 gulp.task('devCss', function() {
     return gulp.src(paths.devCss)
         .pipe(concat('calendula.dev.css'))
+        .pipe(less())
         .pipe(autoprefixer(apBrowsers))
         .pipe(gulp.dest(destDir));
 });
@@ -101,6 +92,7 @@ gulp.task('devCss', function() {
 gulp.task('prodCssBase', function() {
     return gulp.src(paths.mainCss)
         .pipe(concat('calendula.base.css'))
+        .pipe(less())
         .pipe(autoprefixer(apBrowsers))
         .pipe(cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
@@ -109,6 +101,7 @@ gulp.task('prodCssBase', function() {
 gulp.task('prodCssAll', function() {
     return gulp.src(paths.prodCssAll)
         .pipe(concat('calendula.all.css'))
+        .pipe(less())
         .pipe(autoprefixer(apBrowsers))
         .pipe(cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
@@ -116,14 +109,15 @@ gulp.task('prodCssAll', function() {
 
 gulp.task('prodCssThemes', function() {
     return gulp.src(paths.prodCssThemes)
+        .pipe(less())
         .pipe(autoprefixer(apBrowsers))
         .pipe(cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('watch', function() {
-    gulp.watch('sources/js/**/*', jsTasks);
-    gulp.watch('sources/css/**/*', cssTasks);
+    gulp.watch('src/js/**/*', jsTasks);
+    gulp.watch('src/less/**/*', cssTasks);
 });
 
 gulp.task('default', allTasks);

@@ -1,3 +1,17 @@
+var NS = 'calendula',
+    MIN_MONTH = 0,
+    MAX_MONTH = 11;
+
+function extend(container, obj) {
+    for(var i in obj) {
+        if(obj.hasOwnProperty(i)) {
+            container[i] = obj[i];
+        }
+    }
+    
+    return container;
+}
+
 var Cln = function(data) {
     data = extend({}, data || {});
     
@@ -16,7 +30,7 @@ var Cln = function(data) {
 
     this._data = d;
     
-    this._initPlugins([
+    this._initExts([
         ['event', Event],
         ['domEvent', DomEvent],
         ['template', Template],
@@ -148,11 +162,54 @@ extend(Cln.prototype, {
         
         return this;
     },
+    position: function() {
+        var pos = this.setting('position') || 'left bottom',
+            switcher = this.setting('switcher'),
+            p = getOffset(switcher),
+            buf, x, y,
+            con = this._container,
+            conWidth = con.offsetWidth,
+            conHeight = con.offsetHeight,
+            switcherWidth = switcher.offsetWidth,
+            switcherHeight = switcher.offsetHeight;
+
+        if(isString(pos)) {
+            buf = pos.trim().split(/ +/);
+            x = p.left;
+            y = p.top;
+
+            switch(buf[0]) {
+                case 'center':
+                    x += -(conWidth - switcherWidth) / 2;
+                break;
+                case 'right':
+                    x += switcherWidth - conWidth;
+                break;
+            }
+
+            switch(buf[1]) {
+                case 'top':
+                    y += -conHeight;
+                break;
+                case 'center':
+                    y += -(conHeight - switcherHeight) / 2;
+                break;
+                case 'bottom':
+                    y += switcherHeight;
+                break;
+            }
+        } else {
+            x = p.left;
+            y = p.top;
+        }
+
+        setPosition(this._container, x, y);
+    },
     destroy: function() {
         if(this._isInited) {
             this.close();
             
-            this._removePlugins();
+            this._removeExts();
             
             document.body.removeChild(this._container);
             
@@ -443,8 +500,7 @@ extend(Cln.prototype, {
         var years = this._elem('years'),
             yearsContainer = this._elem('years-container'),
             yearHeight = this._elem('year').offsetHeight,
-            selector = this._elem('year-selector'),
-            noAnim = elem('years', 'noanim');
+            selector = this._elem('year-selector');
             
         if(!anim) {
             setMod(years, 'noanim');

@@ -116,6 +116,7 @@ extend(Template.prototype, {
         for(var day = 1; day <= daysMonth[m]; day++) {
             title = '';
             date.setDate(day);
+            dateTs = +date;
             weekday = date.getDay();
             holiday = par.getHoliday(day, m, y);
             mods = {};

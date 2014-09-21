@@ -7,7 +7,7 @@ var NS = 'calendula',
     MIN_MONTH = 0,
     MAX_MONTH = 11;
 
-var extend = function(container, obj) {
+function extend(container, obj) {
     for(var i in obj) {
         if(obj.hasOwnProperty(i)) {
             container[i] = obj[i];
@@ -15,7 +15,7 @@ var extend = function(container, obj) {
     }
     
     return container;
-};
+}
 
 var Cln = function(data) {
     data = extend({}, data || {});
@@ -35,7 +35,7 @@ var Cln = function(data) {
 
     this._data = d;
     
-    this._initPlugins([
+    this._initExts([
         ['event', Event],
         ['domEvent', DomEvent],
         ['template', Template],
@@ -167,11 +167,54 @@ extend(Cln.prototype, {
         
         return this;
     },
+    position: function() {
+        var pos = this.setting('position') || 'left bottom',
+            switcher = this.setting('switcher'),
+            p = getOffset(switcher),
+            buf, x, y,
+            con = this._container,
+            conWidth = con.offsetWidth,
+            conHeight = con.offsetHeight,
+            switcherWidth = switcher.offsetWidth,
+            switcherHeight = switcher.offsetHeight;
+
+        if(isString(pos)) {
+            buf = pos.trim().split(/ +/);
+            x = p.left;
+            y = p.top;
+
+            switch(buf[0]) {
+                case 'center':
+                    x += -(conWidth - switcherWidth) / 2;
+                break;
+                case 'right':
+                    x += switcherWidth - conWidth;
+                break;
+            }
+
+            switch(buf[1]) {
+                case 'top':
+                    y += -conHeight;
+                break;
+                case 'center':
+                    y += -(conHeight - switcherHeight) / 2;
+                break;
+                case 'bottom':
+                    y += switcherHeight;
+                break;
+            }
+        } else {
+            x = p.left;
+            y = p.top;
+        }
+
+        setPosition(this._container, x, y);
+    },
     destroy: function() {
         if(this._isInited) {
             this.close();
             
-            this._removePlugins();
+            this._removeExts();
             
             document.body.removeChild(this._container);
             
@@ -462,8 +505,7 @@ extend(Cln.prototype, {
         var years = this._elem('years'),
             yearsContainer = this._elem('years-container'),
             yearHeight = this._elem('year').offsetHeight,
-            selector = this._elem('year-selector'),
-            noAnim = elem('years', 'noanim');
+            selector = this._elem('year-selector');
             
         if(!anim) {
             setMod(years, 'noanim');
@@ -643,514 +685,6 @@ extend(Cln.prototype, {
     }
 });
 
-var div = document.createElement('div'),
-    dataAttr = div.dataset ? function(el, name) {
-        return el.dataset[name];
-    } : function(el, name) { // support IE9
-        return el.getAttribute('data-' + name);
-    },
-    hasClassList = !!div.classList,
-    addClass = hasClassList ? function(el, name) {
-        return el.classList.add(name);
-    } : function(el, name) { // support IE9
-        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
-        if(!re.test(name.className)) {
-            el.className = (el.className + ' ' + name).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
-        }
-    },
-    removeClass = hasClassList ? function(el, name) {
-        return el.classList.remove(name);    
-    } : function(el, name) { // support IE9
-        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
-        el.className = el.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
-    },
-    hasClass = hasClassList ? function(el, name) {
-        return el.classList.contains(name);
-    } : function(el, name) { // support IE9
-        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
-        return el.className.search(re) !== -1;
-    };
-
-var elem = function(name, m, val) {
-        if(val === null || val === false) {
-            name = '';
-        } else if(val === true || val === undefined) {
-            val = '';
-        }
-        
-        return NS + '__' + name + (m ? '_' + m + (val === '' ? '' : '_' + val) : '');
-    },
-    mod = function(name, val) {
-        if(val === null || val === false) {
-            name = '';
-        } else if(val === true || val === undefined) {
-            val = '';
-        }
-        
-        return NS + '_' + name + (val === '' ? '' : '_' + val);
-    },
-    delMod = function(el, m) {
-        var e = getElemName(el),
-            selector = e ? elem(e, m) : mod(m),
-            classes = (el.className || '').split(' ');
-
-        classes.forEach(function(cl) {
-            if(cl === selector || cl.search(selector + '_') !== -1) {
-                removeClass(el, cl);
-            }
-        });
-    },
-    setMod = function(el, m, val) {
-        var e = getElemName(el);
-        delMod(el, m);
-        addClass(el, e ? elem(e, m, val) : mod(m, val));
-    },
-    hasMod = function(el, m, val) {
-        var e = getElemName(el);
-
-        return hasClass(el, e ? elem(e, m, val) : mod(m, val));
-    },
-    hasElem = function(el, e) {
-        return hasClass(el, elem(e));
-    },
-    getElemName = function(el) {
-        var buf = el.className.match(/__([^ _$]+)/);
-        return buf ? buf[1] : '';
-    };
-
-var _Em = {
-    _elem: function(e, m, val) {
-        return this._container.querySelector('.' + elem(e, m, val));
-    },
-    /*_elemContext: function(context, e, m, val) {
-        return context.querySelector('.' + elem(e, m, val));
-    },*/
-    _elemAll: function(e, m, val) {
-        return this._container.querySelectorAll('.' + elem(e, m, val));
-    },
-    _elemAllContext: function(context, e, m, val) {
-        return context.querySelectorAll('.' + elem(e, m, val));
-    }
-};
-
-extend(Cln.prototype, _Em);
-
-var isArray = Array.isArray;
-
-var isPlainObj = function(obj) {
-    return Object.prototype.toString.call(obj) === '[object Object]';
-};
-
-var isString = function(obj) {
-    return typeof obj === 'string';
-};
-
-var isNumber = function(obj) {
-    return typeof obj === 'number';
-};
-
-var isObject = function(obj) {
-    return typeof obj === 'object';
-};
-
-var isUndefined = function(obj) {
-    return typeof obj === 'undefined';
-};
-
-function getOffset(el) {
-    var box = {top: 0, left: 0};
-
-    // If we don't have gBCR, just use 0,0 rather than error
-    // BlackBerry 5, iOS 3 (original iPhone)
-    if(!isUndefined(el.getBoundingClientRect)) {
-        box = el.getBoundingClientRect();
-    }
-    
-    return {
-        top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
-        left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
-    };
-};
-
-function setPosition(elem, x, y) {
-    setLeft(elem, x);
-    setTop(elem, y);
-}
-
-function setLeft(elem, x) {
-    elem.style.left = isNumber(x) ? x + 'px' : x;
-}
-
-function setTop(elem, y) {
-    elem.style.top = isNumber(y) ? y + 'px' : y;
-}
-
-var setTranslateY = (function() {
-    var div = document.createElement('div'),
-        prop = false;
-    
-    ['Moz', 'Webkit', 'O', 'ms', ''].forEach(function(el) {
-        var propBuf = el + (el ? 'T' : 't') + 'ransform';
-        if(propBuf in div.style) {
-            prop = propBuf;
-        }
-    });
-    
-    return prop === false ? function(el, y) {
-        el.style.top = isNumber(y) ? y + 'px' : y;
-    } : function(el, y) {
-        el.style[prop] = 'translateY(' + (isNumber(y) ? y + 'px' : y) + ')';
-    };
-})();
-
-extend(Cln.prototype, {
-    position: function() {
-        var pos = this.setting('position') || 'left bottom',
-            switcher = this.setting('switcher'),
-            p = getOffset(switcher),
-            buf, x, y,
-            con = this._container,
-            conWidth = con.offsetWidth,
-            conHeight = con.offsetHeight,
-            switcherWidth = switcher.offsetWidth,
-            switcherHeight = switcher.offsetHeight;
-
-        if(isString(pos)) {
-            buf = pos.trim().split(/ +/);
-            x = p.left;
-            y = p.top;
-
-            switch(buf[0]) {
-                case 'center':
-                    x += -(conWidth - switcherWidth) / 2;
-                break;
-                case 'right':
-                    x += switcherWidth - conWidth;
-                break;
-            }
-
-            switch(buf[1]) {
-                case 'top':
-                    y += -conHeight;
-                break;
-                case 'center':
-                    y += -(conHeight - switcherHeight) / 2;
-                break;
-                case 'bottom':
-                    y += switcherHeight;
-                break;
-            }
-        } else {
-            x = p.left;
-            y = p.top;
-        }
-
-        setPosition(this._container, x, y);
-    }
-});
-
-var parseNum = function(str) {
-    return parseInt(str, 10);
-};
-
-var jshtml = (function() {
-    var buildItem = function(data) {
-        if(data === null || data === undefined) {
-            return '';
-        }
-
-        var buf = [];
-
-        if(isPlainObj(data)) {
-            return tag(data);
-        } else if(isArray(data)) {
-            for(var i = 0, len = data.length; i < len; i++) {
-                buf.push(buildItem(data[i]));
-            }
-
-            return buf.join('');
-        } else {
-            return '' + data;
-        }
-    };
-
-    var tag = function(data) {
-        var t = data.t || 'div',
-            text = '<' + t + attrs(data) + '>';
-
-        if(data.c) {
-            text += buildItem(data.c);
-        }
-
-        text += '</' + t + '>';
-
-        return text;
-    };
-
-    var attrs = function(data) {
-        var keys = Object.keys(data),
-            ignoredItems = ['c', 't', 'e', 'm'],
-            text = [],
-            classes = [],
-            i,
-            buf = '';
-
-        if(data.e) {
-            classes.push(elem(data.e));
-        }
-
-        if(data.m) {
-            if(data.e) {
-                for(i in data.m) {
-                    if(data.m.hasOwnProperty(i)) {
-                        classes.push(elem(data.e, i, data.m[i]));
-                    }
-                } 
-            } else {
-                for(i in data.m) {
-                    if(data.m.hasOwnProperty(i)) {
-                        classes.push(mod(i, data.m[i]));
-                    }
-                } 
-            }
-        }
-
-        if(classes.length) {
-            text.push(attr('class', classes));
-        }
-
-        for(var i = 0, len = keys.length; i < len; i++) {
-            var item = keys[i];
-            if(ignoredItems.indexOf(item) === -1) {
-                text.push(attr(item, data[item]));
-            }
-        }
-
-        buf = text.join(' ');
-
-        return buf ? ' ' + buf : '';
-    };
-
-    var attr = function(name, value) {
-        return value !== null && value !== undefined ?
-            name + '="' + (isArray(value) ? value.join(' ') : value) + '"' : '';
-    };
-
-    return buildItem;
-})();
-
-function Timeout() {
-    this._buf = [];
-}
-
-extend(Timeout.prototype, {
-    set: function(callback, time, ns) {
-        var that = this,
-            id = setTimeout(function() {
-                callback();
-                that.clear(id);
-            }, time);
-
-        this._buf.push({
-            id: id,
-            ns: ns
-        });
-
-        return id;
-    },
-    clear: function(id) {
-        var buf = this._buf,
-            index = -1;
-
-        if(buf) {
-            buf.some(function(el, i) {
-                if(el.id === id) {
-                    index = i;
-                    return true;
-                }
-
-                return false;
-            });
-
-            if(index >= 0) {
-                clearTimeout(buf[index].id);
-                buf.splice(index, 1);
-            }
-        }
-    },
-    clearAll: function(ns) {
-        var oldBuf = this._buf,
-            newBuf = [];
-
-        if(oldBuf) {
-            oldBuf.forEach(function(el, i) {
-                if(ns) {
-                    if(ns === el.ns) {
-                        clearTimeout(el.id);
-                    } else {
-                        newBuf.push(el);
-                    }
-                } else {
-                    clearTimeout(el.id);
-                }
-            }, this);
-
-            this._buf = ns ? newBuf : [];
-        }
-    },
-    destroy: function() {
-        this.clearAll();
-
-        delete this._buf;
-    }
-});
-
-var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
-    document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
-    'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
-
-function Event() {
-    this._buf = [];
-}
-
-extend(Event.prototype, {
-    on: function(type, callback) {
-        if(type && callback) {            
-            this._buf.push({
-                type: type,
-                callback: callback
-            });
-        }
-        
-        return this;
-    },
-    off: function(type, callback) {
-        var buf = this._buf;
-        
-        for(var i = 0; i < buf.length; i++) {
-            if(callback === buf[i].callback && type === buf[i].type) {
-                buf.splice(i, 1);
-                i--;
-            }
-        }
-        
-        return this;
-    },
-    trigger: function(type) {
-        var buf = this._buf;
-
-        for(var i = 0; i < buf.length; i++) {
-            if(type === buf[i].type) {
-                buf[i].callback.apply(this, [{type: type}].concat(Array.prototype.slice.call(arguments, 1)));
-            }
-        }
-        
-        return this;
-    },
-    destroy: function() {
-        delete this._buf;
-    }
-});
-
-function DomEvent() {
-    this._buf = [];
-}
-
-extend(DomEvent.prototype, {
-    onWheel: function(elem, callback, ns) {
-        // handle MozMousePixelScroll in older Firefox
-        return this.on(elem,
-            supportWheel === 'DOMMouseScroll' ? 'MozMousePixelScroll' : supportWheel,
-            supportWheel === 'wheel' ? callback : function(originalEvent) {
-                if(!originalEvent) {
-                    originalEvent = window.event;
-                }
-
-                var event = {
-                    originalEvent: originalEvent,
-                    target: originalEvent.target || originalEvent.srcElement,
-                    type: 'wheel',
-                    deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
-                    deltaX: 0,
-                    delatZ: 0,
-                    preventDefault: function() {
-                        originalEvent.preventDefault ?
-                            originalEvent.preventDefault() :
-                            originalEvent.returnValue = false;
-                    }
-                },
-                k = -1 / 40;
-                
-                if(supportWheel === 'mousewheel') {
-                    event.deltaY = k * originalEvent.wheelDelta;
-                    if(originalEvent.wheelDeltaX) {
-                        event.deltaX = k * originalEvent.wheelDeltaX;
-                    }
-                } else {
-                    event.deltaY = originalEvent.detail;
-                }
-
-                return callback(event);
-        }, ns);
-    },    
-    on: function(elem, type, callback, ns) {
-        if(elem && type && callback) {                
-            elem.addEventListener(type, callback, false);
-
-            this._buf.push({
-                elem: elem,
-                type: type,
-                callback: callback,
-                ns: ns
-            });
-        }
-        
-        return this;
-    },
-    off: function(elem, type, callback, ns) {
-        var buf = this._buf;
-
-        for(var i = 0; i < buf.length; i++) {
-            var el = buf[i];
-            if(el && el.elem === elem && el.callback === callback && el.type === type && el.ns === ns) {
-                elem.removeEventListener(type, callback, false);
-                buf.splice(i, 1);
-                i--;
-            }
-        }
-        
-        return this;
-    },
-    offAll: function(ns) {
-        var buf = this._buf;
-
-        for(var i = 0; i < buf.length; i++) {
-            var el = buf[i];
-
-            if(ns) {
-                if(ns === el.ns) {
-                    el.elem.removeEventListener(el.type, el.callback, false);
-                    buf.splice(i, 1);
-                    i--;
-                }
-            } else {
-                el.elem.removeEventListener(el.type, el.callback, false);
-            }
-        }
-        
-        if(!ns) {
-            this._buf = [];
-        }
-        
-        return this;
-    },
-    destroy: function() {
-        this.offAll();
-
-        delete this._buf;
-    }
-});
-
 var SATURDAY = 6,
     SUNDAY = 0;
 
@@ -1269,6 +803,7 @@ extend(Template.prototype, {
         for(var day = 1; day <= daysMonth[m]; day++) {
             title = '';
             date.setDate(day);
+            dateTs = +date;
             weekday = date.getDay();
             holiday = par.getHoliday(day, m, y);
             mods = {};
@@ -1417,20 +952,6 @@ extend(Template.prototype, {
     }
 });
 
-extend(Cln, {
-    addHolidays: function(locale, data) {
-        this._holidays = this._holidays || {};
-        this._holidays[locale] = data;
-    }
-});
-
-Cln.prototype.getHoliday = function(d, m, y) {
-    var locale = this._data.locale,
-        c = Cln._holidays;
-        
-    return c && c[locale] && c[locale][y] ? c[locale][y][d + '-' + (m + 1)] : undefined;
-};
-
 function leadZero(num) {
     return (num < 10 ? '0' : '') + num;
 }
@@ -1442,6 +963,245 @@ function isLeapYear(y) {
     
     return false;
 }
+
+var div = document.createElement('div'),
+    dataAttr = div.dataset ? function(el, name) {
+        return el.dataset[name];
+    } : function(el, name) { // support IE9
+        return el.getAttribute('data-' + name);
+    },
+    hasClassList = !!div.classList,
+    addClass = hasClassList ? function(el, name) {
+        return el.classList.add(name);
+    } : function(el, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        if(!re.test(name.className)) {
+            el.className = (el.className + ' ' + name).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+        }
+    },
+    removeClass = hasClassList ? function(el, name) {
+        return el.classList.remove(name);    
+    } : function(el, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        el.className = el.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
+    },
+    hasClass = hasClassList ? function(el, name) {
+        return el.classList.contains(name);
+    } : function(el, name) { // support IE9
+        var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
+        return el.className.search(re) !== -1;
+    };
+
+function elem(name, m, val) {
+    if(val === null || val === false) {
+        name = '';
+    } else if(val === true || val === undefined) {
+        val = '';
+    }
+
+    return NS + '__' + name + (m ? '_' + m + (val === '' ? '' : '_' + val) : '');
+}
+
+function mod(name, val) {
+    if(val === null || val === false) {
+        name = '';
+    } else if(val === true || val === undefined) {
+        val = '';
+    }
+
+    return NS + '_' + name + (val === '' ? '' : '_' + val);
+}
+
+function delMod(el, m) {
+    var e = getElemName(el),
+        selector = e ? elem(e, m) : mod(m),
+        classes = (el.className || '').split(' ');
+
+    classes.forEach(function(cl) {
+        if(cl === selector || cl.search(selector + '_') !== -1) {
+            removeClass(el, cl);
+        }
+    });
+}
+
+function setMod(el, m, val) {
+    var e = getElemName(el);
+    delMod(el, m);
+    addClass(el, e ? elem(e, m, val) : mod(m, val));
+}
+
+function hasMod(el, m, val) {
+    var e = getElemName(el);
+
+    return hasClass(el, e ? elem(e, m, val) : mod(m, val));
+}
+
+function hasElem(el, e) {
+    return hasClass(el, elem(e));
+}
+
+function getElemName(el) {
+    var buf = el.className.match(/__([^ _$]+)/);
+    return buf ? buf[1] : '';
+}
+
+var jshtml = (function() {
+    var buildItem = function(data) {
+        if(data === null || data === undefined) {
+            return '';
+        }
+
+        var buf = [];
+
+        if(isPlainObj(data)) {
+            return tag(data);
+        } else if(isArray(data)) {
+            for(var i = 0, len = data.length; i < len; i++) {
+                buf.push(buildItem(data[i]));
+            }
+
+            return buf.join('');
+        } else {
+            return '' + data;
+        }
+    };
+
+    var tag = function(data) {
+        var t = data.t || 'div',
+            text = '<' + t + attrs(data) + '>';
+
+        if(data.c) {
+            text += buildItem(data.c);
+        }
+
+        text += '</' + t + '>';
+
+        return text;
+    };
+
+    var attrs = function(data) {
+        var keys = Object.keys(data),
+            ignoredItems = ['c', 't', 'e', 'm'],
+            text = [],
+            classes = [],
+            i, len,
+            buf = '';
+
+        if(data.e) {
+            classes.push(elem(data.e));
+        }
+
+        if(data.m) {
+            if(data.e) {
+                for(i in data.m) {
+                    if(data.m.hasOwnProperty(i)) {
+                        classes.push(elem(data.e, i, data.m[i]));
+                    }
+                } 
+            } else {
+                for(i in data.m) {
+                    if(data.m.hasOwnProperty(i)) {
+                        classes.push(mod(i, data.m[i]));
+                    }
+                } 
+            }
+        }
+
+        if(classes.length) {
+            text.push(attr('class', classes));
+        }
+
+        for(i = 0, len = keys.length; i < len; i++) {
+            var item = keys[i];
+            if(ignoredItems.indexOf(item) === -1) {
+                text.push(attr(item, data[item]));
+            }
+        }
+
+        buf = text.join(' ');
+
+        return buf ? ' ' + buf : '';
+    };
+
+    var attr = function(name, value) {
+        return value !== null && value !== undefined ?
+            name + '="' + (isArray(value) ? value.join(' ') : value) + '"' : '';
+    };
+
+    return buildItem;
+})();
+
+function parseNum(str) {
+    return parseInt(str, 10);
+}
+
+var isArray = Array.isArray;
+
+function isPlainObj(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
+}
+
+function isString(obj) {
+    return typeof obj === 'string';
+}
+
+function isNumber(obj) {
+    return typeof obj === 'number';
+}
+
+function isObject(obj) {
+    return typeof obj === 'object';
+}
+
+function isUndefined(obj) {
+    return typeof obj === 'undefined';
+}
+
+function getOffset(el) {
+    var box = {top: 0, left: 0};
+
+    // If we don't have gBCR, just use 0,0 rather than error
+    // BlackBerry 5, iOS 3 (original iPhone)
+    if(!isUndefined(el.getBoundingClientRect)) {
+        box = el.getBoundingClientRect();
+    }
+    
+    return {
+        top: box.top  + (window.pageYOffset || document.scrollTop || 0) - (document.clientTop  || 0),
+        left: box.left + (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || 0)
+    };
+}
+
+function setPosition(elem, x, y) {
+    setLeft(elem, x);
+    setTop(elem, y);
+}
+
+function setLeft(elem, x) {
+    elem.style.left = isNumber(x) ? x + 'px' : x;
+}
+
+function setTop(elem, y) {
+    elem.style.top = isNumber(y) ? y + 'px' : y;
+}
+
+var setTranslateY = (function() {
+    var div = document.createElement('div'),
+        prop = false;
+    
+    ['Moz', 'Webkit', 'O', 'ms', ''].forEach(function(el) {
+        var propBuf = el + (el ? 'T' : 't') + 'ransform';
+        if(propBuf in div.style) {
+            prop = propBuf;
+        }
+    });
+    
+    return prop === false ? function(el, y) {
+        el.style.top = isNumber(y) ? y + 'px' : y;
+    } : function(el, y) {
+        el.style[prop] = 'translateY(' + (isNumber(y) ? y + 'px' : y) + ')';
+    };
+})();
 
 extend(Cln.prototype, {
     _parseDate: function(value) {
@@ -1495,6 +1255,210 @@ extend(Cln.prototype, {
     }
 });
 
+function DomEvent() {
+    this._buf = [];
+}
+
+extend(DomEvent.prototype, {
+    onWheel: function(elem, callback, ns) {
+        // handle MozMousePixelScroll in older Firefox
+        return this.on(elem,
+            supportWheel === 'DOMMouseScroll' ? 'MozMousePixelScroll' : supportWheel,
+            supportWheel === 'wheel' ? callback : function(originalEvent) {
+                if(!originalEvent) {
+                    originalEvent = window.event;
+                }
+
+                var event = {
+                    originalEvent: originalEvent,
+                    target: originalEvent.target || originalEvent.srcElement,
+                    type: 'wheel',
+                    deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
+                    deltaX: 0,
+                    delatZ: 0,
+                    preventDefault: function() {
+                        originalEvent.preventDefault ?
+                            originalEvent.preventDefault() :
+                            originalEvent.returnValue = false;
+                    }
+                },
+                k = -1 / 40;
+                
+                if(supportWheel === 'mousewheel') {
+                    event.deltaY = k * originalEvent.wheelDelta;
+                    if(originalEvent.wheelDeltaX) {
+                        event.deltaX = k * originalEvent.wheelDeltaX;
+                    }
+                } else {
+                    event.deltaY = originalEvent.detail;
+                }
+
+                return callback(event);
+        }, ns);
+    },    
+    on: function(elem, type, callback, ns) {
+        if(elem && type && callback) {                
+            elem.addEventListener(type, callback, false);
+
+            this._buf.push({
+                elem: elem,
+                type: type,
+                callback: callback,
+                ns: ns
+            });
+        }
+        
+        return this;
+    },
+    off: function(elem, type, callback, ns) {
+        var buf = this._buf;
+
+        for(var i = 0; i < buf.length; i++) {
+            var el = buf[i];
+            if(el && el.elem === elem && el.callback === callback && el.type === type && el.ns === ns) {
+                elem.removeEventListener(type, callback, false);
+                buf.splice(i, 1);
+                i--;
+            }
+        }
+        
+        return this;
+    },
+    offAll: function(ns) {
+        var buf = this._buf;
+
+        for(var i = 0; i < buf.length; i++) {
+            var el = buf[i];
+
+            if(ns) {
+                if(ns === el.ns) {
+                    el.elem.removeEventListener(el.type, el.callback, false);
+                    buf.splice(i, 1);
+                    i--;
+                }
+            } else {
+                el.elem.removeEventListener(el.type, el.callback, false);
+            }
+        }
+        
+        if(!ns) {
+            this._buf = [];
+        }
+        
+        return this;
+    },
+    destroy: function() {
+        this.offAll();
+
+        delete this._buf;
+    }
+});
+
+var _Em = {
+    _elem: function(e, m, val) {
+        return this._container.querySelector('.' + elem(e, m, val));
+    },
+    /*_elemContext: function(context, e, m, val) {
+        return context.querySelector('.' + elem(e, m, val));
+    },*/
+    _elemAll: function(e, m, val) {
+        return this._container.querySelectorAll('.' + elem(e, m, val));
+    },
+    _elemAllContext: function(context, e, m, val) {
+        return context.querySelectorAll('.' + elem(e, m, val));
+    }
+};
+
+extend(Cln.prototype, _Em);
+
+var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
+    document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
+    'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
+
+function Event() {
+    this._buf = [];
+}
+
+extend(Event.prototype, {
+    on: function(type, callback) {
+        if(type && callback) {            
+            this._buf.push({
+                type: type,
+                callback: callback
+            });
+        }
+        
+        return this;
+    },
+    off: function(type, callback) {
+        var buf = this._buf;
+        
+        for(var i = 0; i < buf.length; i++) {
+            if(callback === buf[i].callback && type === buf[i].type) {
+                buf.splice(i, 1);
+                i--;
+            }
+        }
+        
+        return this;
+    },
+    trigger: function(type) {
+        var buf = this._buf;
+
+        for(var i = 0; i < buf.length; i++) {
+            if(type === buf[i].type) {
+                buf[i].callback.apply(this, [{type: type}].concat(Array.prototype.slice.call(arguments, 1)));
+            }
+        }
+        
+        return this;
+    },
+    destroy: function() {
+        delete this._buf;
+    }
+});
+
+extend(Cln.prototype, {
+    _initExts: function(data) {
+        this._exts = data;
+
+        data.forEach(function(el) {
+            var name = el[0],
+                Cls = el[1];
+
+            this[name] = new Cls();
+
+            extend(this[name], _Em);
+
+            this[name]['parent'] = this;
+            this[name]['init'] && this[name]['init'](this._data, this._container);
+        }, this);
+    },
+    _removeExts: function() {
+        this._exts.forEach(function(el) {
+            var ext = el[0];
+            this[ext].destroy();
+            delete this[ext];
+        }, this);
+
+        delete this._exts;
+    }
+});
+
+extend(Cln, {
+    addHolidays: function(locale, data) {
+        this._holidays = this._holidays || {};
+        this._holidays[locale] = data;
+    }
+});
+
+Cln.prototype.getHoliday = function(d, m, y) {
+    var locale = this._data.locale,
+        c = Cln._holidays;
+        
+    return c && c[locale] && c[locale][y] ? c[locale][y][d + '-' + (m + 1)] : undefined;
+};
+
 extend(Cln, {
     _texts: {},
     _locales: [],
@@ -1512,6 +1476,72 @@ Cln.prototype.text = function(id) {
     return Cln._texts[this._data.locale][id];
 };
 
+function Timeout() {
+    this._buf = [];
+}
+
+extend(Timeout.prototype, {
+    set: function(callback, time, ns) {
+        var that = this,
+            id = setTimeout(function() {
+                callback();
+                that.clear(id);
+            }, time);
+
+        this._buf.push({
+            id: id,
+            ns: ns
+        });
+
+        return id;
+    },
+    clear: function(id) {
+        var buf = this._buf,
+            index = -1;
+
+        if(buf) {
+            buf.some(function(el, i) {
+                if(el.id === id) {
+                    index = i;
+                    return true;
+                }
+
+                return false;
+            });
+
+            if(index >= 0) {
+                clearTimeout(buf[index].id);
+                buf.splice(index, 1);
+            }
+        }
+    },
+    clearAll: function(ns) {
+        var oldBuf = this._buf,
+            newBuf = [];
+
+        if(oldBuf) {
+            oldBuf.forEach(function(el, i) {
+                if(ns) {
+                    if(ns === el.ns) {
+                        clearTimeout(el.id);
+                    } else {
+                        newBuf.push(el);
+                    }
+                } else {
+                    clearTimeout(el.id);
+                }
+            }, this);
+
+            this._buf = ns ? newBuf : [];
+        }
+    },
+    destroy: function() {
+        this.clearAll();
+
+        delete this._buf;
+    }
+});
+
 function Title() {
     this._title = {};
 }
@@ -1528,7 +1558,7 @@ extend(Title.prototype, {
 
         function save(el) {
             tt[el.date] = {text: el.text, color: el.color};
-        };
+        }
 
         if(!data) {
             return;
@@ -1538,7 +1568,7 @@ extend(Title.prototype, {
             data.forEach(function(el) {
                 save(el);
             });
-        } else if(isPlainObject(data)) {
+        } else if(isPlainObj(data)) {
             save(data);
         }
     },
@@ -1563,7 +1593,7 @@ extend(Tooltip.prototype, {
 
         var el = document.createElement('div');
         addClass(el, elem('tooltip'));
-        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}])
+        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}]);
 
         document.body.appendChild(el);
 
@@ -1600,33 +1630,6 @@ extend(Tooltip.prototype, {
             document.body.removeChild(this._container);
             delete this._container;
         }
-    }
-});
-
-extend(Cln.prototype, {
-    _initPlugins: function(data) {
-        this._plugins = data;
-
-        data.forEach(function(el) {
-            var name = el[0],
-                Cls = el[1];
-
-            this[name] = new Cls();
-
-            extend(this[name], _Em);
-
-            this[name]['parent'] = this;
-            this[name]['init'] && this[name]['init'](this._data, this._container);
-        }, this);
-    },
-    _removePlugins: function() {
-        this._plugins.forEach(function(el) {
-            var plugin = el[0];
-            this[plugin].destroy();
-            delete this[plugin];
-        }, this);
-
-        delete this._plugins;
     }
 });
 

@@ -14,7 +14,7 @@ extend(Title.prototype, {
 
         function save(el) {
             tt[el.date] = {text: el.text, color: el.color};
-        };
+        }
 
         if(!data) {
             return;
@@ -24,7 +24,7 @@ extend(Title.prototype, {
             data.forEach(function(el) {
                 save(el);
             });
-        } else if(isPlainObject(data)) {
+        } else if(isPlainObj(data)) {
             save(data);
         }
     },

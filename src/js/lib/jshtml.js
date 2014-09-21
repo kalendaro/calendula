@@ -37,7 +37,7 @@ var jshtml = (function() {
             ignoredItems = ['c', 't', 'e', 'm'],
             text = [],
             classes = [],
-            i,
+            i, len,
             buf = '';
 
         if(data.e) {
@@ -64,7 +64,7 @@ var jshtml = (function() {
             text.push(attr('class', classes));
         }
 
-        for(var i = 0, len = keys.length; i < len; i++) {
+        for(i = 0, len = keys.length; i < len; i++) {
             var item = keys[i];
             if(ignoredItems.indexOf(item) === -1) {
                 text.push(attr(item, data[item]));

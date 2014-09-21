@@ -1,0 +1,105 @@
+.calendula
+{
+    &__tooltip
+    {
+        position: absolute;
+
+        display: none;
+
+        border: 2px solid transparent;
+    }
+
+    &__tooltip-text
+    {
+        padding: 5px 8px;
+    }
+
+    &__tooltip-tail
+    {
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+
+        overflow: hidden;
+
+        width: 10px;
+        height: 5px;
+        margin-left: -5px;
+    }
+
+    &__tooltip-tail:after
+    {
+        position: absolute;
+        top: -5px;
+        left: 0;
+
+        width: 6px;
+        height: 6px;
+
+        content: '';
+        transform: rotate(45deg);
+
+        border: 2px solid transparent;
+        background: #fff;
+    }
+
+    &__day_has-title:after
+    {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        width: 0;
+        height: 0;
+
+        content: '';
+
+        border-width: 0 5px 5px 0;
+        border-style: solid;
+        border-color: transparent blue transparent;
+    }
+
+    &__day_title-color_red:after
+    {
+        border-color: transparent red transparent;
+    }
+
+    &__day_title-color_orange:after
+    {
+        border-color: transparent orange transparent;
+    }
+
+    &__day_title-color_green:after
+    {
+        border-color: transparent green transparent;
+    }
+
+    &__tooltip_visible
+    {
+        display: block;
+    }
+
+    &__tooltip_color_default &__tooltip-tail:after,
+    &__tooltip_color_default
+    {
+        border-color: rgba(0, 0, 255, .3);
+    }
+
+    &__tooltip_color_red &__tooltip-tail:after,
+    &__tooltip_color_red
+    {
+        border-color: rgba(255, 0, 0, .3);
+    }
+
+    &__tooltip_color_green &__tooltip-tail:after,
+    &__tooltip_color_green
+    {
+        border-color: rgba(0, 255, 0, .3);
+    }
+
+    &__tooltip_color_orange &__tooltip-tail:after,
+    &__tooltip_color_orange
+    {
+        border-color: rgba(255, 165, 0, .3);
+    }
+}
