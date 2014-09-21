@@ -22,7 +22,7 @@ var Cln = function(data) {
     
     var years = this._prepareYears(data.years),
         d = extend(data, {
-            autoclosable: isUndefined(data.autoclosable) ? true : data.autoclosable,
+            autocloseable: isUndefined(data.autocloseable) ? true : data.autocloseable,
             closeAfterSelection: isUndefined(data.closeAfterSelection) ? true : data.closeAfterSelection,
             locale: data.locale || Cln._defaultLocale,
             min: this._parseDateToObj(data.min),
@@ -245,7 +245,7 @@ extend(Cln.prototype, {
         this._ignoreDocumentClick = false;
         
         this.domEvent.on(document, 'click', function(e) {
-            if(e.button || !that.setting('autoclosable')) {
+            if(e.button || !that.setting('autocloseable')) {
                 return;
             }
             

@@ -127,7 +127,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <input type="checkbox" checked="checked" id="cl-autoclose" /> <label for="cl-autoclose">autoclose</label>
+                    <input type="checkbox" checked="checked" id="cl-autocloseable" /> <label for="cl-autocloseable">autocloseable</label>
                 </td>
             </tr>
             <tr>
@@ -196,7 +196,7 @@ window.addEventListener('load', function() {
         clMinSet = getById('cl-min-set'),
         clMax = getById('cl-max'),
         clMaxSet = getById('cl-max-set'),
-        clAutoclose = getById('cl-autoclose'),
+        clAutocloseable = getById('cl-autocloseable'),
         clCloseAfterSelection = getById('cl-closeAfterSelection'),
         clDaysAfterMonths = getById('cl-daysAfterMonths'),
         clPosition = getById('cl-position'),
@@ -220,7 +220,7 @@ window.addEventListener('load', function() {
             min: clMin.value,
             max: clMax.value,
             switcher: button,
-            autoclosable: clAutoclose.checked,
+            autocloseable: clAutocloseable.checked,
             daysAfterMonths: clDaysAfterMonths.checked,
             theme: clTheme.value,
             showOn: getShowOn(),
@@ -269,8 +269,8 @@ window.addEventListener('load', function() {
         cl.open();
     });
 
-    clAutoclose.addEventListener('change', function() {
-        cl.setting('autoclose', this.checked);
+    clAutocloseable.addEventListener('change', function() {
+        cl.setting('autocloseable', this.checked);
     }, false);
     
     clShowOn.addEventListener('change', function() {
