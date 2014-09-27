@@ -1,3 +1,7 @@
+var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
+    document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
+    'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
+
 function DomEvent() {
     this._buf = [];
 }
@@ -26,7 +30,7 @@ extend(DomEvent.prototype, {
                     }
                 },
                 k = -1 / 40;
-                
+
                 if(supportWheel === 'mousewheel') {
                     event.deltaY = k * originalEvent.wheelDelta;
                     if(originalEvent.wheelDeltaX) {
@@ -38,9 +42,9 @@ extend(DomEvent.prototype, {
 
                 return callback(event);
         }, ns);
-    },    
+    },
     on: function(elem, type, callback, ns) {
-        if(elem && type && callback) {                
+        if(elem && type && callback) {
             elem.addEventListener(type, callback, false);
 
             this._buf.push({
@@ -50,7 +54,7 @@ extend(DomEvent.prototype, {
                 ns: ns
             });
         }
-        
+
         return this;
     },
     off: function(elem, type, callback, ns) {
@@ -64,7 +68,7 @@ extend(DomEvent.prototype, {
                 i--;
             }
         }
-        
+
         return this;
     },
     offAll: function(ns) {
@@ -83,11 +87,11 @@ extend(DomEvent.prototype, {
                 el.elem.removeEventListener(el.type, el.callback, false);
             }
         }
-        
+
         if(!ns) {
             this._buf = [];
         }
-        
+
         return this;
     },
     destroy: function() {
