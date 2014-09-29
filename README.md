@@ -33,7 +33,7 @@
 <script src="build/calendula.en.js"></script>
   ```
 
-Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula/).
+Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula/index.ru.html).
 
 ## Использование
   ```JavaScript
@@ -116,7 +116,7 @@ c.event.on('select', function(e, data) {
 + [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
 
 ## Пересборка
-[Сборка на сайте](http://hcodes.github.io/calendula/)
+[Сборка на сайте](http://hcodes.github.io/calendula/index.ru.html)
 
 Ручная сборка:
   ```
