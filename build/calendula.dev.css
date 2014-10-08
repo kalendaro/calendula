@@ -616,10 +616,10 @@
   outline: 1px solid #ccc;
   background: #fff;
 }
-.calendula_theme_metro .calendula_opened {
-  -webkit-transform: translateY(0);
-      -ms-transform: translateY(0);
-          transform: translateY(0);
+.calendula_theme_metro.calendula_opened {
+  -webkit-transform: translateY(0%);
+      -ms-transform: translateY(0%);
+          transform: translateY(0%);
 }
 .calendula_theme_metro .calendula__month,
 .calendula_theme_metro .calendula__year {

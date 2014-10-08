@@ -13,13 +13,13 @@ function extend(container, obj) {
             container[i] = obj[i];
         }
     }
-    
+
     return container;
 }
 
 var Cln = function(data) {
     data = extend({}, data || {});
-    
+
     var years = this._prepareYears(data.years),
         d = extend(data, {
             autocloseable: isUndefined(data.autocloseable) ? true : data.autocloseable,
@@ -34,7 +34,7 @@ var Cln = function(data) {
         });
 
     this._data = d;
-    
+
     this._initExts([
         ['event', Event],
         ['domEvent', DomEvent],
@@ -57,11 +57,11 @@ extend(Cln.prototype, {
     },
     open: function() {
         var that = this;
-        
+
         this._init();
-        
+
         this._ignoreDocumentClick = true;
-        
+
         if(!this.isOpened()) {
             // For Firefox CSS3 animation
             this.timeout.set(function() {
@@ -71,22 +71,22 @@ extend(Cln.prototype, {
                 that._yearSelector(that._currentDate.year, false);
                 that._openedEvents();
             }, 1, 'open');
-            
+
             this._isOpened = true;
-            
+
             this.event.trigger('open');
         }
-        
+
         return this;
     },
     close: function() {
         this._init();
-        
+
         if(this.isOpened()) {
             this._ignoreDocumentClick = false;
 
             this.timeout.clearAll('open');
-            
+
             this._update();
 
             this._delOpenedEvents();
@@ -96,10 +96,10 @@ extend(Cln.prototype, {
             this._isOpened = false;
 
             this.tooltip.hide();
-            
+
             this.event.trigger('close');
         }
-        
+
         return this;
     },
     toggle: function() {
@@ -109,7 +109,7 @@ extend(Cln.prototype, {
         if(!arguments.length) {
             return this._val;
         }
-        
+
         if(value) {
             this._val = this._parseDateToObj(value);
             this._currentDate = extend({}, this._val);
@@ -117,11 +117,11 @@ extend(Cln.prototype, {
             this._val = {};
             this._currentDate = this._current();
         }
-        
+
         if(this._container) {
             this._updateSelection();
         }
-        
+
         this._updateSwitcher();
     },
     setting: function(name, value) {
@@ -136,7 +136,7 @@ extend(Cln.prototype, {
         if(arguments.length === 1) {
             return d[name];
         }
-                
+
         if(name === 'min' || name === 'max' || name === 'value') {
             d[name] = this._parseDateToObj(value);
         } else {
@@ -146,12 +146,12 @@ extend(Cln.prototype, {
         if(name === 'showOn') {
             this._addSwitcherEvents(value);
         }
-        
+
         if(container) {
             if(name === 'theme') {
                 setMod(container, 'theme', value);
             }
-            
+
             if(name === 'daysAfterMonths') {
                 if(value) {
                     setMod(container, 'days-after-months');
@@ -159,12 +159,12 @@ extend(Cln.prototype, {
                     delMod(container, 'days-after-months');
                 }
             }
-            
+
             if(rebuild[name]) {
                 this._rebuild();
             }
         }
-        
+
         return this;
     },
     position: function() {
@@ -213,11 +213,11 @@ extend(Cln.prototype, {
     destroy: function() {
         if(this._isInited) {
             this.close();
-            
+
             this._removeExts();
-            
+
             document.body.removeChild(this._container);
-            
+
             [
                 '_container',
                 '_data',
@@ -233,32 +233,32 @@ extend(Cln.prototype, {
         if(this._isInited) {
             return;
         }
-        
+
         this._isInited = true;
-                
+
         var id = this.setting('id'),
             container = document.createElement('div');
-            
+
         this._container = container;
 
         if(id) {
             container.id = id;
         }
-        
+
         addClass(container, NS);
         setMod(container, 'theme', this._data.theme);
-        
+
         if(this.setting('daysAfterMonths')) {
             setMod(container, 'days-after-months');
         }
-        
+
         this._rebuild();
 
         document.body.appendChild(container);
     },
     _current: function() {
         var d = new Date();
-        
+
         return {
             day: d.getDate(),
             month: d.getMonth(),
@@ -267,7 +267,7 @@ extend(Cln.prototype, {
     },
     _update: function() {
         this._init();
-        
+
         if(this.setting('switcher')) {
             this.position();
         }
@@ -284,21 +284,21 @@ extend(Cln.prototype, {
     },
     _openedEvents: function() {
         var that = this;
-        
+
         this._ignoreDocumentClick = false;
-        
+
         this.domEvent.on(document, 'click', function(e) {
             if(e.button || !that.setting('autocloseable')) {
                 return;
             }
-            
+
             if(that._ignoreDocumentClick) {
                 that._ignoreDocumentClick = false;
             } else {
                 that.close();
             }
         }, 'open');
-        
+
         this.domEvent
             .on(window, 'resize', function() {
                 that._resize();
@@ -317,7 +317,7 @@ extend(Cln.prototype, {
 
                 that.tooltip.hide();
             }, 'open');
-        
+
         var days = this._elem('days'),
             months = this._elem('months'),
             years = this._elem('years'),
@@ -331,7 +331,7 @@ extend(Cln.prototype, {
 
                 return k;
             };
-        
+
         this._onwheelmonths = function(e) {
             var k = getK(e);
             if(k) {
@@ -339,20 +339,20 @@ extend(Cln.prototype, {
                 e.preventDefault();
             }
         };
-        
+
         this._onwheelyears = function(e) {
-            var k = getK(e);            
+            var k = getK(e);
             if(k) {
                 that._yearSelector(that._currentDate.year + k, true);
                 e.preventDefault();
             }
         };
-        
+
         this.domEvent
             .onWheel(days, this._onwheelmonths, 'open')
             .onWheel(months, this._onwheelmonths, 'open')
             .onWheel(years, this._onwheelyears, 'open');
-        
+
         this.domEvent.on(months, 'click', function(e) {
             if(e.button) {
                 return;
@@ -362,12 +362,12 @@ extend(Cln.prototype, {
                 that._monthSelector(+dataAttr(e.target, 'month'), true);
             }
         }, 'open');
-        
+
         this.domEvent.on(years, 'click', function(e) {
             if(e.button) {
                 return;
             }
-            
+
             var y = dataAttr(e.target, 'year');
             if(y) {
                 that._yearSelector(+y, true);
@@ -400,29 +400,29 @@ extend(Cln.prototype, {
                 target = e.target,
                 day = dataAttr(target, 'day'),
                 month = dataAttr(target, 'month');
-            
+
             if(day) {
                 if(hasMod(target, 'minmax')) {
                     return;
                 }
-                
+
                 if(!hasMod(target, 'selected')) {
                     cd.day = +day;
                     cd.month = +month;
-                    
+
                     var selected = days.querySelector('.' + elem('day', 'selected'));
                     if(selected) {
                         delMod(selected, 'selected');
                     }
-                    
+
                     setMod(target, 'selected');
-                    
+
                     that.event.trigger('select', {
                         day: cd.day,
                         month: cd.month,
                         year: cd.year
                     });
-                    
+
                     if(that.setting('closeAfterSelection')) {
                         that.close();
                     }
@@ -439,9 +439,9 @@ extend(Cln.prototype, {
         } else if(month > MAX_MONTH) {
             month = MAX_MONTH;
         }
-        
+
         this._currentDate.month = month;
-        
+
         var months = this._elem('months'),
             monthHeight = this._elem('month').offsetHeight,
             monthsElems = this._elemAll('days-month'),
@@ -450,37 +450,37 @@ extend(Cln.prototype, {
             daysContainer = this._elem('days-container'),
             days = this._elem('days'),
             daysContainerTop;
-            
+
         if(!anim) {
             setMod(days, 'noanim');
             setMod(months, 'noanim');
         }
-        
+
         var top = Math.floor(this._currentDate.month * monthHeight - monthHeight / 2);
         if(top <= 0) {
             top = 1;
         }
-        
+
         if(top + selector.offsetHeight >= months.offsetHeight) {
             top = months.offsetHeight - selector.offsetHeight - 1;
         }
-        
+
         setTranslateY(selector, top);
-        
+
         daysContainerTop = -Math.floor(monthElem.offsetTop - days.offsetHeight / 2 + monthElem.offsetHeight / 2);
         if(daysContainerTop > 0) {
             daysContainerTop = 0;
         }
-        
+
         var deltaHeight = days.offsetHeight - daysContainer.offsetHeight;
         if(daysContainerTop < deltaHeight) {
             daysContainerTop = deltaHeight;
         }
-        
+
         setTranslateY(daysContainer, daysContainerTop);
-        
+
         this._colorizeMonths(month);
-        
+
         if(!anim) {
             this.timeout.set(function() {
                 delMod(days, 'noanim');
@@ -493,53 +493,53 @@ extend(Cln.prototype, {
             startYear = d._startYear,
             endYear = d._endYear,
             oldYear = this._currentDate.year;
-            
+
         if(year < startYear) {
             year = startYear;
         } else if(year > endYear) {
             year = endYear;
         }
-        
+
         this._currentDate.year = year;
-        
+
         var years = this._elem('years'),
             yearsContainer = this._elem('years-container'),
             yearHeight = this._elem('year').offsetHeight,
             selector = this._elem('year-selector');
-            
+
         if(!anim) {
             setMod(years, 'noanim');
         }
-        
+
         var topSelector = Math.floor((this._currentDate.year - startYear) * yearHeight),
             topContainer = -Math.floor((this._currentDate.year - startYear) * yearHeight - years.offsetHeight / 2);
-            
+
         if(topContainer > 0) {
             topContainer = 0;
         }
-        
+
         if(topContainer < years.offsetHeight - yearsContainer.offsetHeight) {
             topContainer = years.offsetHeight - yearsContainer.offsetHeight;
         }
-        
+
         var k = 0;
         if(years.offsetHeight >= yearsContainer.offsetHeight) {
             if((endYear - startYear + 1) % 2) {
                 k = yearHeight;
             }
-            
+
             topContainer = Math.floor((years.offsetHeight - yearsContainer.offsetHeight - k) / 2);
         }
-        
+
         if(year !== oldYear) {
             this._rebuildDays(year);
         }
-        
+
         setTranslateY(selector, topSelector);
         setTranslateY(yearsContainer, topContainer);
-        
+
         this._colorizeYears(year);
-        
+
         if(!anim) {
             this.timeout.set(function() {
                 delMod(years, 'noanim');
@@ -555,22 +555,22 @@ extend(Cln.prototype, {
                 delMod(elems[i], 'color', c);
             }
         }
-        
+
         setMod(months[month], 'color', '0');
-        
+
         if(month - 1 >= MIN_MONTH) {
             setMod(months[month - 1], 'color', '0');
         }
-        
+
         if(month + 1 <= MAX_MONTH) {
             setMod(months[month + 1], 'color', '0');
         }
-        
+
         var n = 1;
         for(c = month - 2; c >= MIN_MONTH && n < MAX_COLOR; c--, n++) {
             setMod(months[c], 'color', n);
         }
-        
+
         n = 1;
         for(c = month + 2; c <= MAX_MONTH && n < MAX_COLOR; c++, n++) {
             setMod(months[c], 'color', n);
@@ -586,14 +586,14 @@ extend(Cln.prototype, {
                 delMod(elems[i], 'color', c);
             }
         }
-        
+
         setMod(years[year - startYear], 'color', '0');
-        
+
         var n = 1;
         for(c = year - 1; c >= this._data._startYear && n < MAX_COLOR; c--, n++) {
             setMod(years[c - startYear], 'color', n);
         }
-        
+
         n = 1;
         for(c = year + 1; c <= this._data._endYear && n < MAX_COLOR; c++, n++) {
             setMod(years[c - startYear], 'color', n);
@@ -607,42 +607,42 @@ extend(Cln.prototype, {
             buf,
             startYear,
             endYear;
-        
+
         if(isString(y)) {
             buf = y.trim().split(/[:,; ]/);
             startYear = parseNum(buf[0]);
             endYear = parseNum(buf[1]);
-            
+
             if(!isNaN(startYear) && !isNaN(endYear)) {
                 if(Math.abs(startYear) < 1000) {
                     startYear = current.year + startYear;
                 }
-                
+
                 if(Math.abs(endYear) < 1000) {
                     endYear = current.year + endYear;
                 }
             }
         }
-        
+
         return {
             start: startYear || (current.year - 11),
             end: endYear || (current.year + 1)
         };
     },
     _updateSelection: function() {
-        var el = this._elem('day', 'selected'),
-            months;
-       
-        if(el) {
-            delMod(el, 'selected');
+        var elSelected = this._elem('day', 'selected');
+        if(elSelected) {
+            delMod(elSelected, 'selected');
         }
-        
+
         if(this._currentDate.year === this._val.year) {
-            months = this._elemAll('days-month');
+            var months = this._elemAll('days-month');
             if(months && months[this._val.month]) {
-                el = this._elemAllContext(months[this._val.month], 'day');
-                if(el && el[this._val.day - 1]) {
-                    setMod(el[this._val.day - 1], 'selected');
+                var el = this._elemAllContext(months[this._val.month], 'day'),
+                    d = this._val.day - 1;
+
+                if(el && el[d]) {
+                    setMod(el[d], 'selected');
                 }
             }
         }
@@ -650,14 +650,19 @@ extend(Cln.prototype, {
     _addSwitcherEvents: function(showOn) {
         var switcher = this.setting('switcher'),
             that = this,
-            events = isArray(showOn) ? showOn : [showOn || 'click'];
-            
+            events = isArray(showOn) ? showOn : [showOn || 'click'],
+            tagName;
+
         this.domEvent.offAll('switcher');
 
         if(switcher) {
             events.forEach(function(el) {
                 that.domEvent.on(switcher, el, function() {
-                    that.open();
+                    if(tagName === 'input' || tagName === 'textarea') {
+                        that.open();
+                    } else {
+                        that.toggle();
+                    }
                 }, 'switcher');
             });
         }
@@ -666,7 +671,7 @@ extend(Cln.prototype, {
         var el = this.setting('switcher'),
             text = this._switcherText(),
             tagName;
-            
+
         if(el) {
             tagName = el.tagName.toLowerCase();
             if(tagName === 'input' || tagName === 'textarea') {
@@ -680,7 +685,7 @@ extend(Cln.prototype, {
         var date = this._currentDate,
             m = this.text('months'),
             cm = this.text('caseMonths');
-            
+
         return date.day + ' ' + (cm || m)[date.month] + ' ' + date.year;
     }
 });
@@ -1255,6 +1260,10 @@ extend(Cln.prototype, {
     }
 });
 
+var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
+    document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
+    'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
+
 function DomEvent() {
     this._buf = [];
 }
@@ -1283,7 +1292,7 @@ extend(DomEvent.prototype, {
                     }
                 },
                 k = -1 / 40;
-                
+
                 if(supportWheel === 'mousewheel') {
                     event.deltaY = k * originalEvent.wheelDelta;
                     if(originalEvent.wheelDeltaX) {
@@ -1295,9 +1304,9 @@ extend(DomEvent.prototype, {
 
                 return callback(event);
         }, ns);
-    },    
+    },
     on: function(elem, type, callback, ns) {
-        if(elem && type && callback) {                
+        if(elem && type && callback) {
             elem.addEventListener(type, callback, false);
 
             this._buf.push({
@@ -1307,7 +1316,7 @@ extend(DomEvent.prototype, {
                 ns: ns
             });
         }
-        
+
         return this;
     },
     off: function(elem, type, callback, ns) {
@@ -1321,7 +1330,7 @@ extend(DomEvent.prototype, {
                 i--;
             }
         }
-        
+
         return this;
     },
     offAll: function(ns) {
@@ -1340,11 +1349,11 @@ extend(DomEvent.prototype, {
                 el.elem.removeEventListener(el.type, el.callback, false);
             }
         }
-        
+
         if(!ns) {
             this._buf = [];
         }
-        
+
         return this;
     },
     destroy: function() {
@@ -1371,35 +1380,31 @@ var _Em = {
 
 extend(Cln.prototype, _Em);
 
-var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
-    document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
-    'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
-
 function Event() {
     this._buf = [];
 }
 
 extend(Event.prototype, {
     on: function(type, callback) {
-        if(type && callback) {            
+        if(type && callback) {
             this._buf.push({
                 type: type,
                 callback: callback
             });
         }
-        
+
         return this;
     },
     off: function(type, callback) {
         var buf = this._buf;
-        
+
         for(var i = 0; i < buf.length; i++) {
             if(callback === buf[i].callback && type === buf[i].type) {
                 buf.splice(i, 1);
                 i--;
             }
         }
-        
+
         return this;
     },
     trigger: function(type) {
@@ -1410,7 +1415,7 @@ extend(Event.prototype, {
                 buf[i].callback.apply(this, [{type: type}].concat(Array.prototype.slice.call(arguments, 1)));
             }
         }
-        
+
         return this;
     },
     destroy: function() {
