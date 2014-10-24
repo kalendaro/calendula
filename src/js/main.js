@@ -55,17 +55,16 @@ extend(Cln.prototype, {
 
         this._init();
 
-        this._ignoreDocumentClick = true;
-
         if(!this.isOpened()) {
-            // For Firefox CSS3 animation
-            this.timeout.set(function() {
-                setMod(that._container, 'opened');
-                that._update();
-                that._monthSelector(that._currentDate.month, false);
-                that._yearSelector(that._currentDate.year, false);
-                that._openedEvents();
-            }, 1, 'open');
+            this.timeout
+                .clearAll(['open', 'close'])
+                .set(function() {
+                    setMod(that._container, 'opened');
+                    that._update();
+                    that._monthSelector(that._currentDate.month, false);
+                    that._yearSelector(that._currentDate.year, false);
+                    that._openedEvents();
+                }, 0, 'open');
 
             this._isOpened = true;
 
@@ -75,30 +74,33 @@ extend(Cln.prototype, {
         return this;
     },
     close: function() {
+        var that = this;
         this._init();
 
         if(this.isOpened()) {
-            this._ignoreDocumentClick = false;
+            that.timeout
+                .clearAll(['open', 'close'])
+                .set(function() {
+                    that._isOpened = false;
 
-            this.timeout.clearAll('open');
+                    that.timeout.clearAll('open');
 
-            this._update();
+                    that._update();
 
-            this._delOpenedEvents();
+                    that._delOpenedEvents();
 
-            delMod(this._container, 'opened');
+                    delMod(that._container, 'opened');
 
-            this._isOpened = false;
+                    that.tooltip.hide();
 
-            this.tooltip.hide();
-
-            this.event.trigger('close');
+                    that.event.trigger('close');
+                }, 0, 'close');
         }
 
         return this;
     },
     toggle: function() {
-        return this.isOpened() ? this.close : this.open();
+        return this.isOpened() ? this.close() : this.open();
     },
     val: function(value) {
         if(!arguments.length) {
@@ -216,7 +218,6 @@ extend(Cln.prototype, {
             [
                 '_container',
                 '_data',
-                '_ignoreDocumentClick',
                 '_isInited',
                 '_isOpened'
             ].forEach(function(el) {
@@ -277,19 +278,28 @@ extend(Cln.prototype, {
         this._elem('days-container').innerHTML = this.template.get('days');
         this._monthSelector(this._currentDate.month, false);
     },
+    _intoContainer: function(target) {
+        var node = target;
+
+        while(node) {
+            if(node === this._container) {
+                return true;
+            }
+
+            node = node.parentNode;
+        }
+
+        return false;
+    },
     _openedEvents: function() {
         var that = this;
-
-        this._ignoreDocumentClick = false;
 
         this.domEvent.on(document, 'click', function(e) {
             if(e.button || !that.setting('autocloseable')) {
                 return;
             }
 
-            if(that._ignoreDocumentClick) {
-                that._ignoreDocumentClick = false;
-            } else {
+            if(e.target !== that.setting('switcher') && !that._intoContainer(e.target)) {
                 that.close();
             }
         }, 'open');
@@ -307,8 +317,6 @@ extend(Cln.prototype, {
                 if(e.button) {
                     return;
                 }
-
-                that._ignoreDocumentClick = true;
 
                 that.tooltip.hide();
             }, 'open');
@@ -646,14 +654,20 @@ extend(Cln.prototype, {
         var switcher = this.setting('switcher'),
             that = this,
             events = isArray(showOn) ? showOn : [showOn || 'click'],
-            tagName;
+            openedTagNames = ['input', 'textarea'],
+            openedEvents = ['focus', 'mouseover'];
 
         this.domEvent.offAll('switcher');
 
+        if(events.indexOf('none') !== -1) {
+            return;
+        }
+
         if(switcher) {
+            var tagName = switcher.tagName.toLowerCase();
             events.forEach(function(el) {
                 that.domEvent.on(switcher, el, function() {
-                    if(tagName === 'input' || tagName === 'textarea') {
+                    if(openedTagNames.indexOf(tagName) !== -1 || openedEvents.indexOf(el) !== -1) {
                         that.open();
                     } else {
                         that.toggle();

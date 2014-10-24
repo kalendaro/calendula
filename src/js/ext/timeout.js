@@ -36,26 +36,29 @@ extend(Timeout.prototype, {
                 buf.splice(index, 1);
             }
         }
+        
+        return this;
     },
     clearAll: function(ns) {
         var oldBuf = this._buf,
-            newBuf = [];
+            newBuf = [],
+            nsArray = Array.isArray(ns) ? ns : [ns];
 
-        if(oldBuf) {
-            oldBuf.forEach(function(el, i) {
-                if(ns) {
-                    if(ns === el.ns) {
-                        clearTimeout(el.id);
-                    } else {
-                        newBuf.push(el);
-                    }
-                } else {
+        oldBuf.forEach(function(el, i) {
+            if(ns) {
+                if(nsArray.indexOf(el.ns) !== -1) {
                     clearTimeout(el.id);
+                } else {
+                    newBuf.push(el);
                 }
-            }, this);
+            } else {
+                clearTimeout(el.id);
+            }
+        }, this);
 
-            this._buf = ns ? newBuf : [];
-        }
+        this._buf = ns ? newBuf : [];
+        
+        return this;
     },
     destroy: function() {
         this.clearAll();
