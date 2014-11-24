@@ -113,6 +113,7 @@ c.event.on('select', function(e, data) {
 ## Примеры
 + [Расширенный](http://hcodes.github.io/calendula/examples/api.html)
 + [Простой](http://hcodes.github.io/calendula/examples/simple.html)
++ [Все темы](http://hcodes.github.io/calendula/examples/many.html)
 + [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
 
 ## Пересборка
