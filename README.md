@@ -64,8 +64,6 @@ var c = new Calendula({
  + `1418328000000`
  + `{day: 22, month: 10 /* 0-11 */, year: 2014}`
 
-
-
 ## API
 ### .open()
 Открыть календарь.
@@ -83,7 +81,7 @@ var c = new Calendula({
 Получить/установить значение настройки.
 
 ### .event.on(type, callback)
-Установка события.
+Установить событие.
   ```JavaScript
 c.event.on('select', function(e, data) {
   console.log(data.day, data.month, data.year);
@@ -91,12 +89,33 @@ c.event.on('select', function(e, data) {
   ```
 
 ### .event.off(type, callback)
-Снятие события.
+Снять событие.
+
+### .title.set(data)
+Установить цветную подсказку на день.
+```JavaScript
+c.title.set({date: '2014-12-15', text: 'Hello world!', color: 'red'});
+
+//...
+c.title.set([
+    {date: '2014-12-11', text: 'Hello world!', color: 'red'},
+    {date: '2014-12-12', text: 'Hello world!', color: 'orange'},
+    {date: '2014-12-13', text: 'Hello world!', color: 'blue'}
+]);
+```
+### .title.remove(date)
+Удалить цветную подсказку.
+```JavaScript
+c.title.remove('2014-12-15');
+//...
+c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
+```
+
+### .title.removeAll()
+Удалить все цветные подсказки.
 
 ### .destroy()
 Уничтожить календарь: привязку событий, DOM-элементы и пр.
-
-
 
 ## События
 ### open
@@ -115,6 +134,7 @@ c.event.on('select', function(e, data) {
 + [Простой](http://hcodes.github.io/calendula/examples/simple.html)
 + [Все темы](http://hcodes.github.io/calendula/examples/many.html)
 + [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
++ [Цветные подсказки](http://hcodes.github.io/calendula/examples/color_title.html)
 
 ## Пересборка
 [Сборка на сайте](http://hcodes.github.io/calendula/index.ru.html)
