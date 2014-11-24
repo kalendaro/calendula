@@ -10,8 +10,9 @@ extend(Cln.prototype, {
 
             extend(this[name], _Em);
 
-            this[name]['parent'] = this;
-            this[name]['init'] && this[name]['init'](this._data, this._container);
+            var n = this[name];
+            n.parent = this;
+            n.init && n.init(this._data, this._container);
         }, this);
     },
     _removeExts: function() {

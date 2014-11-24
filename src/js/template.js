@@ -262,5 +262,7 @@ extend(Template.prototype, {
                 ]
             }
         ];
+    },
+    destroy: function(){
     }
 });
