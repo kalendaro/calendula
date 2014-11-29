@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calendula</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="../build/calendula.all.css" />
+    <script src="../build/calendula.all.js"></script>
+</head>
+<body>
+
+<button id="example-button" style="position: absolute; left: 30%; top: 100px;"></button>
+
+<script>
+    function leadZero(num) {
+        return num < 10 ? '0' + num : num; 
+    }
+    
+    var ca = new Calendula({
+        switcher: document.getElementById('example-button'),
+        value: 'today'
+    })
+    
+    var year = new Date().getFullYear(),
+        colors = ['yellow', 'olive', 'blue', 'red', 'green', 'orange', 'purple', 'black'],
+        color = 0;
+    for(var m = 1; m <= 12; m++) {
+        color++;
+        if(color >= colors.length) {
+            color = 0;
+        }
+        for(var d = 1; d <= 31; d++) {
+            ca.title.set({
+                date: [year, leadZero(m), leadZero(d)].join('-'),
+                text: 'Hello world!',
+                color: colors[color]
+            });
+        }
+    }
+    
+    ca.open();
+</script>
+
+</body>
+</html>

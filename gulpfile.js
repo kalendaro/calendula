@@ -18,13 +18,11 @@ var paths = {
     ],
     mainJs: [
         'src/js/start.js',
-        
+
         'src/js/main.js',
-        'src/js/template.js',
-        
         'src/js/lib/*.js',
         'src/js/ext/*.js',
-        
+
         'src/js/end.js'
     ],
     prodJsLocales: [

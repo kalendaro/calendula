@@ -11,6 +11,7 @@
   -webkit-transition: visibility 0s linear .2s, opacity .2s linear, -webkit-transform .2s linear;
           transition: visibility 0s linear .2s, opacity .2s linear, transform .2s linear;
   opacity: 0;
+  z-index: 1000;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 .calendula_opened {
@@ -174,6 +175,7 @@
   position: absolute;
   display: none;
   border: 2px solid transparent;
+  z-index: 1010;
 }
 .calendula__tooltip-text {
   padding: 5px 8px;
@@ -211,33 +213,73 @@
   border-style: solid;
   border-color: transparent blue transparent;
 }
-.calendula__day_title-color_red:after {
-  border-color: transparent red transparent;
-}
-.calendula__day_title-color_orange:after {
-  border-color: transparent orange transparent;
-}
-.calendula__day_title-color_green:after {
-  border-color: transparent green transparent;
-}
 .calendula__tooltip_visible {
   display: block;
 }
+.calendula__day_title-color_blue:after {
+  border-color: transparent blue transparent;
+}
 .calendula__tooltip_color_default .calendula__tooltip-tail:after,
-.calendula__tooltip_color_default {
+.calendula__tooltip_color_default,
+.calendula__tooltip_color_blue .calendula__tooltip-tail:after,
+.calendula__tooltip_color_blue {
   border-color: rgba(0, 0, 255, 0.3);
+}
+.calendula__day_title-color_red:after {
+  border-color: transparent red transparent;
 }
 .calendula__tooltip_color_red .calendula__tooltip-tail:after,
 .calendula__tooltip_color_red {
   border-color: rgba(255, 0, 0, 0.3);
 }
+.calendula__day_title-color_green:after {
+  border-color: transparent green transparent;
+}
 .calendula__tooltip_color_green .calendula__tooltip-tail:after,
 .calendula__tooltip_color_green {
   border-color: rgba(0, 255, 0, 0.3);
 }
+.calendula__day_title-color_orange:after {
+  border-color: transparent orange transparent;
+}
 .calendula__tooltip_color_orange .calendula__tooltip-tail:after,
 .calendula__tooltip_color_orange {
   border-color: rgba(255, 165, 0, 0.3);
+}
+.calendula__day_title-color_white:after {
+  border-color: transparent white transparent;
+}
+.calendula__tooltip_color_white .calendula__tooltip-tail:after,
+.calendula__tooltip_color_white {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.calendula__day_title-color_black:after {
+  border-color: transparent black transparent;
+}
+.calendula__tooltip_color_black .calendula__tooltip-tail:after,
+.calendula__tooltip_color_black {
+  border-color: rgba(0, 0, 0, 0.3);
+}
+.calendula__day_title-color_yellow:after {
+  border-color: transparent yellow transparent;
+}
+.calendula__tooltip_color_yellow .calendula__tooltip-tail:after,
+.calendula__tooltip_color_yellow {
+  border-color: rgba(255, 255, 0, 0.3);
+}
+.calendula__day_title-color_purple:after {
+  border-color: transparent purple transparent;
+}
+.calendula__tooltip_color_purple .calendula__tooltip-tail:after,
+.calendula__tooltip_color_purple {
+  border-color: rgba(128, 0, 128, 0.3);
+}
+.calendula__day_title-color_olive:after {
+  border-color: transparent olive transparent;
+}
+.calendula__tooltip_color_olive .calendula__tooltip-tail:after,
+.calendula__tooltip_color_olive {
+  border-color: rgba(128, 128, 0, 0.3);
 }
 .calendula_theme_android,
 .calendula__tooltip_theme_android {

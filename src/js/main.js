@@ -268,6 +268,19 @@ extend(Cln.prototype, {
             this.position();
         }
     },
+    _findDayByDate: function(date) {
+        if(date.year !== this._currentDate.year) {
+            return null;
+        }
+
+        var month = this._elemAll('days-month')[date.month];
+        if(month) {
+            var day = this._elemAllContext(month, 'day')[date.day - 1];
+            return day || null;
+        }
+
+        return null;
+    },
     _resize: function() {
         this._update();
     },
@@ -379,12 +392,12 @@ extend(Cln.prototype, {
 
         this.domEvent.on(days, 'mouseover', function(e) {
             var target = e.target,
-                d = dataAttr(target, 'day'),
-                m = dataAttr(target, 'month'),
-                y = that._currentDate.year;
+                d = +dataAttr(target, 'day'),
+                m = +dataAttr(target, 'month'),
+                y = +that._currentDate.year;
 
             if(hasElem(target, 'day') && hasMod(target, 'has-title')) {
-                that.tooltip.show(target, that.title.get(that._internalDate(y, m, d)));
+                that.tooltip.show(target, that.title.get(that._ymdToISO(y, m, d)));
             }
         }, 'open');
 
@@ -432,9 +445,6 @@ extend(Cln.prototype, {
                 }
             }
         }, 'open');
-    },
-    _internalDate: function(y, m, d) {
-        return [y, leadZero(m), leadZero(d)].join('-');
     },
     _monthSelector: function(month, anim) {
         if(month < MIN_MONTH) {

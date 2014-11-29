@@ -42,6 +42,12 @@
         {
             margin-left: 5px;
         }
+        
+        td
+        {
+            vertical-align: top;
+            line-height: 2em;
+        }
     </style>
 </head>
 <body class="page page_theme_normal">
@@ -140,6 +146,34 @@
                     <input type="checkbox" checked="checked" id="cl-daysAfterMonths" /> <label for="cl-daysAfterMonths">days after months</label>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    title
+                </td>
+                <td>
+                    <input type="text" id="cl-title-add-date" placeholder="date" value="" style="width: 5em;"/>
+                    <select id="cl-title-color">
+                        <option name="black">black</option>
+                        <option name="blue">blue</option>
+                        <option name="green">green</option>
+                        <option name="olive">olive</option>
+                        <option name="orange">orange</option>
+                        <option name="pink">pink</option>
+                        <option name="red">red</option>
+                        <option name="white">white</option>
+                        <option name="yellow">yellow</option>
+                    </select><br/>
+                    <input type="text" id="cl-title-text" placeholder="text" value=""/><br/>
+                    <input type="submit" value="Add" id="cl-title-add"/>
+                </td>
+            </tr>
+                <td>
+                </td>
+                <td>
+                    <input type="text" id="cl-title-del-date" placeholder="date" value="" style="width: 5em;" /> <input type="submit" value="Del" id="cl-title-del"/>
+                </td>
+            </tr>
+            
         </table>
         
         <br />
@@ -147,7 +181,7 @@
         <div id="log"></div>
     </div>
     
-    <input id="example-button"/>
+    <input type="text" id="example-button" value=""/>
     <!--<button id="example-button"></button>-->
     
 <script>
@@ -202,6 +236,12 @@ window.addEventListener('load', function() {
         clDaysAfterMonths = getById('cl-daysAfterMonths'),
         clPosition = getById('cl-position'),
         clShowOn = getById('cl-show-on'),
+        clTitleText = getById('cl-title-text'),
+        clTitleAdd = getById('cl-title-add'),
+        clTitleDel = getById('cl-title-del'),
+        clTitleColor = getById('cl-title-color'),
+        clTitleAddDate = getById('cl-title-add-date'),
+        clTitleDelDate = getById('cl-title-del-date'),
         button = getById('example-button'),
         minDate = new Date(),
         maxDate = new Date();
@@ -215,7 +255,7 @@ window.addEventListener('load', function() {
     clMin.value = formatDate(minDate);
     clMax.value = formatDate(maxDate);
     
-    var cl = new Calendula({
+    window.cl = new Calendula({
             locale: clLocale.value,
             value: clValue.value,
             min: clMin.value,
@@ -294,6 +334,18 @@ window.addEventListener('load', function() {
         setTimeout(function() {
             cl.open();
         }, 300);
+    }, false);
+    
+    clTitleAdd.addEventListener('click', function() {
+        cl.title.set({
+            text: clTitleText.value,
+            color: clTitleColor.value,
+            date: clTitleAddDate.value
+        });
+    }, false);
+    
+    clTitleDel.addEventListener('click', function() {
+        cl.title.remove(clTitleDelDate.value);
     }, false);
 
     clOpen.addEventListener('click', function() {

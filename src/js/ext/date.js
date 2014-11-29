@@ -3,7 +3,7 @@ extend(Cln.prototype, {
         var date = null,
             match,
             buf;
-        
+
         if(value) {
             if(isString(value)) {
                 if(value === 'today') {
@@ -19,7 +19,7 @@ extend(Cln.prototype, {
                         buf = [match[1], match[2], match[3]];
                     }
                 }
-                
+
                 if(buf) {
                     date = new Date(parseNum(buf[2]), parseNum(buf[1] - 1), parseNum(buf[0]));
                 }
@@ -33,8 +33,19 @@ extend(Cln.prototype, {
                 date = new Date(value);
             }
         }
-        
+
         return date;
+    },
+    _ymdToISO: function(y, m, d) {
+        return [y, leadZero(m + 1), leadZero(d)].join('-');
+    },
+    _parseDateToISO: function(value) {
+        var d = this._parseDate(value);
+        if(d) {
+            return [d.getFullYear(), leadZero(d.getMonth() + 1), leadZero(d.getDate())].join('-');
+        } else {
+            return null;
+        }
     },
     _parseDateToObj: function(value) {
         var d = this._parseDate(value);

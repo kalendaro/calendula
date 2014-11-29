@@ -146,7 +146,7 @@ extend(Template.prototype, {
                 mods.minmax = true;
             }
 
-            var tt = par.title.get(par._internalDate(y, m, day));
+            var tt = par.title.get(par._ymdToISO(y, m, day));
             if(tt) {
                 mods['has-title'] = true;
                 mods['title-color'] = tt.color || 'default';
