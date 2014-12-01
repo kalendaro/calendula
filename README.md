@@ -146,7 +146,3 @@ gulp
   ```
 
 ## [Лицензия](https://github.com/hcodes/calendula/blob/master/LICENSE.ru.md)
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/hcodes/calendula/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
