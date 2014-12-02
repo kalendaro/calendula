@@ -6,7 +6,7 @@ var div = document.createElement('div'),
     },
     hasClassList = !!div.classList,
     addClass = hasClassList ? function(el, name) {
-        return el.classList.add(name);
+        el.classList.add(name);
     } : function(el, name) { // support IE9
         var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
         if(!re.test(name.className)) {
@@ -14,7 +14,7 @@ var div = document.createElement('div'),
         }
     },
     removeClass = hasClassList ? function(el, name) {
-        return el.classList.remove(name);    
+        el.classList.remove(name);    
     } : function(el, name) { // support IE9
         var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
         el.className = el.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
