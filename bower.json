@@ -1,0 +1,25 @@
+{
+  "name": "calendula",
+  "version": "0.9.9",
+  "description": "A special datepicker",
+  "authors": [
+    "Denis Seleznev <hcodes@yandex.ru>"
+  ],
+  "homepage": "http://hcodes.github.io/calendula/",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hcodes/calendula.git"
+  },
+  "bugs": "https://github.com/hcodes/calendula/issues/new",
+  "keywords": [
+    "calendula",
+    "datepicker",
+    "calendar",
+    "date"
+  ],
+  "main": [
+    "build/calendula.all.js",
+    "build/calendula.all.css"
+  ]
+}
