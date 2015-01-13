@@ -1,4 +1,4 @@
-# Calendula [![Build Status](https://img.shields.io/travis/hcodes/calendula.svg)](https://travis-ci.org/hcodes/calendula) [![devDependency Status](https://img.shields.io/david/dev/hcodes/calendula.svg)](https://david-dm.org/hcodes/calendula#info=devDependencies)
+# Calendula 📅 [![Build Status](https://img.shields.io/travis/hcodes/calendula.svg)](https://travis-ci.org/hcodes/calendula) [![devDependency Status](https://img.shields.io/david/dev/hcodes/calendula.svg)](https://david-dm.org/hcodes/calendula#info=devDependencies)
 Особенный календарь на JavaScript
 
 ![Calendula](https://raw.githubusercontent.com/hcodes/calendula/master/examples/theme.default.png)
