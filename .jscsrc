@@ -1,11 +1,10 @@
 {
     "excludeFiles": [
         ".*",
-        "sources/js/start.js",
-        "sources/js/end.js",
+        "src/js/start.js",
+        "src/js/end.js",
         "tests",
         "build",
-        "sources/js/holiday",
         "node_modules"
     ],
     "requireCurlyBraces": ["if", "else", "for", "while", "do"],
