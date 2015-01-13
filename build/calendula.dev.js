@@ -1,4 +1,4 @@
-/*! Calendula | (c) 2014 Denis Seleznev | https://github.com/hcodes/calendula/ */
+/*! Calendula | © 2013—2015 Denis Seleznev | https://github.com/hcodes/calendula/ */
 var Calendula = (function(window, document, Date, undefined) {
 
 'use strict';
@@ -719,7 +719,7 @@ function leadZero(num) {
 }
 
 function isLeapYear(y) {
-    if((!(y % 4) && (y % 100)) || !(y % 400)) {
+    if(((y % 4 === 0) && (y % 100)) || (y % 400 === 0)) {
         return true;
     }
     
