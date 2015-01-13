@@ -1,7 +1,10 @@
-gulpfile.js
 .*
+gulpfile.js
 tests/**
 examples/**
-sources/js/start.js
-sources/js/end.js
+src/**
 node_modules/**
+build/calendula.all.js
+build/calendula.base.js
+build/calendula.locale.*.js
+build/calendula.holiday.*.js
