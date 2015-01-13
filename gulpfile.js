@@ -45,7 +45,7 @@ paths.prodCssAll = paths.mainCss.concat('src/less/calendula.theme.*.less');
 
 var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolidays'],
     cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
-    allTasks = [].concat(cssTasks, jsTasks, 'watch');
+    allTasks = [].concat(cssTasks, jsTasks);
     
 gulp.task('devJs', function() {
     return gulp.src(paths.devJs)
@@ -56,20 +56,20 @@ gulp.task('devJs', function() {
 gulp.task('prodJsBase', function() {
     return gulp.src(paths.prodJsBase)
         .pipe(concat('calendula.base.js'))
-        .pipe(uglify())
+        .pipe(uglify({preserveComments: 'some'}))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsAll', function() {
     return gulp.src(paths.prodJsAll)
         .pipe(concat('calendula.all.js'))
-        .pipe(uglify())
+        .pipe(uglify({preserveComments: 'some'}))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsLocales', function() {
     return gulp.src(paths.prodJsLocales)
-        .pipe(uglify())
+        .pipe(uglify({preserveComments: 'some'}))
         .pipe(gulp.dest(destDir));
 });
 

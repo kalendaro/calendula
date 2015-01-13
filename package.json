@@ -1,16 +1,47 @@
 {
   "name": "Calendula",
-  "version": "0.8.0",
+  "description": "A special datepicker",
+  "version": "0.9.9",
+  "author": {
+    "name": "Denis Seleznev",
+    "email": "hcodes@yandex.ru",
+    "url": "https://github.com/hcodes/calendula"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hcodes/calendula.git"
+  },
+  "homepage": "https://hcodes.github.io/calendula/",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/hcodes/calendula/blob/master/LICENSE"
+    }
+  ],
+  "keywords": [
+    "calendar", "calendula", "datepicker", "календарь"
+  ],
+  "engines": {
+    "node": ">= 0.10"
+  },
+  "private": true,
   "devDependencies": {
-    "csscomb": "~3.0.0-5",
-    "gulp": "~3.8.5",
-    "gulp-autoprefixer": "^1.0.0",
+    "csscomb": "~3.0.4",
+    "gulp": "~3.8.10",
+    "gulp-autoprefixer": "^2.0.0",
     "gulp-cleancss": "^0.2.2",
-    "gulp-concat": "~2.2.0",
-    "gulp-less": "^1.3.6",
+    "gulp-concat": "~2.4.3",
+    "gulp-less": "^2.0.1",
     "gulp-rename": "~1.2.0",
-    "gulp-uglify": "~0.2.1",
-    "jscs": "^1.5.2",
-    "jshint": "^2.5.1"
+    "gulp-uglify": "~1.0.2",
+    "jscs": "^1.9.0",
+    "jshint": "^2.5.1",
+    "yaspeller": "~0.7.2"
+  },
+  "scripts": {
+    "test": "npm run-script jshint && npm run-script jscs && npm run-script yaspeller",
+    "jscs": "./node_modules/.bin/jscs .",
+    "jshint": "./node_modules/.bin/jshint .",
+    "yaspeller": "./node_modules/.bin/yaspeller ."
   }
 }

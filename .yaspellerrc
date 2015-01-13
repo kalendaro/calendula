@@ -1,0 +1,17 @@
+{
+  "lang": "ru",
+  "fileExtensions": ["md"],
+  "excludeFiles": [
+    ".*",
+    "node_modules",
+    "test",
+    "coverage",
+    "docs"
+  ],
+  "dictionary": [
+    "тач",
+    "Пересборка",
+    "диапозона",
+    "локали"
+  ]
+}
