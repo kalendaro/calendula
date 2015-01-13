@@ -55,7 +55,7 @@ var c = new Calendula({
 | 6. | min       | `String`<br>`Date`<br>`Number` |               | Минимальная дата.                           |
 | 7. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` `android`|
 | 8. | value     | `String`<br>`Date`<br>`Number` | текущая дата   | Выбранная дата.                            |
-| 9. | years     | `String`               | `-11:1`       | Установка диапозона для списка лет.         |
+| 9. | years     | `String`               | `-11:1`       | Установка диапазона для списка лет.         |
 
 Поддерживаемые форматы дат:
  + `2014-11-22` `2014/11/22` `2014.11.22`
