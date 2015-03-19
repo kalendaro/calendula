@@ -1,9 +1,7 @@
 var SATURDAY = 6,
     SUNDAY = 0;
 
-function Template() {}
-
-extend(Template.prototype, {
+Cln.addExt('template', null, {
     get: function(name) {
         return jshtml(this[name]());
     },
@@ -77,7 +75,6 @@ extend(Template.prototype, {
             dayNames = this.dayNames(),
             dayIndex = dayNames[weekday],
             month = par.text('months')[m],
-            daysMonth = [31, isLeapYear(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
             minSetting = par.setting('min'),
             maxSetting = par.setting('max'),
             minTs = getTs(minSetting),
@@ -110,9 +107,8 @@ extend(Template.prototype, {
                 ]
             };
 
-        for(var day = 1; day <= daysMonth[m]; day++) {
+        for(var day = 1; date.getMonth() === m; date.setDate(++day)) {
             title = '';
-            date.setDate(day);
             dateTs = +date;
             weekday = date.getDay();
             holiday = par.getHoliday(day, m, y);
@@ -143,7 +139,7 @@ extend(Template.prototype, {
                 mods.minmax = true;
             }
 
-            var tt = par.title.get(par._ymdToISO(y, m, day));
+            var tt = par.title.get(ymdToISO(y, m, day));
             if(tt) {
                 mods['has-title'] = true;
                 mods['title-color'] = tt.color || 'default';
@@ -260,6 +256,5 @@ extend(Template.prototype, {
             }
         ];
     },
-    destroy: function(){
-    }
+    destroy: function() {}
 });

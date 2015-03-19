@@ -20,30 +20,30 @@
 + Safari 6 и выше.
 
 ## Подключение
-  ```HTML
+```HTML
 <link rel="stylesheet" type="text/css" href="build/calendula.all.css" />
 <script src="build/calendula.all.js"></script>
-  ```
-  
+```
+
 Для подключения только нужной локали и темы:
-  ```HTML
+```HTML
 <link rel="stylesheet" type="text/css" href="build/calendula.base.css" />
 <link rel="stylesheet" type="text/css" href="build/calendula.ios.css" />
 <script src="build/calendula.base.js"></script>
 <script src="build/calendula.en.js"></script>
-  ```
+```
 
 Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula/index.ru.html).
 
 ## Использование
-  ```JavaScript
+```JavaScript
 var c = new Calendula({
-  theme: 'ios',
-  locale: 'fr',
-  value: '2014-10-11'
-  //...
+    theme: 'ios',
+    locale: 'fr',
+    value: '2014-10-11'
+    //...
 });
-  ```
+```
 
 | №  | Свойство  | Тип                  | По умолчанию  | Описание                                    |
 |:---|:----------|:---------------------|:--------------|:--------------------------------------------|
@@ -84,7 +84,7 @@ var c = new Calendula({
 Установить событие.
   ```JavaScript
 c.event.on('select', function(e, data) {
-  console.log(data.day, data.month, data.year);
+    console.log(data.day, data.month, data.year);
 });
   ```
 
@@ -95,8 +95,6 @@ c.event.on('select', function(e, data) {
 Установить цветную подсказку на день.
 ```JavaScript
 c.title.set({date: '2014-12-15', text: 'Hello world!', color: 'red'});
-
-//...
 c.title.set([
     {date: '2014-12-11', text: 'Hello world!', color: 'red'},
     {date: '2014-12-12', text: 'Hello world!', color: 'orange'},
@@ -107,7 +105,6 @@ c.title.set([
 Удалить цветную подсказку.
 ```JavaScript
 c.title.remove('2014-12-15');
-//...
 c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 ```
 
@@ -120,8 +117,8 @@ c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 ## События
 ### open
 Календарь открыт.
-  
-  
+
+
 ### close
 Календарь закрыт.
 
@@ -136,13 +133,14 @@ c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 + [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
 + [Цветные подсказки](http://hcodes.github.io/calendula/examples/color_title.html)
 
-## Пересборка
+## Разработка
 [Сборка на сайте](http://hcodes.github.io/calendula/index.ru.html)
 
 Ручная сборка:
-  ```
+```
 npm i
 gulp
-  ```
+```
 
 ## [Лицензия](https://github.com/hcodes/calendula/blob/master/LICENSE.ru.md)
+MIT License

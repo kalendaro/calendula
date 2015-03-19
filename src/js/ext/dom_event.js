@@ -2,11 +2,9 @@ var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Mod
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
     'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
 
-function DomEvent() {
+Cln.addExt('domEvent', function() {
     this._buf = [];
-}
-
-extend(DomEvent.prototype, {
+}, {
     onWheel: function(elem, callback, ns) {
         // handle MozMousePixelScroll in older Firefox
         return this.on(elem,

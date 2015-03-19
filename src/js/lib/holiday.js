@@ -5,9 +5,9 @@ extend(Cln, {
     }
 });
 
-Cln.prototype.getHoliday = function(d, m, y) {
+Cln.prototype.getHoliday = function(day, month, year) {
     var locale = this._data.locale,
         c = Cln._holidays;
         
-    return c && c[locale] && c[locale][y] ? c[locale][y][d + '-' + (m + 1)] : undefined;
+    return c && c[locale] && c[locale][year] ? c[locale][year][day + '-' + (month + 1)] : undefined;
 };

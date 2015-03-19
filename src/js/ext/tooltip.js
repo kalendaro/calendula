@@ -1,6 +1,4 @@
-function Tooltip() {}
-
-extend(Tooltip.prototype, {
+Cln.addExt('tooltip', null, {
     create: function() {
         if(this._container) {
             return;
@@ -15,13 +13,14 @@ extend(Tooltip.prototype, {
         this._container = el;
     },
     show: function(target, data) {
-        var dataBuf = data || {};
+        var dataBuf = data || {},
+            margin = 5;
 
         this.create();
         setMod(this._container, 'theme', this.parent.setting('theme'));
         setMod(this._container, 'visible');
 
-        this._elem('tooltip-text').innerHTML = jshtml({c: dataBuf.text, e: 'tooltip-row'});
+        this._container.querySelector('.calendula__tooltip-text').innerHTML = jshtml({c: dataBuf.text, e: 'tooltip-row'});
 
         setMod(this._container, 'color', dataBuf.color || 'default');
 
@@ -29,7 +28,7 @@ extend(Tooltip.prototype, {
 
         var offset = getOffset(target),
             x = offset.left - (this._container.offsetWidth - target.offsetWidth) / 2,
-            y = offset.top - this._container.offsetHeight - 5;
+            y = offset.top - this._container.offsetHeight - margin;
 
         setPosition(this._container, x, y);
     },

@@ -34,7 +34,7 @@ var jshtml = (function() {
 
     var attrs = function(data) {
         var keys = Object.keys(data),
-            ignoredItems = ['c', 't', 'e', 'm'],
+            ignoredItems = ['c', 't', 'e', 'm'], // class, tag, element, modifier
             text = [],
             classes = [],
             i, len,

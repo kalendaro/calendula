@@ -1,8 +1,6 @@
-function Timeout() {
+Cln.addExt('timeout', function() {
     this._buf = [];
-}
-
-extend(Timeout.prototype, {
+}, {    
     set: function(callback, time, ns) {
         var that = this,
             id = setTimeout(function() {

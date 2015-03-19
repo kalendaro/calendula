@@ -20,8 +20,8 @@ var Cln = function(data) {
             autocloseable: isUndefined(data.autocloseable) ? true : data.autocloseable,
             closeAfterSelection: isUndefined(data.closeAfterSelection) ? true : data.closeAfterSelection,
             locale: data.locale || Cln._defaultLocale,
-            min: this._parseDateToObj(data.min),
-            max: this._parseDateToObj(data.max),
+            min: parseDateToObj(data.min),
+            max: parseDateToObj(data.max),
             showOn: data.showOn || 'click',
             theme: data.theme || 'default',
             _startYear: years.start,
@@ -30,21 +30,14 @@ var Cln = function(data) {
 
     this._data = d;
 
-    this._initExts([
-        ['event', Event],
-        ['domEvent', DomEvent],
-        ['template', Template],
-        ['timeout', Timeout],
-        ['title', Title],
-        ['tooltip', Tooltip]
-    ]);
+    this._initExts();
 
     this.val(d.value);
 
     this._addSwitcherEvents(d.showOn);
 };
 
-Cln.version = '0.9.9';
+Cln.version = '0.9.10';
 
 extend(Cln.prototype, {
     isOpened: function() {
@@ -108,7 +101,7 @@ extend(Cln.prototype, {
         }
 
         if(value) {
-            this._val = this._parseDateToObj(value);
+            this._val = parseDateToObj(value);
             this._currentDate = extend({}, this._val);
         } else {
             this._val = {};
@@ -135,7 +128,7 @@ extend(Cln.prototype, {
         }
 
         if(name === 'min' || name === 'max' || name === 'value') {
-            d[name] = this._parseDateToObj(value);
+            d[name] = parseDateToObj(value);
         } else {
             d[name] = value;
         }
@@ -397,7 +390,7 @@ extend(Cln.prototype, {
                 y = +that._currentDate.year;
 
             if(hasElem(target, 'day') && hasMod(target, 'has-title')) {
-                that.tooltip.show(target, that.title.get(that._ymdToISO(y, m, d)));
+                that.tooltip.show(target, that.title.get(ymdToISO(y, m, d)));
             }
         }, 'open');
 
@@ -686,6 +679,13 @@ extend(Cln.prototype, {
             });
         }
     },
+    _switcherText: function() {
+        var date = this._currentDate,
+            m = this.text('months'),
+            cm = this.text('caseMonths');
+
+        return date.day + ' ' + (cm || m)[date.month] + ' ' + date.year;
+    },
     _updateSwitcher: function() {
         var el = this.setting('switcher'),
             text = this._switcherText(),
@@ -700,11 +700,13 @@ extend(Cln.prototype, {
             }
         }
     },
-    _switcherText: function() {
-        var date = this._currentDate,
-            m = this.text('months'),
-            cm = this.text('caseMonths');
-
-        return date.day + ' ' + (cm || m)[date.month] + ' ' + date.year;
+    _elem: function(e, m, val) {
+        return this._container.querySelector('.' + elem(e, m, val));
+    },
+    _elemAll: function(e, m, val) {
+        return this._container.querySelectorAll('.' + elem(e, m, val));
+    },
+    _elemAllContext: function(context, e, m, val) {
+        return context.querySelectorAll('.' + elem(e, m, val));
     }
 });

@@ -1,13 +1,11 @@
-function Title() {
+Cln.addExt('title', function() {
     this._title = {};
-}
-
-extend(Title.prototype, {
+}, {
     init: function(data) {
         this.set(data.title);
     },
     get: function(date) {
-        var bufDate = this.parent._parseDateToISO(date);
+        var bufDate = parseDateToISO(date);
         return bufDate ? this._title[bufDate] : undefined;
     },
     set: function(data) {
@@ -20,7 +18,7 @@ extend(Title.prototype, {
         }
     },
     _set: function(data) {
-        var bufDate = this.parent._parseDateToISO(data.date),
+        var bufDate = parseDateToISO(data.date),
             parent = this.parent,
             el;
 
@@ -28,7 +26,7 @@ extend(Title.prototype, {
             this._title[bufDate] = {text: data.text, color: data.color};
 
             if(parent._isInited) {
-                el = parent._findDayByDate(parent._parseDateToObj(data.date));
+                el = parent._findDayByDate(parseDateToObj(data.date));
                 if(el) {
                     setMod(el, 'has-title');
                     setMod(el, 'title-color', data.color);
@@ -47,13 +45,13 @@ extend(Title.prototype, {
     },
     _remove: function(date) {
         var parent = this.parent,
-            bufDate = parent._parseDateToISO(date);
+            bufDate = parseDateToISO(date);
 
         if(bufDate) {
             delete this._title[bufDate];
 
             if(parent._isInited) {
-                var day = parent._findDayByDate(parent._parseDateToObj(date));
+                var day = parent._findDayByDate(parseDateToObj(date));
                 if(day) {
                     delMod(day, 'has-title');
                     delMod(day, 'title-color');
