@@ -2013,7 +2013,7 @@ Calendula.addLocale('tr', {
         'kasım',
         'aralık'
     ],
-    shortDayNames:['Pa', 'PT', 'Sa', 'Çarş', 'Per', 'CU', 'Ctesi'],
+    shortDayNames: ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'],
     dayNames: [
         'Pazar',
         'Pazartesi',
