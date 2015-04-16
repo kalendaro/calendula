@@ -70,10 +70,7 @@ extend(Template.prototype, {
                 };
             };
 
-        current.setHours(12);
-        current.setMinutes(0);
-        current.setSeconds(0);
-        current.setMilliseconds(0);
+        current.setHours(12, 0, 0, 0);
 
         var par = this.parent,
             weekday = date.getDay(),
