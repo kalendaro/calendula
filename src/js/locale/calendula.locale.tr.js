@@ -13,7 +13,7 @@ Calendula.addLocale('tr', {
         'kasım',
         'aralık'
     ],
-    shortDayNames: ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'],
+    shortDayNames: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
     dayNames: [
         'Pazar',
         'Pazartesi',
