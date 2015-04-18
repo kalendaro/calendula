@@ -37,8 +37,6 @@ var Cln = function(data) {
     this._addSwitcherEvents(d.showOn);
 };
 
-Cln.version = '0.9.10';
-
 extend(Cln.prototype, {
     isOpened: function() {
         return this._isOpened;
