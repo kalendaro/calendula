@@ -20,7 +20,10 @@ Cln.addExt('tooltip', null, {
         setMod(this._container, 'theme', this.parent.setting('theme'));
         setMod(this._container, 'visible');
 
-        this._container.querySelector('.calendula__tooltip-text').innerHTML = jshtml({c: dataBuf.text, e: 'tooltip-row'});
+        this._container.querySelector('.calendula__tooltip-text').innerHTML = jshtml({
+            c: dataBuf.text,
+            e: 'tooltip-row'
+        });
 
         setMod(this._container, 'color', dataBuf.color || 'default');
 

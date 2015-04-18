@@ -16,7 +16,7 @@
     "unused": "vars",
     "strict": false,
     "trailing": true,
-    "maxparams": 4,
+    "maxparams": 5,
     "maxdepth": 4,
     "maxlen": 120,
 

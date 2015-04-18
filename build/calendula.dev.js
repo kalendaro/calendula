@@ -42,8 +42,6 @@ var Cln = function(data) {
     this._addSwitcherEvents(d.showOn);
 };
 
-Cln.version = '0.9.10';
-
 extend(Cln.prototype, {
     isOpened: function() {
         return this._isOpened;
@@ -720,12 +718,12 @@ extend(Cln.prototype, {
     _initExts: function(data) {
         Cln._exts.forEach(function(ext) {
             var name = ext[0],
-                constr = ext[1] || function() {},
+                Constr = ext[1] || function() {},
                 prot = ext[2];
 
-            extend(constr.prototype, prot);
+            extend(Constr.prototype, prot);
 
-            this[name] = new constr();
+            this[name] = new Constr();
 
             var obj = this[name];
             obj.parent = this;
@@ -1657,7 +1655,10 @@ Cln.addExt('tooltip', null, {
         setMod(this._container, 'theme', this.parent.setting('theme'));
         setMod(this._container, 'visible');
 
-        this._container.querySelector('.calendula__tooltip-text').innerHTML = jshtml({c: dataBuf.text, e: 'tooltip-row'});
+        this._container.querySelector('.calendula__tooltip-text').innerHTML = jshtml({
+            c: dataBuf.text,
+            e: 'tooltip-row'
+        });
 
         setMod(this._container, 'color', dataBuf.color || 'default');
 

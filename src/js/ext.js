@@ -2,12 +2,12 @@ extend(Cln.prototype, {
     _initExts: function(data) {
         Cln._exts.forEach(function(ext) {
             var name = ext[0],
-                constr = ext[1] || function() {},
+                Constr = ext[1] || function() {},
                 prot = ext[2];
 
-            extend(constr.prototype, prot);
+            extend(Constr.prototype, prot);
 
-            this[name] = new constr();
+            this[name] = new Constr();
 
             var obj = this[name];
             obj.parent = this;
