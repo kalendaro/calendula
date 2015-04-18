@@ -1,6 +1,6 @@
 {
   "lang": "ru",
-  "fileExtensions": ["md"],
+  "fileExtensions": [".md"],
   "excludeFiles": [
     ".*",
     "node_modules",
@@ -8,6 +8,7 @@
     "coverage",
     "docs"
   ],
+  "checkYo": true,
   "dictionary": [
     "локали",
     "Пересборка",
