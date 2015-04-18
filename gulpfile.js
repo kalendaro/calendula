@@ -20,6 +20,7 @@ var paths = {
         'src/js/start.js',
 
         'src/js/main.js',
+        'src/js/ext.js',
         'src/js/lib/*.js',
         'src/js/ext/*.js',
 

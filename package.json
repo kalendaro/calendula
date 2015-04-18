@@ -1,7 +1,7 @@
 {
   "name": "Calendula",
   "description": "A special datepicker",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
@@ -26,17 +26,17 @@
   },
   "private": true,
   "devDependencies": {
-    "csscomb": "~3.0.4",
-    "gulp": "~3.8.10",
-    "gulp-autoprefixer": "~2.0.0",
-    "gulp-cleancss": "~0.2.2",
-    "gulp-concat": "~2.5.2",
-    "gulp-less": "^3.0.2",
-    "gulp-rename": "~1.2.0",
-    "gulp-uglify": "~1.0.2",
-    "jscs": "^1.9.0",
-    "jshint": "^2.5.1",
-    "yaspeller": "~2.0.1"
+    "csscomb": "3.0.x",
+    "gulp": "3.8.x",
+    "gulp-autoprefixer": "2.1.x",
+    "gulp-cleancss": "0.2.x",
+    "gulp-concat": "2.5.x",
+    "gulp-less": "3.0.x",
+    "gulp-rename": "1.2.x",
+    "gulp-uglify": "1.2.x",
+    "jscs": "1.x",
+    "jshint": "2.5.x",
+    "yaspeller": "2.x"
   },
   "scripts": {
     "test": "npm run-script jshint && npm run-script jscs && npm run-script yaspeller",

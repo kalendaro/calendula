@@ -1,3 +1,3 @@
 return Cln;
 
-})(this, this.document, Date);
+})(this, this.document, Date, Math);

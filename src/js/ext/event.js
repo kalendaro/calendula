@@ -1,8 +1,6 @@
-function Event() {
+Cln.addExt('event', function() {
     this._buf = [];
-}
-
-extend(Event.prototype, {
+}, {
     on: function(type, callback) {
         if(type && callback) {
             this._buf.push({

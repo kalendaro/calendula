@@ -1,5 +1,5 @@
 /*! Calendula | © 2013—2015 Denis Seleznev | https://github.com/hcodes/calendula/ */
-var Calendula = (function(window, document, Date, undefined) {
+var Calendula = (function(window, document, Date, Math, undefined) {
 
 'use strict';
 
@@ -25,8 +25,8 @@ var Cln = function(data) {
             autocloseable: isUndefined(data.autocloseable) ? true : data.autocloseable,
             closeAfterSelection: isUndefined(data.closeAfterSelection) ? true : data.closeAfterSelection,
             locale: data.locale || Cln._defaultLocale,
-            min: this._parseDateToObj(data.min),
-            max: this._parseDateToObj(data.max),
+            min: parseDateToObj(data.min),
+            max: parseDateToObj(data.max),
             showOn: data.showOn || 'click',
             theme: data.theme || 'default',
             _startYear: years.start,
@@ -35,21 +35,14 @@ var Cln = function(data) {
 
     this._data = d;
 
-    this._initExts([
-        ['event', Event],
-        ['domEvent', DomEvent],
-        ['template', Template],
-        ['timeout', Timeout],
-        ['title', Title],
-        ['tooltip', Tooltip]
-    ]);
+    this._initExts();
 
     this.val(d.value);
 
     this._addSwitcherEvents(d.showOn);
 };
 
-Cln.version = '0.9.9';
+Cln.version = '0.9.10';
 
 extend(Cln.prototype, {
     isOpened: function() {
@@ -113,7 +106,7 @@ extend(Cln.prototype, {
         }
 
         if(value) {
-            this._val = this._parseDateToObj(value);
+            this._val = parseDateToObj(value);
             this._currentDate = extend({}, this._val);
         } else {
             this._val = {};
@@ -140,7 +133,7 @@ extend(Cln.prototype, {
         }
 
         if(name === 'min' || name === 'max' || name === 'value') {
-            d[name] = this._parseDateToObj(value);
+            d[name] = parseDateToObj(value);
         } else {
             d[name] = value;
         }
@@ -402,7 +395,7 @@ extend(Cln.prototype, {
                 y = +that._currentDate.year;
 
             if(hasElem(target, 'day') && hasMod(target, 'has-title')) {
-                that.tooltip.show(target, that.title.get(that._ymdToISO(y, m, d)));
+                that.tooltip.show(target, that.title.get(ymdToISO(y, m, d)));
             }
         }, 'open');
 
@@ -691,6 +684,13 @@ extend(Cln.prototype, {
             });
         }
     },
+    _switcherText: function() {
+        var date = this._currentDate,
+            m = this.text('months'),
+            cm = this.text('caseMonths');
+
+        return date.day + ' ' + (cm || m)[date.month] + ' ' + date.year;
+    },
     _updateSwitcher: function() {
         var el = this.setting('switcher'),
             text = this._switcherText(),
@@ -705,25 +705,115 @@ extend(Cln.prototype, {
             }
         }
     },
-    _switcherText: function() {
-        var date = this._currentDate,
-            m = this.text('months'),
-            cm = this.text('caseMonths');
-
-        return date.day + ' ' + (cm || m)[date.month] + ' ' + date.year;
+    _elem: function(e, m, val) {
+        return this._container.querySelector('.' + elem(e, m, val));
+    },
+    _elemAll: function(e, m, val) {
+        return this._container.querySelectorAll('.' + elem(e, m, val));
+    },
+    _elemAllContext: function(context, e, m, val) {
+        return context.querySelectorAll('.' + elem(e, m, val));
     }
 });
+
+extend(Cln.prototype, {
+    _initExts: function(data) {
+        Cln._exts.forEach(function(ext) {
+            var name = ext[0],
+                constr = ext[1] || function() {},
+                prot = ext[2];
+
+            extend(constr.prototype, prot);
+
+            this[name] = new constr();
+
+            var obj = this[name];
+            obj.parent = this;
+            obj.init && obj.init(this._data, this._container);
+        }, this);
+    },
+    _removeExts: function() {
+        Cln._exts.forEach(function(ext) {
+            var name = ext[0];
+
+            this[name].destroy();
+            delete this[name];
+        }, this);
+    }
+});
+
+Cln._exts = [];
+
+Cln.addExt = function(name, constr, prot) {
+    Cln._exts.push([name, constr, prot]);
+};
 
 function leadZero(num) {
     return (num < 10 ? '0' : '') + num;
 }
 
-function isLeapYear(y) {
-    if(((y % 4 === 0) && (y % 100)) || (y % 400 === 0)) {
-        return true;
+function ymdToISO(y, m, d) {
+    return [y, leadZero(m + 1), leadZero(d)].join('-');
+}
+
+function parseDate(value) {
+    var date = null,
+        match,
+        buf;
+
+    if(value) {
+        if(isString(value)) {
+            if(value === 'today') {
+                return new Date();
+            }
+
+            match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
+            if(match) {
+                    buf = [match[3], match[2], match[1]];
+            } else {
+                match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
+                if(match) {
+                    buf = [match[1], match[2], match[3]];
+                }
+            }
+
+            if(buf) {
+                date = new Date(parseNum(buf[2]), parseNum(buf[1] - 1), parseNum(buf[0]));
+            }
+        } else if(isObject(value)) {
+            if(value instanceof Date) {
+                date = value;
+            } else if(value.year && value.day) {
+                date = new Date(value.year, value.month - 1, value.day, 12, 0, 0, 0);
+            }
+        } else if(isNumber(value)) {
+            date = new Date(value);
+        }
     }
-    
-    return false;
+
+    return date;
+}
+
+function parseDateToISO(value) {
+    var d = parseDate(value);
+    if(d) {
+        return [d.getFullYear(), leadZero(d.getMonth() + 1), leadZero(d.getDate())].join('-');
+    } else {
+        return null;
+    }
+}
+
+function parseDateToObj(value) {
+    var d = parseDate(value);
+    if(d) {
+        return {
+            day: d.getDate(),
+            month: d.getMonth(),
+            year: d.getFullYear()
+        };
+    } else {
+        return {};
+    }
 }
 
 var div = document.createElement('div'),
@@ -807,6 +897,20 @@ function getElemName(el) {
     return buf ? buf[1] : '';
 }
 
+extend(Cln, {
+    addHolidays: function(locale, data) {
+        this._holidays = this._holidays || {};
+        this._holidays[locale] = data;
+    }
+});
+
+Cln.prototype.getHoliday = function(day, month, year) {
+    var locale = this._data.locale,
+        c = Cln._holidays;
+        
+    return c && c[locale] && c[locale][year] ? c[locale][year][day + '-' + (month + 1)] : undefined;
+};
+
 var jshtml = (function() {
     var buildItem = function(data) {
         if(data === null || data === undefined) {
@@ -843,7 +947,7 @@ var jshtml = (function() {
 
     var attrs = function(data) {
         var keys = Object.keys(data),
-            ignoredItems = ['c', 't', 'e', 'm'],
+            ignoredItems = ['c', 't', 'e', 'm'], // class, tag, element, modifier
             text = [],
             classes = [],
             i, len,
@@ -892,6 +996,23 @@ var jshtml = (function() {
 
     return buildItem;
 })();
+
+extend(Cln, {
+    _texts: {},
+    _locales: [],
+    addLocale: function(locale, texts) {
+        this._locales.push(locale);
+        this._texts[locale] = texts;
+        
+        if(texts.def) {
+            this._defaultLocale = locale;
+        }
+    }
+});
+
+Cln.prototype.text = function(id) {
+    return Cln._texts[this._data.locale][id];
+};
 
 function parseNum(str) {
     return parseInt(str, 10);
@@ -965,78 +1086,13 @@ var setTranslateY = (function() {
     };
 })();
 
-extend(Cln.prototype, {
-    _parseDate: function(value) {
-        var date = null,
-            match,
-            buf;
-
-        if(value) {
-            if(isString(value)) {
-                if(value === 'today') {
-                    return new Date();
-                }
-
-                match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
-                if(match) {
-                        buf = [match[3], match[2], match[1]];
-                } else {
-                    match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
-                    if(match) {
-                        buf = [match[1], match[2], match[3]];
-                    }
-                }
-
-                if(buf) {
-                    date = new Date(parseNum(buf[2]), parseNum(buf[1] - 1), parseNum(buf[0]));
-                }
-            } else if(isObject(value)) {
-                if(value instanceof Date) {
-                    date = value;
-                } else if(value.year && value.day) {
-                    date = new Date(value.year, value.month - 1, value.day, 12, 0, 0, 0);
-                }
-            } else if(isNumber(value)) {
-                date = new Date(value);
-            }
-        }
-
-        return date;
-    },
-    _ymdToISO: function(y, m, d) {
-        return [y, leadZero(m + 1), leadZero(d)].join('-');
-    },
-    _parseDateToISO: function(value) {
-        var d = this._parseDate(value);
-        if(d) {
-            return [d.getFullYear(), leadZero(d.getMonth() + 1), leadZero(d.getDate())].join('-');
-        } else {
-            return null;
-        }
-    },
-    _parseDateToObj: function(value) {
-        var d = this._parseDate(value);
-        if(d) {
-            return {
-                day: d.getDate(),
-                month: d.getMonth(),
-                year: d.getFullYear()
-            };
-        } else {
-            return {};
-        }
-    }
-});
-
 var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
     'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
 
-function DomEvent() {
+Cln.addExt('domEvent', function() {
     this._buf = [];
-}
-
-extend(DomEvent.prototype, {
+}, {
     onWheel: function(elem, callback, ns) {
         // handle MozMousePixelScroll in older Firefox
         return this.on(elem,
@@ -1131,28 +1187,9 @@ extend(DomEvent.prototype, {
     }
 });
 
-var _Em = {
-    _elem: function(e, m, val) {
-        return this._container.querySelector('.' + elem(e, m, val));
-    },
-    /*_elemContext: function(context, e, m, val) {
-        return context.querySelector('.' + elem(e, m, val));
-    },*/
-    _elemAll: function(e, m, val) {
-        return this._container.querySelectorAll('.' + elem(e, m, val));
-    },
-    _elemAllContext: function(context, e, m, val) {
-        return context.querySelectorAll('.' + elem(e, m, val));
-    }
-};
-
-extend(Cln.prototype, _Em);
-
-function Event() {
+Cln.addExt('event', function() {
     this._buf = [];
-}
-
-extend(Event.prototype, {
+}, {
     on: function(type, callback) {
         if(type && callback) {
             this._buf.push({
@@ -1191,71 +1228,10 @@ extend(Event.prototype, {
     }
 });
 
-extend(Cln.prototype, {
-    _initExts: function(data) {
-        this._exts = data;
-
-        data.forEach(function(el) {
-            var name = el[0],
-                Cls = el[1];
-
-            this[name] = new Cls();
-
-            extend(this[name], _Em);
-
-            var n = this[name];
-            n.parent = this;
-            n.init && n.init(this._data, this._container);
-        }, this);
-    },
-    _removeExts: function() {
-        this._exts.forEach(function(el) {
-            var ext = el[0];
-            this[ext].destroy();
-            delete this[ext];
-        }, this);
-
-        delete this._exts;
-    }
-});
-
-extend(Cln, {
-    addHolidays: function(locale, data) {
-        this._holidays = this._holidays || {};
-        this._holidays[locale] = data;
-    }
-});
-
-Cln.prototype.getHoliday = function(d, m, y) {
-    var locale = this._data.locale,
-        c = Cln._holidays;
-        
-    return c && c[locale] && c[locale][y] ? c[locale][y][d + '-' + (m + 1)] : undefined;
-};
-
-extend(Cln, {
-    _texts: {},
-    _locales: [],
-    addLocale: function(locale, texts) {
-        this._locales.push(locale);
-        this._texts[locale] = texts;
-        
-        if(texts.def) {
-            this._defaultLocale = locale;
-        }
-    }
-});
-
-Cln.prototype.text = function(id) {
-    return Cln._texts[this._data.locale][id];
-};
-
 var SATURDAY = 6,
     SUNDAY = 0;
 
-function Template() {}
-
-extend(Template.prototype, {
+Cln.addExt('template', null, {
     get: function(name) {
         return jshtml(this[name]());
     },
@@ -1322,17 +1298,13 @@ extend(Template.prototype, {
                 };
             };
 
-        current.setHours(12);
-        current.setMinutes(0);
-        current.setSeconds(0);
-        current.setMilliseconds(0);
+        current.setHours(12, 0, 0, 0);
 
         var par = this.parent,
             weekday = date.getDay(),
             dayNames = this.dayNames(),
             dayIndex = dayNames[weekday],
             month = par.text('months')[m],
-            daysMonth = [31, isLeapYear(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
             minSetting = par.setting('min'),
             maxSetting = par.setting('max'),
             minTs = getTs(minSetting),
@@ -1365,9 +1337,8 @@ extend(Template.prototype, {
                 ]
             };
 
-        for(var day = 1; day <= daysMonth[m]; day++) {
+        for(var day = 1; date.getMonth() === m; date.setDate(++day)) {
             title = '';
-            date.setDate(day);
             dateTs = +date;
             weekday = date.getDay();
             holiday = par.getHoliday(day, m, y);
@@ -1398,7 +1369,7 @@ extend(Template.prototype, {
                 mods.minmax = true;
             }
 
-            var tt = par.title.get(par._ymdToISO(y, m, day));
+            var tt = par.title.get(ymdToISO(y, m, day));
             if(tt) {
                 mods['has-title'] = true;
                 mods['title-color'] = tt.color || 'default';
@@ -1515,15 +1486,12 @@ extend(Template.prototype, {
             }
         ];
     },
-    destroy: function(){
-    }
+    destroy: function() {}
 });
 
-function Timeout() {
+Cln.addExt('timeout', function() {
     this._buf = [];
-}
-
-extend(Timeout.prototype, {
+}, {    
     set: function(callback, time, ns) {
         var that = this,
             id = setTimeout(function() {
@@ -1588,16 +1556,14 @@ extend(Timeout.prototype, {
     }
 });
 
-function Title() {
+Cln.addExt('title', function() {
     this._title = {};
-}
-
-extend(Title.prototype, {
+}, {
     init: function(data) {
         this.set(data.title);
     },
     get: function(date) {
-        var bufDate = this.parent._parseDateToISO(date);
+        var bufDate = parseDateToISO(date);
         return bufDate ? this._title[bufDate] : undefined;
     },
     set: function(data) {
@@ -1610,7 +1576,7 @@ extend(Title.prototype, {
         }
     },
     _set: function(data) {
-        var bufDate = this.parent._parseDateToISO(data.date),
+        var bufDate = parseDateToISO(data.date),
             parent = this.parent,
             el;
 
@@ -1618,7 +1584,7 @@ extend(Title.prototype, {
             this._title[bufDate] = {text: data.text, color: data.color};
 
             if(parent._isInited) {
-                el = parent._findDayByDate(parent._parseDateToObj(data.date));
+                el = parent._findDayByDate(parseDateToObj(data.date));
                 if(el) {
                     setMod(el, 'has-title');
                     setMod(el, 'title-color', data.color);
@@ -1637,13 +1603,13 @@ extend(Title.prototype, {
     },
     _remove: function(date) {
         var parent = this.parent,
-            bufDate = parent._parseDateToISO(date);
+            bufDate = parseDateToISO(date);
 
         if(bufDate) {
             delete this._title[bufDate];
 
             if(parent._isInited) {
-                var day = parent._findDayByDate(parent._parseDateToObj(date));
+                var day = parent._findDayByDate(parseDateToObj(date));
                 if(day) {
                     delMod(day, 'has-title');
                     delMod(day, 'title-color');
@@ -1669,9 +1635,7 @@ extend(Title.prototype, {
     }
 });
 
-function Tooltip() {}
-
-extend(Tooltip.prototype, {
+Cln.addExt('tooltip', null, {
     create: function() {
         if(this._container) {
             return;
@@ -1686,13 +1650,14 @@ extend(Tooltip.prototype, {
         this._container = el;
     },
     show: function(target, data) {
-        var dataBuf = data || {};
+        var dataBuf = data || {},
+            margin = 5;
 
         this.create();
         setMod(this._container, 'theme', this.parent.setting('theme'));
         setMod(this._container, 'visible');
 
-        this._elem('tooltip-text').innerHTML = jshtml({c: dataBuf.text, e: 'tooltip-row'});
+        this._container.querySelector('.calendula__tooltip-text').innerHTML = jshtml({c: dataBuf.text, e: 'tooltip-row'});
 
         setMod(this._container, 'color', dataBuf.color || 'default');
 
@@ -1700,7 +1665,7 @@ extend(Tooltip.prototype, {
 
         var offset = getOffset(target),
             x = offset.left - (this._container.offsetWidth - target.offsetWidth) / 2,
-            y = offset.top - this._container.offsetHeight - 5;
+            y = offset.top - this._container.offsetHeight - margin;
 
         setPosition(this._container, x, y);
     },
@@ -1721,7 +1686,7 @@ extend(Tooltip.prototype, {
 
 return Cln;
 
-})(this, this.document, Date);
+})(this, this.document, Date, Math);
 
 Calendula.addLocale('be', {
     months: [
@@ -2013,7 +1978,7 @@ Calendula.addLocale('tr', {
         'kasım',
         'aralık'
     ],
-    shortDayNames: ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'],
+    shortDayNames: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'],
     dayNames: [
         'Pazar',
         'Pazartesi',
