@@ -829,7 +829,7 @@ function parseDate(value) {
 /**
  * Parse a date and convert to ISO format.
  * @param {string|number|Date} value
- * @return {string}
+ * @return {string|null}
  */
 function parseDateToISO(value) {
     var d = parseDate(value);
