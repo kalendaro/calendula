@@ -21,14 +21,14 @@
 
 ## Подключение
 ```HTML
-<link rel="stylesheet" type="text/css" href="build/calendula.all.css" />
+<link rel="stylesheet" href="build/calendula.all.css" />
 <script src="build/calendula.all.js"></script>
 ```
 
 Для подключения только нужной локали и темы:
 ```HTML
-<link rel="stylesheet" type="text/css" href="build/calendula.base.css" />
-<link rel="stylesheet" type="text/css" href="build/calendula.ios.css" />
+<link rel="stylesheet" href="build/calendula.base.css" />
+<link rel="stylesheet" href="build/calendula.ios.css" />
 <script src="build/calendula.base.js"></script>
 <script src="build/calendula.en.js"></script>
 ```
