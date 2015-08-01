@@ -10,7 +10,7 @@ var gulp = require('gulp'),
         browsers: ['ie >= 9', 'Firefox >= 24', 'Chrome >= 26', 'iOS >= 5', 'Safari >= 6', 'Android > 2.3']
     },
     destDir = './build';
-    
+
 var paths = {
     mainCss: [
         'src/less/calendula.less',
@@ -47,7 +47,7 @@ paths.prodCssAll = paths.mainCss.concat('src/less/calendula.theme.*.less');
 var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolidays'],
     cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
     allTasks = [].concat(cssTasks, jsTasks);
-    
+
 gulp.task('devJs', function() {
     return gulp.src(paths.devJs)
         .pipe(concat('calendula.dev.js'))
@@ -67,6 +67,8 @@ gulp.task('prodJsAll', function() {
         .pipe(uglify({preserveComments: 'some'}))
         .pipe(gulp.dest(destDir));
 });
+
+
 
 gulp.task('prodJsLocales', function() {
     return gulp.src(paths.prodJsLocales)
