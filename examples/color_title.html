@@ -3,7 +3,7 @@
 <head>
     <title>Calendula</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="../build/calendula.all.css" />
+    <link rel="stylesheet" href="../build/calendula.all.css" />
     <script src="../build/calendula.all.js"></script>
 </head>
 <body>
@@ -12,14 +12,14 @@
 
 <script>
     function leadZero(num) {
-        return num < 10 ? '0' + num : num; 
+        return num < 10 ? '0' + num : num;
     }
-    
+
     var ca = new Calendula({
         switcher: document.getElementById('example-button'),
         value: 'today'
     })
-    
+
     var year = new Date().getFullYear(),
         colors = ['yellow', 'olive', 'blue', 'red', 'green', 'orange', 'purple', 'black'],
         color = 0;
@@ -36,7 +36,7 @@
             });
         }
     }
-    
+
     ca.open();
 </script>
 

@@ -3,7 +3,7 @@
 <head>
     <title>Calendula</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="../build/calendula.dev.css" />
+    <link rel="stylesheet" href="../build/calendula.dev.css" />
     <script src="../build/calendula.dev.js"></script>
     <style>
         #api-methods
@@ -12,37 +12,37 @@
             left: 20px;
             top: 20px;
         }
-        
+
         #example-button
         {
             position: absolute;
             left: 30%;
             top: 100px;
         }
-        
-        .page 
+
+        .page
         {
             -webkit-transition: background-color .3s linear 0s;
                     transition: background-color .3s linear 0s;
         }
-        
+
         .page_theme_normal
         {
             background-color: none;
             color: #000;
         }
-        
+
         .page_theme_black
         {
             background-color: black;
             color: #fff;
         }
-        
+
         #log
         {
             margin-left: 5px;
         }
-        
+
         td
         {
             vertical-align: top;
@@ -173,35 +173,35 @@
                     <input type="text" id="cl-title-del-date" placeholder="date" value="" style="width: 5em;" /> <input type="submit" value="Del" id="cl-title-del"/>
                 </td>
             </tr>
-            
+
         </table>
-        
+
         <br />
         Events:<br />
         <div id="log"></div>
     </div>
-    
+
     <input type="text" id="example-button" value=""/>
     <!--<button id="example-button"></button>-->
-    
+
 <script>
 window.addEventListener('load', function() {
     var leadZero = function(num) {
         return num < 10 ? '0' + num : num;
     };
-    
+
     var formatDate = function(d) {
         return [d.getFullYear(), leadZero(d.getMonth() + 1), leadZero(d.getDate())].join('-');
     };
-    
+
     var log = function(text) {
         getById('log').innerHTML += text + '<br />';
     };
-    
+
     var getById = function(id) {
         return document.getElementById(id);
     };
-    
+
     var clLocale = getById('cl-locale');
     Calendula._locales.sort().forEach(function(el) {
         var opt = document.createElement('option');
@@ -219,7 +219,7 @@ window.addEventListener('load', function() {
     var getShowOn = function() {
         return clShowOn.value === 'both' ? ['click', 'focus'] : clShowOn.value;
     };
-        
+
     var clOpen = getById('cl-open'),
         clClose = getById('cl-close'),
         clToggle = getById('cl-toggle'),
@@ -245,16 +245,16 @@ window.addEventListener('load', function() {
         button = getById('example-button'),
         minDate = new Date(),
         maxDate = new Date();
-    
+
     minDate.setDate(1);
     minDate.setYear(minDate.getFullYear() - 5);
     maxDate.setDate(1);
     maxDate.setYear(maxDate.getFullYear() + 1);
-    
+
     clValue.value = formatDate(new Date());
     clMin.value = formatDate(minDate);
     clMax.value = formatDate(maxDate);
-    
+
     window.cl = new Calendula({
             locale: clLocale.value,
             value: clValue.value,
@@ -273,7 +273,7 @@ window.addEventListener('load', function() {
                 {date: '2014-10-13', color: 'green', text: 'Hello world!'}
             ]
         });
-        
+
     cl.event.on('select', function(e, data) {
         log(e.type + ' ' + JSON.stringify(data));
     }).on('open', function(e) {
@@ -283,20 +283,20 @@ window.addEventListener('load', function() {
     })
 
     cl.open();
-     
+
     clTheme.addEventListener('change', function() {
         cl.setting('theme', this.value);
         document.body.className = 'page page_theme_' + this.value;
-        
+
         setTimeout(function() {
             cl.open();
         }, 300);
     }, false);
-    
+
     clValueSet.addEventListener('click', function() {
         cl.val(clValue.value);
     }, false);
-    
+
     clMinSet.addEventListener('click', function() {
         cl.setting('min', clMin.value);
     }, false);
@@ -313,7 +313,7 @@ window.addEventListener('load', function() {
     clAutocloseable.addEventListener('change', function() {
         cl.setting('autocloseable', this.checked);
     }, false);
-    
+
     clShowOn.addEventListener('change', function() {
         cl.setting('showOn', getShowOn());
     }, false);
@@ -321,7 +321,7 @@ window.addEventListener('load', function() {
     clCloseAfterSelection.addEventListener('change', function() {
         cl.setting('closeAfterSelection', this.checked);
     }, false);
-    
+
     clDaysAfterMonths.addEventListener('change', function() {
         cl.setting('daysAfterMonths', this.checked);
     }, false);
@@ -330,12 +330,12 @@ window.addEventListener('load', function() {
 
     clLocale.addEventListener('change', function() {
         cl.setting('locale', this.value);
-        
+
         setTimeout(function() {
             cl.open();
         }, 300);
     }, false);
-    
+
     clTitleAdd.addEventListener('click', function() {
         cl.title.set({
             text: clTitleText.value,
@@ -343,7 +343,7 @@ window.addEventListener('load', function() {
             date: clTitleAddDate.value
         });
     }, false);
-    
+
     clTitleDel.addEventListener('click', function() {
         cl.title.remove(clTitleDelDate.value);
     }, false);
@@ -351,15 +351,15 @@ window.addEventListener('load', function() {
     clOpen.addEventListener('click', function() {
         cl.open();
     }, false);
-    
+
     clClose.addEventListener('click', function() {
         cl.close();
     }, false);
-    
+
     clToggle.addEventListener('click', function() {
         cl.toggle();
     }, false);
-    
+
     clDestroy.addEventListener('click', function() {
         cl.destroy();
     }, false);
