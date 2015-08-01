@@ -127,11 +127,11 @@ c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 
 
 ## Примеры
-+ [Расширенный](http://hcodes.github.io/calendula-download/examples/api.html)
-+ [Простой](http://hcodes.github.io/calendula-download/examples/simple.html)
-+ [Все темы](http://hcodes.github.io/calendula-download/examples/many.html)
-+ [Моя тема](http://hcodes.github.io/calendula-download/examples/my_theme.html)
-+ [Цветные подсказки](http://hcodes.github.io/calendula-download/examples/color_title.html)
++ [Расширенный](http://hcodes.github.io/calendula/examples/api.html)
++ [Простой](http://hcodes.github.io/calendula/examples/simple.html)
++ [Все темы](http://hcodes.github.io/calendula/examples/many.html)
++ [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
++ [Цветные подсказки](http://hcodes.github.io/calendula/examples/color_title.html)
 
 ## Разработка
 [Сборка на сайте](http://hcodes.github.io/calendula-download/index.ru.html)
