@@ -1,11 +1,28 @@
-function leadZero(num) {
-    return (num < 10 ? '0' : '') + num;
+/**
+ * Add a leading zero.
+ * @param {number} value
+ * @return {string}
+ */
+function leadZero(value) {
+    return (value < 10 ? '0' : '') + value;
 }
 
-function ymdToISO(y, m, d) {
-    return [y, leadZero(m + 1), leadZero(d)].join('-');
+/**
+ * Convert a date to ISO format.
+ * @param {number} year
+ * @param {number} month - 0-11
+ * @param {number} day
+ * @return {string}
+ */
+function ymdToISO(year, month, day) {
+    return [year, leadZero(month + 1), leadZero(day)].join('-');
 }
 
+/**
+ * Parse a date.
+ * @param {string|number|Date} value
+ * @return {Date}
+ */
 function parseDate(value) {
     var date = null,
         match,
@@ -34,7 +51,7 @@ function parseDate(value) {
             if(value instanceof Date) {
                 date = value;
             } else if(value.year && value.day) {
-                date = new Date(value.year, value.month - 1, value.day, 12, 0, 0, 0);
+                date = new Date(value.year, value.month, value.day, 12, 0, 0, 0);
             }
         } else if(isNumber(value)) {
             date = new Date(value);
@@ -44,6 +61,11 @@ function parseDate(value) {
     return date;
 }
 
+/**
+ * Parse a date and convert to ISO format.
+ * @param {string|number|Date} value
+ * @return {string}
+ */
 function parseDateToISO(value) {
     var d = parseDate(value);
     if(d) {
@@ -53,6 +75,11 @@ function parseDateToISO(value) {
     }
 }
 
+/**
+ * Convert a date to a object.
+ * @param {string|number|Date} value
+ * @return {Object}
+ */
 function parseDateToObj(value) {
     var d = parseDate(value);
     if(d) {

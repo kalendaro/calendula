@@ -1,15 +1,17 @@
+
 {
+    "mocha": true,
     "browser": true,
     "jquery": true,
     "curly": true,
     "camelcase": true,
     "eqeqeq": true,
-    "es3": true,
     "immed": true,
     "latedef": "nofunc",
     "newcap": true,
     "noarg": true,
     "noempty": true,
+    "node": true,
     "nonew": true,
     "quotmark": "single",
     "undef": true,
@@ -26,5 +28,10 @@
     "sub": true,
 
     "nomen": false,
-    "onevar": false
+    "onevar": false,
+    
+    "globals": {
+        "Calendula": true,
+        "chai": true
+    }
 }

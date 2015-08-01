@@ -7,14 +7,14 @@ var NS = 'calendula',
     MIN_MONTH = 0,
     MAX_MONTH = 11;
 
-function extend(container, obj) {
-    for(var i in obj) {
-        if(obj.hasOwnProperty(i)) {
-            container[i] = obj[i];
+function extend(dest, source) {
+    for(var i in source) {
+        if(source.hasOwnProperty(i)) {
+            dest[i] = source[i];
         }
     }
 
-    return container;
+    return dest;
 }
 
 var Cln = function(data) {
@@ -43,9 +43,18 @@ var Cln = function(data) {
 };
 
 extend(Cln.prototype, {
+    /*
+     * Is opened popup?
+     *
+     * @return {boolean}
+    */
     isOpened: function() {
         return this._isOpened;
     },
+    /*
+     * Open popup
+     *
+    */
     open: function() {
         var that = this;
 
@@ -69,6 +78,10 @@ extend(Cln.prototype, {
 
         return this;
     },
+    /*
+     * Close popup
+     *
+    */
     close: function() {
         var that = this;
         this._init();
@@ -77,8 +90,6 @@ extend(Cln.prototype, {
             that.timeout
                 .clearAll(['open', 'close'])
                 .set(function() {
-                    that._isOpened = false;
-
                     that.timeout.clearAll('open');
 
                     that._update();
@@ -91,13 +102,24 @@ extend(Cln.prototype, {
 
                     that.event.trigger('close');
                 }, 0, 'close');
+
+            this._isOpened = false;
         }
 
         return this;
     },
+    /*
+     * Open/close popup
+     *
+    */
     toggle: function() {
         return this.isOpened() ? this.close() : this.open();
     },
+    /*
+     * Get/set value
+     *
+     * @param {string|number} [value]
+    */
     val: function(value) {
         if(!arguments.length) {
             return this._val;
@@ -210,15 +232,10 @@ extend(Cln.prototype, {
             this._removeExts();
 
             document.body.removeChild(this._container);
-
-            [
-                '_container',
-                '_data',
-                '_isInited',
-                '_isOpened'
-            ].forEach(function(el) {
-                delete this[el];
-            }, this);
+            
+            this._data = null;
+            this._container = null;
+            this._isInited = null;
         }
     },
     _init: function() {
@@ -746,14 +763,31 @@ Cln.addExt = function(name, constr, prot) {
     Cln._exts.push([name, constr, prot]);
 };
 
-function leadZero(num) {
-    return (num < 10 ? '0' : '') + num;
+/**
+ * Add a leading zero.
+ * @param {number} value
+ * @return {string}
+ */
+function leadZero(value) {
+    return (value < 10 ? '0' : '') + value;
 }
 
-function ymdToISO(y, m, d) {
-    return [y, leadZero(m + 1), leadZero(d)].join('-');
+/**
+ * Convert a date to ISO format.
+ * @param {number} year
+ * @param {number} month - 0-11
+ * @param {number} day
+ * @return {string}
+ */
+function ymdToISO(year, month, day) {
+    return [year, leadZero(month + 1), leadZero(day)].join('-');
 }
 
+/**
+ * Parse a date.
+ * @param {string|number|Date} value
+ * @return {Date}
+ */
 function parseDate(value) {
     var date = null,
         match,
@@ -782,7 +816,7 @@ function parseDate(value) {
             if(value instanceof Date) {
                 date = value;
             } else if(value.year && value.day) {
-                date = new Date(value.year, value.month - 1, value.day, 12, 0, 0, 0);
+                date = new Date(value.year, value.month, value.day, 12, 0, 0, 0);
             }
         } else if(isNumber(value)) {
             date = new Date(value);
@@ -792,6 +826,11 @@ function parseDate(value) {
     return date;
 }
 
+/**
+ * Parse a date and convert to ISO format.
+ * @param {string|number|Date} value
+ * @return {string}
+ */
 function parseDateToISO(value) {
     var d = parseDate(value);
     if(d) {
@@ -801,6 +840,11 @@ function parseDateToISO(value) {
     }
 }
 
+/**
+ * Convert a date to a object.
+ * @param {string|number|Date} value
+ * @return {Object}
+ */
 function parseDateToObj(value) {
     var d = parseDate(value);
     if(d) {
@@ -815,12 +859,23 @@ function parseDateToObj(value) {
 }
 
 var div = document.createElement('div'),
+    /**
+     * Get data attribute.
+     * @param {Element} el
+     * @param {string} name
+     * @return {string|undefined}
+     */
     dataAttr = div.dataset ? function(el, name) {
         return el.dataset[name];
     } : function(el, name) { // support IE9
         return el.getAttribute('data-' + name);
     },
     hasClassList = !!div.classList,
+    /**
+     * Add CSS class.
+     * @param {Element} el
+     * @param {string} name
+     */
     addClass = hasClassList ? function(el, name) {
         el.classList.add(name);
     } : function(el, name) { // support IE9
@@ -829,12 +884,22 @@ var div = document.createElement('div'),
             el.className = (el.className + ' ' + name).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
         }
     },
+    /**
+     * Remove CSS class.
+     * @param {Element} el
+     * @param {string} name
+     */
     removeClass = hasClassList ? function(el, name) {
-        el.classList.remove(name);    
+        el.classList.remove(name);
     } : function(el, name) { // support IE9
         var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
         el.className = el.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
     },
+    /**
+     * Has CSS class.
+     * @param {Element} el
+     * @param {string} name
+     */
     hasClass = hasClassList ? function(el, name) {
         return el.classList.contains(name);
     } : function(el, name) { // support IE9
@@ -842,6 +907,13 @@ var div = document.createElement('div'),
         return el.className.search(re) !== -1;
     };
 
+/**
+ * Build CSS class for bem-element.
+ * @param {string} name - Bem-element name.
+ * @param {string} [m] - Mod name.
+ * @param {string} [val] - Mod value.
+ * @return {string}
+ */
 function elem(name, m, val) {
     if(val === null || val === false) {
         name = '';
@@ -852,6 +924,12 @@ function elem(name, m, val) {
     return NS + '__' + name + (m ? '_' + m + (val === '' ? '' : '_' + val) : '');
 }
 
+/**
+ * Build CSS class for bem-mod.
+ * @param {string} name - Mod name.
+ * @param {string} [val] - Mod value.
+ * @return {string}
+ */
 function mod(name, val) {
     if(val === null || val === false) {
         name = '';
@@ -862,6 +940,11 @@ function mod(name, val) {
     return NS + '_' + name + (val === '' ? '' : '_' + val);
 }
 
+/**
+ * Remove bem-mod from DOM element.
+ * @param {Element} el
+ * @param {string} m - Mod name.
+ */
 function delMod(el, m) {
     var e = getElemName(el),
         selector = e ? elem(e, m) : mod(m),
@@ -874,38 +957,73 @@ function delMod(el, m) {
     });
 }
 
+/**
+ * Set bem-mod for DOM element.
+ * @param {Element} el
+ * @param {string} m - Mod name.
+ * @param {string} [val] - Mod value.
+ */
 function setMod(el, m, val) {
     var e = getElemName(el);
     delMod(el, m);
     addClass(el, e ? elem(e, m, val) : mod(m, val));
 }
 
+/**
+ * Has bem-mod for DOM element?
+ * @param {Element} el
+ * @param {string} m - Mod name.
+ * @param {string} [val] - Mod value.
+ */
 function hasMod(el, m, val) {
     var e = getElemName(el);
 
     return hasClass(el, e ? elem(e, m, val) : mod(m, val));
 }
 
+/**
+ * Has bem-element?
+ * @param {Element} el
+ * @param {string} e - Element name.
+ * @return {boolean}
+ */
 function hasElem(el, e) {
     return hasClass(el, elem(e));
 }
 
+/**
+ * Get bem-element name.
+ * @param {Element} el
+ * @return {string}
+ */
 function getElemName(el) {
     var buf = el.className.match(/__([^ _$]+)/);
     return buf ? buf[1] : '';
 }
 
 extend(Cln, {
+    /**
+     * Add holidays.
+     * @param {string} locale
+     * @param {Object} data
+     */
     addHolidays: function(locale, data) {
         this._holidays = this._holidays || {};
         this._holidays[locale] = data;
     }
 });
 
+/**
+ * Get data for holiday by date.
+ * @param {number} day
+ * @param {number} month
+ * @param {number} year
+ * @return {number|undefined}
+ */
 Cln.prototype.getHoliday = function(day, month, year) {
     var locale = this._data.locale,
         c = Cln._holidays;
-        
+
     return c && c[locale] && c[locale][year] ? c[locale][year][day + '-' + (month + 1)] : undefined;
 };
 
@@ -996,8 +1114,13 @@ var jshtml = (function() {
 })();
 
 extend(Cln, {
-    _texts: {},
     _locales: [],
+    _texts: {},
+    /**
+     * Add a locale.
+     * @param {string} locale
+     * @param {Object} texts
+     */
     addLocale: function(locale, texts) {
         this._locales.push(locale);
         this._texts[locale] = texts;
@@ -1008,32 +1131,66 @@ extend(Cln, {
     }
 });
 
+/**
+ * Get text by id for current locale.
+ * @param {string} id
+ * @return {*}
+ */
 Cln.prototype.text = function(id) {
     return Cln._texts[this._data.locale][id];
 };
 
+/**
+ * Parse a number, fix for native parseInt.
+ * @param {string} str
+ * @return {number}
+ */
 function parseNum(str) {
     return parseInt(str, 10);
 }
 
 var isArray = Array.isArray;
-
+/**
+ * Is plain object?
+ * @param {*} obj
+ * @return {boolean}
+ */
 function isPlainObj(obj) {
     return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
+/**
+ * Is a string?
+ * @param {*} obj
+ * @return {boolean}
+ */
 function isString(obj) {
     return typeof obj === 'string';
 }
 
+/**
+ * Is a number?
+ * @param {*} obj
+ * @return {boolean}
+ */
 function isNumber(obj) {
     return typeof obj === 'number';
 }
 
+/**
+ * Is a object?
+ * @param {*} obj
+ * @return {boolean}
+ */
 function isObject(obj) {
     return typeof obj === 'object';
 }
 
+/**
+ * Is a undefined?
+ * @param {*} obj
+ * @return {boolean}
+ */
 function isUndefined(obj) {
     return typeof obj === 'undefined';
 }

@@ -2,14 +2,14 @@ var NS = 'calendula',
     MIN_MONTH = 0,
     MAX_MONTH = 11;
 
-function extend(container, obj) {
-    for(var i in obj) {
-        if(obj.hasOwnProperty(i)) {
-            container[i] = obj[i];
+function extend(dest, source) {
+    for(var i in source) {
+        if(source.hasOwnProperty(i)) {
+            dest[i] = source[i];
         }
     }
 
-    return container;
+    return dest;
 }
 
 var Cln = function(data) {
@@ -38,9 +38,18 @@ var Cln = function(data) {
 };
 
 extend(Cln.prototype, {
+    /*
+     * Is opened popup?
+     *
+     * @return {boolean}
+    */
     isOpened: function() {
         return this._isOpened;
     },
+    /*
+     * Open popup
+     *
+    */
     open: function() {
         var that = this;
 
@@ -64,6 +73,10 @@ extend(Cln.prototype, {
 
         return this;
     },
+    /*
+     * Close popup
+     *
+    */
     close: function() {
         var that = this;
         this._init();
@@ -72,8 +85,6 @@ extend(Cln.prototype, {
             that.timeout
                 .clearAll(['open', 'close'])
                 .set(function() {
-                    that._isOpened = false;
-
                     that.timeout.clearAll('open');
 
                     that._update();
@@ -86,13 +97,24 @@ extend(Cln.prototype, {
 
                     that.event.trigger('close');
                 }, 0, 'close');
+
+            this._isOpened = false;
         }
 
         return this;
     },
+    /*
+     * Open/close popup
+     *
+    */
     toggle: function() {
         return this.isOpened() ? this.close() : this.open();
     },
+    /*
+     * Get/set value
+     *
+     * @param {string|number} [value]
+    */
     val: function(value) {
         if(!arguments.length) {
             return this._val;
@@ -205,15 +227,10 @@ extend(Cln.prototype, {
             this._removeExts();
 
             document.body.removeChild(this._container);
-
-            [
-                '_container',
-                '_data',
-                '_isInited',
-                '_isOpened'
-            ].forEach(function(el) {
-                delete this[el];
-            }, this);
+            
+            this._data = null;
+            this._container = null;
+            this._isInited = null;
         }
     },
     _init: function() {
