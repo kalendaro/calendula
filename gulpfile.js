@@ -9,7 +9,7 @@ var gulp = require('gulp'),
     apBrowsers = {
         browsers: ['ie >= 9', 'Firefox >= 24', 'Chrome >= 26', 'iOS >= 5', 'Safari >= 6', 'Android > 2.3']
     },
-    destDir = './build';
+    destDir = './dist';
 
 var paths = {
     mainCss: [

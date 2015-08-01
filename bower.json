@@ -28,7 +28,7 @@
     "package.json"
   ],  
   "main": [
-    "build/calendula.all.js",
-    "build/calendula.all.css"
+    "dist/calendula.all.js",
+    "dist/calendula.all.css"
   ]
 }

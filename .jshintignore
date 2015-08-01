@@ -4,7 +4,7 @@ tests/**
 examples/**
 src/**
 node_modules/**
-build/calendula.all.js
-build/calendula.base.js
-build/calendula.locale.*.js
-build/calendula.holiday.*.js
+dist/calendula.all.js
+dist/calendula.base.js
+dist/calendula.locale.*.js
+dist/calendula.holiday.*.js
