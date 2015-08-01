@@ -139,7 +139,7 @@ c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 Ручная сборка:
 ```
 npm i
-gulp
+npm test
 ```
 
 ## [Лицензия](https://github.com/hcodes/calendula/blob/master/LICENSE.ru.md)
