@@ -68,8 +68,6 @@ gulp.task('prodJsAll', function() {
         .pipe(gulp.dest(destDir));
 });
 
-
-
 gulp.task('prodJsLocales', function() {
     return gulp.src(paths.prodJsLocales)
         .pipe(uglify({preserveComments: 'some'}))
