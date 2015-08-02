@@ -86,7 +86,7 @@ extend(Cln.prototype, {
         this._init();
 
         if(this.isOpened()) {
-            that.timeout
+            this.timeout
                 .clearAll(['open', 'close'])
                 .set(function() {
                     that.timeout.clearAll('open');
@@ -231,7 +231,7 @@ extend(Cln.prototype, {
             this._removeExts();
 
             document.body.removeChild(this._container);
-            
+
             this._data = null;
             this._container = null;
             this._isInited = null;
@@ -297,7 +297,18 @@ extend(Cln.prototype, {
         this._update();
     },
     _rebuild: function() {
+        var isOpened = this.isOpened();
+        if(isOpened) {
+            this._delOpenedEvents();
+        }
+
         this._container.innerHTML = this.template.get('main');
+
+        if(isOpened) {
+            this._openedEvents();
+            this._monthSelector(this._currentDate.month, false);
+            this._yearSelector(this._currentDate.year, false);
+        }
     },
     _rebuildDays: function() {
         this._elem('days-container').innerHTML = this.template.get('days');
