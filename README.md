@@ -33,7 +33,7 @@
 <script src="dist/calendula.en.js"></script>
 ```
 
-Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula/index.ru.html).
+Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula-download/index.ru.html).
 
 ## Использование
 ```JavaScript
@@ -142,5 +142,5 @@ npm i
 npm test
 ```
 
-## [Лицензия](https://github.com/hcodes/calendula/blob/master/LICENSE.ru.md)
+## [Лицензия](https://github.com/hcodes/calendula/blob/master/LICENSE)
 MIT License
