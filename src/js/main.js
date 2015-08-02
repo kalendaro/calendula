@@ -1,5 +1,4 @@
-var NS = 'calendula',
-    MIN_MONTH = 0,
+var MIN_MONTH = 0,
     MAX_MONTH = 11;
 
 function extend(dest, source) {

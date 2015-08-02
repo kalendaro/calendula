@@ -3,8 +3,7 @@ var Calendula = (function(window, document, Date, Math, undefined) {
 
 'use strict';
 
-var NS = 'calendula',
-    MIN_MONTH = 0,
+var MIN_MONTH = 0,
     MAX_MONTH = 11;
 
 function extend(dest, source) {
@@ -907,6 +906,8 @@ var div = document.createElement('div'),
         return el.className.search(re) !== -1;
     };
 
+var NS = 'calendula';
+
 /**
  * Build CSS class for bem-element.
  * @param {string} name - Bem-element name.
@@ -916,7 +917,7 @@ var div = document.createElement('div'),
  */
 function elem(name, m, val) {
     if(val === null || val === false) {
-        name = '';
+        m = '';
     } else if(val === true || val === undefined) {
         val = '';
     }
@@ -937,7 +938,7 @@ function mod(name, val) {
         val = '';
     }
 
-    return NS + '_' + name + (val === '' ? '' : '_' + val);
+    return NS + (name ? '_' + name + (val === '' ? '' : '_' + val) : '');
 }
 
 /**

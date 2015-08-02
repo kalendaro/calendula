@@ -1,3 +1,5 @@
+var NS = 'calendula';
+
 /**
  * Build CSS class for bem-element.
  * @param {string} name - Bem-element name.
@@ -7,7 +9,7 @@
  */
 function elem(name, m, val) {
     if(val === null || val === false) {
-        name = '';
+        m = '';
     } else if(val === true || val === undefined) {
         val = '';
     }
@@ -28,7 +30,7 @@ function mod(name, val) {
         val = '';
     }
 
-    return NS + '_' + name + (val === '' ? '' : '_' + val);
+    return NS + (name ? '_' + name + (val === '' ? '' : '_' + val) : '');
 }
 
 /**
