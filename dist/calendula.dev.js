@@ -1064,7 +1064,7 @@ var jshtml = (function() {
 
     var attrs = function(data) {
         var keys = Object.keys(data),
-            ignoredItems = ['c', 't', 'e', 'm'], // class, tag, element, modifier
+            ignoredItems = ['c', 't', 'e', 'm'], // content, tag, element, modifier
             text = [],
             classes = [],
             i, len,
@@ -1080,13 +1080,13 @@ var jshtml = (function() {
                     if(data.m.hasOwnProperty(i)) {
                         classes.push(elem(data.e, i, data.m[i]));
                     }
-                } 
+                }
             } else {
                 for(i in data.m) {
                     if(data.m.hasOwnProperty(i)) {
                         classes.push(mod(i, data.m[i]));
                     }
-                } 
+                }
             }
         }
 
