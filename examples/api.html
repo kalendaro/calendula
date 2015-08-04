@@ -105,17 +105,16 @@
                 <td>
                     position
                 <td>
-                    <select id="cl-position">
-                        <option value="left bottom">left bottom</option>
-                        <option value="left top">left top</option>
-                        <option value="left center">left center</option>
-                        <option value="center top">center top</option>
-                        <option value="center center">center center</option>
-                        <option value="center bottom">center bottom</option>
-                        <option value="right top">right top</option>
-                        <option value="right center">right center</option>
-                        <option value="right bottom">right bottom</option>
-                        <option value="object">{left: 10, top: 10}</option>
+                    <select id="cl-position-left">
+                        <option value="left">left</option>
+                        <option value="center">center</option>
+                        <option value="right">right</option>
+                    </select>
+
+                    <select id="cl-position-top">
+                        <option value="top">top</option>
+                        <option value="center">center</option>
+                        <option value="bottom">bottom</option>
                     </select>
                 </td>
             </tr>
@@ -213,7 +212,7 @@ window.addEventListener('load', function() {
     });
 
     var getPosition = function() {
-        return clPosition.value === 'object' ? {left: 10, top: 10} : clPosition.value;
+        return [clPositionLeft.value, clPositionTop.value];
     };
 
     var getShowOn = function() {
@@ -234,7 +233,8 @@ window.addEventListener('load', function() {
         clAutocloseable = getById('cl-autocloseable'),
         clCloseAfterSelection = getById('cl-closeAfterSelection'),
         clDaysAfterMonths = getById('cl-daysAfterMonths'),
-        clPosition = getById('cl-position'),
+        clPositionLeft = getById('cl-position-left'),
+        clPositionTop = getById('cl-position-top'),
         clShowOn = getById('cl-show-on'),
         clTitleText = getById('cl-title-text'),
         clTitleAdd = getById('cl-title-add'),
@@ -305,7 +305,12 @@ window.addEventListener('load', function() {
         cl.setting('max', clMax.value);
     }, false);
 
-    clPosition.addEventListener('change', function() {
+    clPositionLeft.addEventListener('change', function() {
+        cl.setting('position', getPosition());
+        cl.open();
+    });
+    
+    clPositionTop.addEventListener('change', function() {
         cl.setting('position', getPosition());
         cl.open();
     });

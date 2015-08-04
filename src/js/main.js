@@ -39,15 +39,14 @@ var Cln = function(data) {
 extend(Cln.prototype, {
     /*
      * Is opened popup?
-     *
      * @return {boolean}
     */
     isOpened: function() {
         return this._isOpened;
     },
     /*
-     * Open popup
-     *
+     * Open popup.
+     * @return {Calendula} this
     */
     open: function() {
         var that = this;
@@ -73,8 +72,8 @@ extend(Cln.prototype, {
         return this;
     },
     /*
-     * Close popup
-     *
+     * Close popup.
+     * @return {Calendula} this
     */
     close: function() {
         var that = this;
@@ -103,16 +102,16 @@ extend(Cln.prototype, {
         return this;
     },
     /*
-     * Open/close popup
-     *
+     * Open/close popup.
+     * @return {Calendula} this
     */
     toggle: function() {
         return this.isOpened() ? this.close() : this.open();
     },
     /*
-     * Get/set value
-     *
-     * @param {string|number} [value]
+     * Get/set value.
+     * @param {string|number|Date} [value]
+     * @return {*}
     */
     val: function(value) {
         if(!arguments.length) {
@@ -133,6 +132,13 @@ extend(Cln.prototype, {
 
         this._updateSwitcher();
     },
+    /*
+     * Get/set a setting.
+     *
+     * @param {string} name
+     * @param {string} [value]
+     * @return {*}
+    */
     setting: function(name, value) {
         var d = this._data,
             container = this._container,
@@ -146,11 +152,7 @@ extend(Cln.prototype, {
             return d[name];
         }
 
-        if(name === 'min' || name === 'max' || name === 'value') {
-            d[name] = parseDateToObj(value);
-        } else {
-            d[name] = value;
-        }
+        d[name] = ['min', 'max', 'value'].indexOf(name) > -1 ? parseDateToObj(value) : value;
 
         if(name === 'showOn') {
             this._addSwitcherEvents(value);
@@ -159,9 +161,7 @@ extend(Cln.prototype, {
         if(container) {
             if(name === 'theme') {
                 setMod(container, 'theme', value);
-            }
-
-            if(name === 'daysAfterMonths') {
+            } else if(name === 'daysAfterMonths') {
                 if(value) {
                     setMod(container, 'days-after-months');
                 } else {
@@ -176,48 +176,52 @@ extend(Cln.prototype, {
 
         return this;
     },
-    position: function() {
-        var pos = this.setting('position') || 'left bottom',
-            switcher = this.setting('switcher'),
-            p = getOffset(switcher),
-            buf, x, y,
-            con = this._container,
-            conWidth = con.offsetWidth,
-            conHeight = con.offsetHeight,
-            switcherWidth = switcher.offsetWidth,
-            switcherHeight = switcher.offsetHeight;
+    /*
+     * Get/set a setting.
+     *
+     * @param {string|number} left
+     * @param {string|number} top
+     * @return {Calendula} this
+    */
+    position: function(left, top) {
+        var x = left,
+            y = top,
+            switcher = this.setting('switcher') || document.body,
+            offset = getOffset(switcher),
+            conWidth = this._container.offsetWidth,
+            conHeight = this._container.offsetHeight;
 
-        if(isString(pos)) {
-            buf = pos.trim().split(/ +/);
-            x = p.left;
-            y = p.top;
-
-            switch(buf[0]) {
+        if(isString(left)) {
+            switch(left) {
+                case 'left':
+                    x = offset.left;
+                break;
                 case 'center':
-                    x += -(conWidth - switcherWidth) / 2;
+                    x = offset.left + (switcher.offsetWidth - conWidth) / 2;
                 break;
                 case 'right':
-                    x += switcherWidth - conWidth;
+                    x = offset.left + switcher.offsetWidth - conWidth;
                 break;
             }
+        }
 
-            switch(buf[1]) {
+        if(isString(top)) {
+            switch(top) {
                 case 'top':
-                    y += -conHeight;
+                    y = offset.top - conHeight;
                 break;
                 case 'center':
-                    y += -(conHeight - switcherHeight) / 2;
+                    y = offset.top - (conHeight - switcher.offsetHeight) / 2;
                 break;
                 case 'bottom':
-                    y += switcherHeight;
+                    y = offset.top + switcher.offsetHeight;
                 break;
             }
-        } else {
-            x = p.left;
-            y = p.top;
         }
 
         setPosition(this._container, x, y);
+
+        return this;
     },
     destroy: function() {
         if(this._isInited) {
@@ -272,7 +276,8 @@ extend(Cln.prototype, {
         this._init();
 
         if(this.setting('switcher')) {
-            this.position();
+            var pos = this.setting('position') || ['left', 'bottom'];
+            this.position(pos[0], pos[1]);
         }
     },
     _findDayByDate: function(date) {

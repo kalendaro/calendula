@@ -1,3 +1,8 @@
+/*
+ * JS objects to HTML.
+ * @param {*} data
+ * @return {string}
+ */
 var jshtml = (function() {
     var buildItem = function(data) {
         if(data === null || data === undefined) {

@@ -44,15 +44,14 @@ var Cln = function(data) {
 extend(Cln.prototype, {
     /*
      * Is opened popup?
-     *
      * @return {boolean}
     */
     isOpened: function() {
         return this._isOpened;
     },
     /*
-     * Open popup
-     *
+     * Open popup.
+     * @return {Calendula} this
     */
     open: function() {
         var that = this;
@@ -78,8 +77,8 @@ extend(Cln.prototype, {
         return this;
     },
     /*
-     * Close popup
-     *
+     * Close popup.
+     * @return {Calendula} this
     */
     close: function() {
         var that = this;
@@ -108,16 +107,16 @@ extend(Cln.prototype, {
         return this;
     },
     /*
-     * Open/close popup
-     *
+     * Open/close popup.
+     * @return {Calendula} this
     */
     toggle: function() {
         return this.isOpened() ? this.close() : this.open();
     },
     /*
-     * Get/set value
-     *
-     * @param {string|number} [value]
+     * Get/set value.
+     * @param {string|number|Date} [value]
+     * @return {*}
     */
     val: function(value) {
         if(!arguments.length) {
@@ -138,6 +137,13 @@ extend(Cln.prototype, {
 
         this._updateSwitcher();
     },
+    /*
+     * Get/set a setting.
+     *
+     * @param {string} name
+     * @param {string} [value]
+     * @return {*}
+    */
     setting: function(name, value) {
         var d = this._data,
             container = this._container,
@@ -151,11 +157,7 @@ extend(Cln.prototype, {
             return d[name];
         }
 
-        if(name === 'min' || name === 'max' || name === 'value') {
-            d[name] = parseDateToObj(value);
-        } else {
-            d[name] = value;
-        }
+        d[name] = ['min', 'max', 'value'].indexOf(name) > -1 ? parseDateToObj(value) : value;
 
         if(name === 'showOn') {
             this._addSwitcherEvents(value);
@@ -164,9 +166,7 @@ extend(Cln.prototype, {
         if(container) {
             if(name === 'theme') {
                 setMod(container, 'theme', value);
-            }
-
-            if(name === 'daysAfterMonths') {
+            } else if(name === 'daysAfterMonths') {
                 if(value) {
                     setMod(container, 'days-after-months');
                 } else {
@@ -181,48 +181,52 @@ extend(Cln.prototype, {
 
         return this;
     },
-    position: function() {
-        var pos = this.setting('position') || 'left bottom',
-            switcher = this.setting('switcher'),
-            p = getOffset(switcher),
-            buf, x, y,
-            con = this._container,
-            conWidth = con.offsetWidth,
-            conHeight = con.offsetHeight,
-            switcherWidth = switcher.offsetWidth,
-            switcherHeight = switcher.offsetHeight;
+    /*
+     * Get/set a setting.
+     *
+     * @param {string|number} left
+     * @param {string|number} top
+     * @return {Calendula} this
+    */
+    position: function(left, top) {
+        var x = left,
+            y = top,
+            switcher = this.setting('switcher') || document.body,
+            offset = getOffset(switcher),
+            conWidth = this._container.offsetWidth,
+            conHeight = this._container.offsetHeight;
 
-        if(isString(pos)) {
-            buf = pos.trim().split(/ +/);
-            x = p.left;
-            y = p.top;
-
-            switch(buf[0]) {
+        if(isString(left)) {
+            switch(left) {
+                case 'left':
+                    x = offset.left;
+                break;
                 case 'center':
-                    x += -(conWidth - switcherWidth) / 2;
+                    x = offset.left + (switcher.offsetWidth - conWidth) / 2;
                 break;
                 case 'right':
-                    x += switcherWidth - conWidth;
+                    x = offset.left + switcher.offsetWidth - conWidth;
                 break;
             }
+        }
 
-            switch(buf[1]) {
+        if(isString(top)) {
+            switch(top) {
                 case 'top':
-                    y += -conHeight;
+                    y = offset.top - conHeight;
                 break;
                 case 'center':
-                    y += -(conHeight - switcherHeight) / 2;
+                    y = offset.top - (conHeight - switcher.offsetHeight) / 2;
                 break;
                 case 'bottom':
-                    y += switcherHeight;
+                    y = offset.top + switcher.offsetHeight;
                 break;
             }
-        } else {
-            x = p.left;
-            y = p.top;
         }
 
         setPosition(this._container, x, y);
+
+        return this;
     },
     destroy: function() {
         if(this._isInited) {
@@ -277,7 +281,8 @@ extend(Cln.prototype, {
         this._init();
 
         if(this.setting('switcher')) {
-            this.position();
+            var pos = this.setting('position') || ['left', 'bottom'];
+            this.position(pos[0], pos[1]);
         }
     },
     _findDayByDate: function(date) {
@@ -1039,6 +1044,11 @@ Cln.prototype.getHoliday = function(day, month, year) {
     return c && c[locale] && c[locale][year] ? c[locale][year][day + '-' + (month + 1)] : undefined;
 };
 
+/*
+ * JS objects to HTML.
+ * @param {*} data
+ * @return {string}
+ */
 var jshtml = (function() {
     var buildItem = function(data) {
         if(data === null || data === undefined) {
@@ -1207,6 +1217,12 @@ function isUndefined(obj) {
     return typeof obj === 'undefined';
 }
 
+/*
+ * Get offset of element.
+ * @param {Element} el
+ * @return {Object}
+ */
+ 
 function getOffset(el) {
     var box = {top: 0, left: 0};
 
@@ -1222,19 +1238,40 @@ function getOffset(el) {
     };
 }
 
-function setPosition(elem, x, y) {
-    setLeft(elem, x);
-    setTop(elem, y);
+/*
+ * Set position of element.
+ * @param {Element} el
+ * @param {string|number} left
+ * @param {string|number} top
+ */
+function setPosition(elem, left, top) {
+    setLeft(elem, left);
+    setTop(elem, top);
 }
 
-function setLeft(elem, x) {
-    elem.style.left = isNumber(x) ? x + 'px' : x;
+/*
+ * Set left.
+ * @param {Element} el
+ * @param {string|number} left
+ */
+function setLeft(elem, left) {
+    elem.style.left = isNumber(left) ? left + 'px' : left;
 }
 
-function setTop(elem, y) {
-    elem.style.top = isNumber(y) ? y + 'px' : y;
+/*
+ * Set top.
+ * @param {Element} el
+ * @param {string|number} top
+ */
+function setTop(elem, top) {
+    elem.style.top = isNumber(top) ? top + 'px' : top;
 }
 
+/*
+ * Set translateY.
+ * @param {Element} el
+ * @param {string|number} top
+ */
 var setTranslateY = (function() {
     var div = document.createElement('div'),
         prop = false;
@@ -1246,10 +1283,10 @@ var setTranslateY = (function() {
         }
     });
     
-    return prop === false ? function(el, y) {
-        el.style.top = isNumber(y) ? y + 'px' : y;
-    } : function(el, y) {
-        el.style[prop] = 'translateY(' + (isNumber(y) ? y + 'px' : y) + ')';
+    return prop === false ? function(el, top) {
+        el.style.top = isNumber(top) ? top + 'px' : top;
+    } : function(el, top) {
+        el.style[prop] = 'translateY(' + (isNumber(top) ? top + 'px' : top) + ')';
     };
 })();
 
