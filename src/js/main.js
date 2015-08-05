@@ -582,15 +582,19 @@ extend(Cln.prototype, {
             }, 0, 'anim');
         }
     },
-    _colorizeMonths: function(month) {
-        var months = this._elemAll('month'),
-            MAX_COLOR = 5;
-        for(var c = 0; c < MAX_COLOR; c++) {
-            var elems = this._elemAll('month', 'color', c);
+    _maxColor: 5,
+    _decolorize: function(selector) {
+        for(var c = 0; c < this._maxColor; c++) {
+            var elems = this._elemAll(selector, 'color', c);
             for(var i = 0, len = elems.length; i < len; i++) {
                 delMod(elems[i], 'color', c);
             }
         }
+    },
+    _colorizeMonths: function(month) {
+        var months = this._elemAll('month');
+
+        this._decolorize('month');
 
         setMod(months[month], 'color', '0');
 
@@ -603,35 +607,30 @@ extend(Cln.prototype, {
         }
 
         var n = 1;
-        for(c = month - 2; c >= MIN_MONTH && n < MAX_COLOR; c--, n++) {
+        for(var c = month - 2; c >= MIN_MONTH && n < this._maxColor; c--, n++) {
             setMod(months[c], 'color', n);
         }
 
         n = 1;
-        for(c = month + 2; c <= MAX_MONTH && n < MAX_COLOR; c++, n++) {
+        for(c = month + 2; c <= MAX_MONTH && n < this._maxColor; c++, n++) {
             setMod(months[c], 'color', n);
         }
     },
     _colorizeYears: function(year) {
         var years = this._elemAll('year'),
-            startYear = this._data._startYear,
-            MAX_COLOR = 5;
-        for(var c = 0; c < MAX_COLOR; c++) {
-            var elems = this._elemAll('year', 'color', c);
-            for(var i = 0, len = elems.length; i < len; i++) {
-                delMod(elems[i], 'color', c);
-            }
-        }
+            startYear = this._data._startYear;
+
+        this._decolorize('year');
 
         setMod(years[year - startYear], 'color', '0');
 
         var n = 1;
-        for(c = year - 1; c >= this._data._startYear && n < MAX_COLOR; c--, n++) {
+        for(var c = year - 1; c >= startYear && n < this._maxColor; c--, n++) {
             setMod(years[c - startYear], 'color', n);
         }
 
         n = 1;
-        for(c = year + 1; c <= this._data._endYear && n < MAX_COLOR; c++, n++) {
+        for(c = year + 1; c <= this._data._endYear && n < this._maxColor; c++, n++) {
             setMod(years[c - startYear], 'color', n);
         }
     },
