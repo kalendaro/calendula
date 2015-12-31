@@ -23,12 +23,12 @@ Cln.addExt('event', function() {
 
         return this;
     },
-    trigger: function(type) {
+    trigger: function(type, data) {
         var buf = this._buf;
 
         for(var i = 0; i < buf.length; i++) {
             if(type === buf[i].type) {
-                buf[i].callback.apply(this, [{type: type}].concat(Array.prototype.slice.call(arguments, 1)));
+                buf[i].callback.call(this, {type: type}, data);
             }
         }
 
