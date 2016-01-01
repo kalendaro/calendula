@@ -1,4 +1,3 @@
-
 {
     "mocha": true,
     "browser": true,
@@ -29,7 +28,7 @@
 
     "nomen": false,
     "onevar": false,
-    
+    "predef": ["define"],
     "globals": {
         "Calendula": true,
         "chai": true
