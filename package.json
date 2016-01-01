@@ -27,7 +27,6 @@
   "engines": {
     "node": ">= 0.10"
   },
-  "private": true,
   "devDependencies": {
     "chai": "3.4.x",
     "mocha": "2.3.x",
