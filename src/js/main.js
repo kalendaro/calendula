@@ -19,8 +19,8 @@ var Cln = function(data) {
             autocloseable: isUndefined(data.autocloseable) ? true : data.autocloseable,
             closeAfterSelection: isUndefined(data.closeAfterSelection) ? true : data.closeAfterSelection,
             locale: data.locale || Cln._defaultLocale,
-            min: parseDateToObj(data.min),
             max: parseDateToObj(data.max),
+            min: parseDateToObj(data.min),
             showOn: data.showOn || 'click',
             theme: data.theme || 'default',
             _startYear: years.start,
@@ -169,6 +169,10 @@ extend(Cln.prototype, {
                 }
             }
 
+            if(name === 'position') {
+                this.isOpened() && this._position(value);
+            }
+
             if(rebuild[name]) {
                 this._rebuild();
             }
@@ -177,19 +181,74 @@ extend(Cln.prototype, {
         return this;
     },
     /*
-     * Get/set a setting.
-     *
-     * @param {string|number} left
-     * @param {string|number} top
-     * @return {Calendula} this
+     * Destroy the datepicker.
     */
-    position: function(left, top) {
-        var x = left,
-            y = top,
-            switcher = this.setting('switcher') || document.body,
-            offset = getOffset(switcher),
-            conWidth = this._container.offsetWidth,
-            conHeight = this._container.offsetHeight;
+    destroy: function() {
+        if(this._isInited) {
+            this.close();
+
+            this._removeExts();
+
+            document.body.removeChild(this._container);
+
+            this._data = null;
+            this._container = null;
+            this._isInited = null;
+        }
+    },
+    _init: function() {
+        if(this._isInited) {
+            return;
+        }
+
+        this._isInited = true;
+
+        var id = this.setting('id'),
+            container = document.createElement('div');
+
+        if(id) {
+            container.id = id;
+        }
+        this._container = container;
+
+        addClass(container, NS);
+        setMod(container, 'theme', this._data.theme);
+
+        if(this.setting('daysAfterMonths')) {
+            setMod(container, 'days-after-months');
+        }
+
+        this._rebuild();
+
+        document.body.appendChild(container);
+    },
+    _position: function(pos) {
+        pos = pos || {};
+
+        var switcher = this.setting('switcher'),
+            left = pos.left,
+            top = pos.top,
+            isAuto = function(prop) {
+                return prop === 'auto' || isUndefined(prop);
+            };
+
+        if(switcher && (isAuto(left) || isAuto(top))) {
+            var bestPos = this._calcBestPosition(switcher);
+            left = bestPos.left;
+            top = bestPos.top;
+        }
+
+        setPosition(this._container, this._calcPosition(left, top, switcher));
+
+        return this;
+    },
+    _calcPosition: function(left, top, switcher) {
+        var offset = getOffset(switcher),
+            con = this._container,
+            conWidth = con.offsetWidth,
+            conHeight = con.offsetHeight,
+            x,
+            y;
 
         if(isString(left)) {
             switch(left) {
@@ -219,49 +278,69 @@ extend(Cln.prototype, {
             }
         }
 
-        setPosition(this._container, x, y);
-
-        return this;
+        return {
+            left: x,
+            top: y
+        };
     },
-    destroy: function() {
-        if(this._isInited) {
-            this.close();
+    _calcVisibleSquare: function(left, top, winArea) {
+        var conArea = {
+                x1: left,
+                y1: top,
+                x2: left + this._container.offsetWidth,
+                y2: top + this._container.offsetHeight
+            },
+            getIntersection = function(d1, d2, d3, d4) {
+                if(d2 <= d3 || d1 >= d4) {
+                    return 0;
+                }
 
-            this._removeExts();
+                return Math.min(d2, d4) - Math.max(d1, d3);
+            },
+            width = getIntersection(conArea.x1, conArea.x2, winArea.x1, winArea.x2),
+            height = getIntersection(conArea.y1, conArea.y2, winArea.y1, winArea.y2);
 
-            document.body.removeChild(this._container);
-
-            this._data = null;
-            this._container = null;
-            this._isInited = null;
-        }
+        return width * height;
     },
-    _init: function() {
-        if(this._isInited) {
-            return;
-        }
+    _calcBestPosition: function(switcher) {
+        var maxArea = 0,
+            areaIndex = 0,
+            winArea = this._winArea();
 
-        this._isInited = true;
+        this._bestPositions.forEach(function(position, i) {
+            var offset = this._calcPosition(position[0], position[1], switcher);
+            var area = this._calcVisibleSquare(offset.left, offset.top, winArea);
+            if(area > maxArea) {
+                maxArea = area;
+                areaIndex = i;
+            }
+        }, this);
 
-        var id = this.setting('id'),
-            container = document.createElement('div');
+        var bestPosition = this._bestPositions[areaIndex];
+        return {
+            left: bestPosition[0],
+            top: bestPosition[1]
+        };
+    },
+    _bestPositions: [
+        ['left', 'bottom'],
+        ['left', 'top'],
+        ['right', 'bottom'],
+        ['right', 'top'],
+        ['center', 'bottom'],
+        ['center', 'top']
+    ],
+    _winArea: function() {
+        var docElement = document.documentElement,
+            pageX = window.pageXOffset,
+            pageY = window.pageYOffset;
 
-        this._container = container;
-
-        if(id) {
-            container.id = id;
-        }
-
-        addClass(container, NS);
-        setMod(container, 'theme', this._data.theme);
-
-        if(this.setting('daysAfterMonths')) {
-            setMod(container, 'days-after-months');
-        }
-
-        this._rebuild();
-
-        document.body.appendChild(container);
+        return {
+            x1: pageX,
+            y1: pageY,
+            x2: pageX + docElement.clientWidth,
+            y2: pageY + docElement.clientHeight
+        };
     },
     _current: function() {
         var d = new Date();
@@ -274,11 +353,7 @@ extend(Cln.prototype, {
     },
     _update: function() {
         this._init();
-
-        if(this.setting('switcher')) {
-            var pos = this.setting('position') || ['left', 'bottom'];
-            this.position(pos[0], pos[1]);
-        }
+        this._position(this.setting('position'));
     },
     _findDayByDate: function(date) {
         if(date.year !== this._currentDate.year) {
@@ -293,7 +368,10 @@ extend(Cln.prototype, {
 
         return null;
     },
-    _resize: function() {
+    _onresize: function() {
+        this._update();
+    },
+    _onscroll: function() {
         this._update();
     },
     _rebuild: function() {
@@ -342,7 +420,10 @@ extend(Cln.prototype, {
 
         this.domEvent
             .on(window, 'resize', function() {
-                that._resize();
+                that._onresize();
+            }, 'open')
+            .on(document, 'scroll', function() {
+                that._onscroll();
             }, 'open')
             .on(document, 'keypress', function(e) {
                 if(e.keyCode === 27) { // ESC

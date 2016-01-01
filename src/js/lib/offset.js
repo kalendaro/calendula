@@ -9,7 +9,7 @@ function getOffset(el) {
 
     // If we don't have gBCR, just use 0,0 rather than error
     // BlackBerry 5, iOS 3 (original iPhone)
-    if(!isUndefined(el.getBoundingClientRect)) {
+    if(el && !isUndefined(el.getBoundingClientRect)) {
         box = el.getBoundingClientRect();
     }
     
@@ -22,12 +22,13 @@ function getOffset(el) {
 /*
  * Set position of element.
  * @param {Element} el
- * @param {string|number} left
- * @param {string|number} top
+ * @param {Object} coords
+ * @param {string|number} coords.left
+ * @param {string|number} coords.top
  */
-function setPosition(elem, left, top) {
-    setLeft(elem, left);
-    setTop(elem, top);
+function setPosition(elem, coords) {
+    setLeft(elem, coords.left);
+    setTop(elem, coords.top);
 }
 
 /*

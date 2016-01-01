@@ -33,7 +33,10 @@ Cln.addExt('tooltip', null, {
             x = offset.left - (this._container.offsetWidth - target.offsetWidth) / 2,
             y = offset.top - this._container.offsetHeight - margin;
 
-        setPosition(this._container, x, y);
+        setPosition(this._container, {
+            left: x,
+            top: y
+        });
     },
     hide: function() {
         if(this._isOpened) {

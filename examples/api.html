@@ -28,7 +28,7 @@
 
         .page_theme_normal
         {
-            background-color: none;
+            background-color: transparent;
             color: #000;
         }
 
@@ -106,12 +106,14 @@
                     position
                 <td>
                     <select id="cl-position-left">
+                        <option value="auto">auto</option>
                         <option value="left">left</option>
                         <option value="center">center</option>
                         <option value="right">right</option>
                     </select>
 
                     <select id="cl-position-top">
+                        <option value="auto">auto</option>
                         <option value="top">top</option>
                         <option value="center">center</option>
                         <option value="bottom">bottom</option>
@@ -212,7 +214,10 @@ window.addEventListener('load', function() {
     });
 
     var getPosition = function() {
-        return [clPositionLeft.value, clPositionTop.value];
+        return {
+            left: clPositionLeft.value,
+            top: clPositionTop.value
+        };
     };
 
     var getShowOn = function() {
