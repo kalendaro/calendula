@@ -1,7 +1,17 @@
-/*! Calendula | © 2013—2015 Denis Seleznev | https://github.com/hcodes/calendula/ */
-var Calendula = (function(window, document, Date, Math, undefined) {
+/*! Calendula | © 2016 Denis Seleznev | https://github.com/hcodes/calendula/ */
 
-'use strict';
+(function(window, document, Date, Math, undefined) {
+
+(function(root, factory) {
+    if(typeof define === 'function' && define.amd) {
+        define('calendula', [], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.Calendula = factory();
+    }
+}(this, function() {
+    'use strict';
 
 var MIN_MONTH = 0,
     MAX_MONTH = 11;
@@ -24,8 +34,8 @@ var Cln = function(data) {
             autocloseable: isUndefined(data.autocloseable) ? true : data.autocloseable,
             closeAfterSelection: isUndefined(data.closeAfterSelection) ? true : data.closeAfterSelection,
             locale: data.locale || Cln._defaultLocale,
-            min: parseDateToObj(data.min),
             max: parseDateToObj(data.max),
+            min: parseDateToObj(data.min),
             showOn: data.showOn || 'click',
             theme: data.theme || 'default',
             _startYear: years.start,
@@ -174,6 +184,10 @@ extend(Cln.prototype, {
                 }
             }
 
+            if(name === 'position') {
+                this.isOpened() && this._position(value);
+            }
+
             if(rebuild[name]) {
                 this._rebuild();
             }
@@ -182,19 +196,74 @@ extend(Cln.prototype, {
         return this;
     },
     /*
-     * Get/set a setting.
-     *
-     * @param {string|number} left
-     * @param {string|number} top
-     * @return {Calendula} this
+     * Destroy the datepicker.
     */
-    position: function(left, top) {
-        var x = left,
-            y = top,
-            switcher = this.setting('switcher') || document.body,
-            offset = getOffset(switcher),
-            conWidth = this._container.offsetWidth,
-            conHeight = this._container.offsetHeight;
+    destroy: function() {
+        if(this._isInited) {
+            this.close();
+
+            this._removeExts();
+
+            document.body.removeChild(this._container);
+
+            this._data = null;
+            this._container = null;
+            this._isInited = null;
+        }
+    },
+    _init: function() {
+        if(this._isInited) {
+            return;
+        }
+
+        this._isInited = true;
+
+        var id = this.setting('id'),
+            container = document.createElement('div');
+
+        if(id) {
+            container.id = id;
+        }
+        this._container = container;
+
+        addClass(container, NS);
+        setMod(container, 'theme', this._data.theme);
+
+        if(this.setting('daysAfterMonths')) {
+            setMod(container, 'days-after-months');
+        }
+
+        this._rebuild();
+
+        document.body.appendChild(container);
+    },
+    _position: function(pos) {
+        pos = pos || {};
+
+        var switcher = this.setting('switcher'),
+            left = pos.left,
+            top = pos.top,
+            isAuto = function(prop) {
+                return prop === 'auto' || isUndefined(prop);
+            };
+
+        if(switcher && (isAuto(left) || isAuto(top))) {
+            var bestPos = this._calcBestPosition(switcher);
+            left = bestPos.left;
+            top = bestPos.top;
+        }
+
+        setPosition(this._container, this._calcPosition(left, top, switcher));
+
+        return this;
+    },
+    _calcPosition: function(left, top, switcher) {
+        var offset = getOffset(switcher),
+            con = this._container,
+            conWidth = con.offsetWidth,
+            conHeight = con.offsetHeight,
+            x,
+            y;
 
         if(isString(left)) {
             switch(left) {
@@ -224,49 +293,69 @@ extend(Cln.prototype, {
             }
         }
 
-        setPosition(this._container, x, y);
-
-        return this;
+        return {
+            left: x,
+            top: y
+        };
     },
-    destroy: function() {
-        if(this._isInited) {
-            this.close();
+    _calcVisibleSquare: function(left, top, winArea) {
+        var conArea = {
+                x1: left,
+                y1: top,
+                x2: left + this._container.offsetWidth,
+                y2: top + this._container.offsetHeight
+            },
+            getIntersection = function(d1, d2, d3, d4) {
+                if(d2 <= d3 || d1 >= d4) {
+                    return 0;
+                }
 
-            this._removeExts();
+                return Math.min(d2, d4) - Math.max(d1, d3);
+            },
+            width = getIntersection(conArea.x1, conArea.x2, winArea.x1, winArea.x2),
+            height = getIntersection(conArea.y1, conArea.y2, winArea.y1, winArea.y2);
 
-            document.body.removeChild(this._container);
-
-            this._data = null;
-            this._container = null;
-            this._isInited = null;
-        }
+        return width * height;
     },
-    _init: function() {
-        if(this._isInited) {
-            return;
-        }
+    _calcBestPosition: function(switcher) {
+        var maxArea = 0,
+            areaIndex = 0,
+            winArea = this._winArea();
 
-        this._isInited = true;
+        this._bestPositions.forEach(function(position, i) {
+            var offset = this._calcPosition(position[0], position[1], switcher);
+            var area = this._calcVisibleSquare(offset.left, offset.top, winArea);
+            if(area > maxArea) {
+                maxArea = area;
+                areaIndex = i;
+            }
+        }, this);
 
-        var id = this.setting('id'),
-            container = document.createElement('div');
+        var bestPosition = this._bestPositions[areaIndex];
+        return {
+            left: bestPosition[0],
+            top: bestPosition[1]
+        };
+    },
+    _bestPositions: [
+        ['left', 'bottom'],
+        ['left', 'top'],
+        ['right', 'bottom'],
+        ['right', 'top'],
+        ['center', 'bottom'],
+        ['center', 'top']
+    ],
+    _winArea: function() {
+        var docElement = document.documentElement,
+            pageX = window.pageXOffset,
+            pageY = window.pageYOffset;
 
-        this._container = container;
-
-        if(id) {
-            container.id = id;
-        }
-
-        addClass(container, NS);
-        setMod(container, 'theme', this._data.theme);
-
-        if(this.setting('daysAfterMonths')) {
-            setMod(container, 'days-after-months');
-        }
-
-        this._rebuild();
-
-        document.body.appendChild(container);
+        return {
+            x1: pageX,
+            y1: pageY,
+            x2: pageX + docElement.clientWidth,
+            y2: pageY + docElement.clientHeight
+        };
     },
     _current: function() {
         var d = new Date();
@@ -279,11 +368,7 @@ extend(Cln.prototype, {
     },
     _update: function() {
         this._init();
-
-        if(this.setting('switcher')) {
-            var pos = this.setting('position') || ['left', 'bottom'];
-            this.position(pos[0], pos[1]);
-        }
+        this._position(this.setting('position'));
     },
     _findDayByDate: function(date) {
         if(date.year !== this._currentDate.year) {
@@ -298,7 +383,10 @@ extend(Cln.prototype, {
 
         return null;
     },
-    _resize: function() {
+    _onresize: function() {
+        this._update();
+    },
+    _onscroll: function() {
         this._update();
     },
     _rebuild: function() {
@@ -347,7 +435,10 @@ extend(Cln.prototype, {
 
         this.domEvent
             .on(window, 'resize', function() {
-                that._resize();
+                that._onresize();
+            }, 'open')
+            .on(document, 'scroll', function() {
+                that._onscroll();
             }, 'open')
             .on(document, 'keypress', function(e) {
                 if(e.keyCode === 27) { // ESC
@@ -1227,7 +1318,7 @@ function getOffset(el) {
 
     // If we don't have gBCR, just use 0,0 rather than error
     // BlackBerry 5, iOS 3 (original iPhone)
-    if(!isUndefined(el.getBoundingClientRect)) {
+    if(el && !isUndefined(el.getBoundingClientRect)) {
         box = el.getBoundingClientRect();
     }
     
@@ -1240,12 +1331,13 @@ function getOffset(el) {
 /*
  * Set position of element.
  * @param {Element} el
- * @param {string|number} left
- * @param {string|number} top
+ * @param {Object} coords
+ * @param {string|number} coords.left
+ * @param {string|number} coords.top
  */
-function setPosition(elem, left, top) {
-    setLeft(elem, left);
-    setTop(elem, top);
+function setPosition(elem, coords) {
+    setLeft(elem, coords.left);
+    setTop(elem, coords.top);
 }
 
 /*
@@ -1415,12 +1507,12 @@ Cln.addExt('event', function() {
 
         return this;
     },
-    trigger: function(type) {
+    trigger: function(type, data) {
         var buf = this._buf;
 
         for(var i = 0; i < buf.length; i++) {
             if(type === buf[i].type) {
-                buf[i].callback.apply(this, [{type: type}].concat(Array.prototype.slice.call(arguments, 1)));
+                buf[i].callback.call(this, {type: type}, data);
             }
         }
 
@@ -1873,7 +1965,10 @@ Cln.addExt('tooltip', null, {
             x = offset.left - (this._container.offsetWidth - target.offsetWidth) / 2,
             y = offset.top - this._container.offsetHeight - margin;
 
-        setPosition(this._container, x, y);
+        setPosition(this._container, {
+            left: x,
+            top: y
+        });
     },
     hide: function() {
         if(this._isOpened) {
@@ -1891,6 +1986,8 @@ Cln.addExt('tooltip', null, {
 });
 
 return Cln;
+
+}));
 
 })(this, this.document, Date, Math);
 
@@ -2242,26 +2339,7 @@ Calendula.addLocale('uk', {
 });
 
 Calendula.addHolidays('ru', {
-    '2011': {
-        '1-1': 1,
-        '2-1': 1,
-        '3-1': 1,
-        '4-1': 1,
-        '5-1': 1,
-        '6-1': 1,
-        '7-1': 1,
-        '10-1': 1,
-        '23-2': 1,
-        '5-3': 0,
-        '7-3': 1,
-        '8-3': 1,
-        '1-5': 1,
-        '2-5': 1,
-        '9-5': 1,
-        '12-6': 1,
-        '13-6': 1,
-        '4-11': 1
-    }, '2012': {
+    '2012': {
         '1-1': 1,
         '2-1': 1,
         '3-1': 1,
@@ -2341,24 +2419,32 @@ Calendula.addHolidays('ru', {
         '9-5': 1,
         '12-6': 1,
         '4-11': 1
+    }, '2016': {
+        '1-1': 1,
+        '2-1': 1,
+        '3-1': 1,
+        '4-1': 1,
+        '5-1': 1,
+        '6-1': 1,
+        '7-1': 1,
+        '8-1': 1,
+        '20-2': 0,
+        '22-2': 1,
+        '23-2': 1,
+        '7-3': 1,
+        '8-3': 1,
+        '1-5': 1,
+        '2-5': 1,
+        '3-5': 1,
+        '9-5': 1,
+        '12-6': 1,
+        '13-6': 1,
+        '4-11': 1
     }
 });
 
 Calendula.addHolidays('tr', {
-    '2011': {
-        '1-1': 1,
-        '23-4': 1,
-        '1-5': 1,
-        '19-5': 1,
-        '30-8': 1,
-        '31-8': 1,
-        '1-9': 1,
-        '29-10': 1,
-        '6-11': 1,
-        '7-11': 1,
-        '8-11': 1,
-        '9-11': 1
-    }, '2012': {
+    '2012': {
         '1-1': 1,
         '23-4': 1,
         '1-5': 1,
@@ -2405,28 +2491,27 @@ Calendula.addHolidays('tr', {
         '19-5': 1,
         '30-8': 1,
         '29-10': 1
+    }, '2016': {
+        '1-1': 1,
+        '23-4': 1,
+        '1-5': 1,
+        '19-5': 1,
+        '4-7': 1,
+        '5-7': 1,
+        '6-7': 1,
+        '7-7': 1,
+        '30-8': 1,
+        '12-9': 1,
+        '13-9': 1,
+        '14-9': 1,
+        '15-9': 1,
+        '28-10': 1,
+        '29-10': 1
     }
 });
 
 Calendula.addHolidays('uk', {
-    '2011': {
-        '1-1': 1,
-        '3-1': 1,
-        '7-1': 1,
-        '8-3': 1,
-        '15-4': 1,
-        '24-4': 1,
-        '25-4': 1,
-        '1-5': 1,
-        '2-5': 1,
-        '3-5': 1,
-        '9-5': 1,
-        '3-6': 1,
-        '12-6': 1,
-        '13-6': 1,
-        '28-6': 1,
-        '24-8': 1
-    }, '2012': {
+    '2012': {
         '1-1': 1,
         '2-1': 1,
         '6-1': 1,
@@ -2494,5 +2579,24 @@ Calendula.addHolidays('uk', {
         '9-5': 1,
         '28-6': 1,
         '24-8': 1
+    }, '2016': {
+        '1-1': 1,
+        '7-1': 1,
+        '8-1': 1,
+        '16-1': 0,
+        '7-3': 1,
+        '8-3': 1,
+        '12-3': 0,
+        '1-5': 1,
+        '2-5': 1,
+        '3-5': 1,
+        '9-5': 1,
+        '19-6': 1,
+        '20-6': 1,
+        '27-6': 1,
+        '28-6': 1,
+        '2-7': 0,
+        '24-8': 1,
+        '14-10': 1
     }
 });
