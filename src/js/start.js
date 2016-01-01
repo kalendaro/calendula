@@ -1,4 +1,14 @@
-/*! Calendula | © 2013—2015 Denis Seleznev | https://github.com/hcodes/calendula/ */
-var Calendula = (function(window, document, Date, Math, undefined) {
+/*! Calendula | © 2016 Denis Seleznev | https://github.com/hcodes/calendula/ */
 
-'use strict';
+(function(window, document, Date, Math, undefined) {
+
+(function(root, factory) {
+    if(typeof define === 'function' && define.amd) {
+        define('calendula', [], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.Calendula = factory();
+    }
+}(this, function() {
+    'use strict';
