@@ -47,14 +47,15 @@ var c = new Calendula({
 | №  | Свойство  | Тип                  | По умолчанию  | Описание                                    |
 |:---|:----------|:---------------------|:--------------|:--------------------------------------------|
 | 1. | autocloseable | `Boolean`            | `true`        | Закрытие календаря при клике мимо него.     |
-| 2. | switcher  | `DOMElement`         |               | Кнопка, при клике на которую открывается и позиционируется календарь. |
-| 3. | closeAfterSelection| `Boolean`   | `true`        | Закрытие календаря при выборе даты.         |
-| 4. | locale    | `String`             | `en`          | Язык интерфейса.<br>`be` `de` `en` `es` `fr` `it` `pl` `ru` `tr` `uk` |
-| 5. | max       | `String`<br>`Date`<br>`Number` |               | Максимальная дата.                          |
-| 6. | min       | `String`<br>`Date`<br>`Number` |               | Минимальная дата.                           |
-| 7. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` `android`|
-| 8. | value     | `String`<br>`Date`<br>`Number` | текущая дата   | Выбранная дата.                            |
-| 9. | years     | `String`               | `-11:1`       | Установка диапазона для списка лет.         |
+| 2. | closeAfterSelection| `Boolean`   | `true`        | Закрытие календаря при выборе даты.         |
+| 3. | locale    | `String`             | `en`          | Язык интерфейса.<br>`be` `de` `en` `es` `fr` `it` `pl` `ru` `tr` `uk` |
+| 4. | max       | `String`<br>`Date`<br>`Number` |               | Максимальная дата.                          |
+| 5. | min       | `String`<br>`Date`<br>`Number` |               | Минимальная дата.                           |
+| 6. | position  | `String`             | `auto auto`   | Позиция календаря относительно `switcher`, `x y`. Где `x`: `auto`, `left`, `center` и `right`. `y`: `auto`, `top`, `center` и `bottom`.|
+| 7. | switcher  | `DOMElement`         |               | Кнопка, при клике на которую открывается и позиционируется календарь. |
+| 8. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` `android`|
+| 9. | value     | `String`<br>`Date`<br>`Number` | текущая дата   | Выбранная дата.                            |
+| 10. | years     | `String`               | `-11:1`       | Установка диапазона для списка лет.         |
 
 Поддерживаемые форматы дат:
  + `2014-11-22` `2014/11/22` `2014.11.22`
