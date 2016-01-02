@@ -330,7 +330,7 @@ extend(Cln.prototype, {
                 offset,
                 area;
 
-            if ((isLeftAuto && isTopAuto) ||
+            if((isLeftAuto && isTopAuto) ||
                 (isLeftAuto && top === topPos) ||
                 (isTopAuto && left === leftPos)) {
                 offset = this._calcPosition(leftPos, topPos, switcher);
