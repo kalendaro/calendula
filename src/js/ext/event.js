@@ -1,6 +1,15 @@
+/*
+ * Extension: Event
+*/
 Cln.addExt('event', function() {
     this._buf = [];
 }, {
+    /*
+     * Attach a handler to an custom event.
+     * @param {string} type
+     * @param {Function} callback
+     * @return {Event} this
+    */
     on: function(type, callback) {
         if(type && callback) {
             this._buf.push({
@@ -11,6 +20,12 @@ Cln.addExt('event', function() {
 
         return this;
     },
+    /*
+     * Remove a previously-attached custom event handler.
+     * @param {string} type
+     * @param {Function} callback
+     * @return {Event} this
+    */
     off: function(type, callback) {
         var buf = this._buf;
 
@@ -23,6 +38,12 @@ Cln.addExt('event', function() {
 
         return this;
     },
+    /*
+     * Execute all handlers for the given event type.
+     * @param {string} type
+     * @param {*} [data]
+     * @return {Event} this
+    */
     trigger: function(type, data) {
         var buf = this._buf;
 
@@ -34,6 +55,9 @@ Cln.addExt('event', function() {
 
         return this;
     },
+    /*
+     * Destructor.
+    */
     destroy: function() {
         delete this._buf;
     }

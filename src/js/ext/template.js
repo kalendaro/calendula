@@ -1,10 +1,21 @@
-var SATURDAY = 6,
-    SUNDAY = 0;
-
+/*
+ * Extension: Template
+*/
 Cln.addExt('template', null, {
+    /**
+     * Get a template.
+     * @param {string} name
+     * @return {*}
+    */
     get: function(name) {
         return jshtml(this[name]());
     },
+    SATURDAY: 6,
+    SUNDAY: 0,
+    /**
+     * Template: days
+     * @return {Array}
+    */
     days: function() {
         var buf = [];
 
@@ -14,11 +25,15 @@ Cln.addExt('template', null, {
 
         return buf;
     },
+    /**
+     * Template: dayNames
+     * @return {Object}
+    */
     dayNames: function() {
         var first = this.parent.text('firstWeekday') || 0,
             w = {
                 first: first,
-                last: !first ? SATURDAY : first - 1
+                last: !first ? this.SATURDAY : first - 1
             },
             n = first;
 
@@ -26,13 +41,19 @@ Cln.addExt('template', null, {
             w[n] = i;
 
             n++;
-            if(n > SATURDAY) {
-                n = SUNDAY;
+            if(n > this.SATURDAY) {
+                n = this.SUNDAY;
             }
         }
 
         return w;
     },
+    /**
+     * Template: month
+     * @param {number} m - Month.
+     * @param {number} y - Year.
+     * @return {Array}
+    */
     month: function(m, y) {
         var date = new Date(y, m, 1, 12, 0, 0, 0),
             dateTs = date.getTime(),
@@ -114,7 +135,7 @@ Cln.addExt('template', null, {
             holiday = par.getHoliday(day, m, y);
             mods = {};
 
-            if(weekday === SUNDAY || weekday === SATURDAY) {
+            if(weekday === this.SUNDAY || weekday === this.SATURDAY) {
                 mods.holiday = true;
             } else {
                 mods.workday = true;
@@ -167,6 +188,10 @@ Cln.addExt('template', null, {
 
         return obj;
     },
+    /**
+     * Template: years
+     * @return {Array}
+    */
     years: function() {
         var data = this.parent._data,
             startYear = data._startYear,
@@ -188,6 +213,10 @@ Cln.addExt('template', null, {
 
         return buf;
     },
+    /**
+     * Template: months
+     * @return {Array}
+    */
     months: function() {
         var buf = [{
             e: 'month-selector',
@@ -206,9 +235,13 @@ Cln.addExt('template', null, {
 
         return buf;
     },
+    /**
+     * Template: main
+     * @return {Array}
+    */
     main: function() {
         var par = this.parent,
-            wd = par.text('firstWeekday') || SUNDAY,
+            wd = par.text('firstWeekday') || this.SUNDAY,
             dayNames = par.text('dayNames') || [],
             bufDayNames = [];
 
@@ -223,8 +256,8 @@ Cln.addExt('template', null, {
             });
 
             wd++;
-            if(wd > SATURDAY) {
-                wd = SUNDAY;
+            if(wd > this.SATURDAY) {
+                wd = this.SUNDAY;
             }
         }, this);
 
@@ -256,5 +289,8 @@ Cln.addExt('template', null, {
             }
         ];
     },
+    /**
+     * Destructor.
+    */
     destroy: function() {}
 });

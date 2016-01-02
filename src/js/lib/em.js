@@ -35,7 +35,7 @@ function mod(name, val) {
 
 /**
  * Remove bem-mod from DOM element.
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string} m - Mod name.
  */
 function delMod(el, m) {
@@ -52,7 +52,7 @@ function delMod(el, m) {
 
 /**
  * Set bem-mod for DOM element.
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string} m - Mod name.
  * @param {string} [val] - Mod value.
  */
@@ -64,7 +64,7 @@ function setMod(el, m, val) {
 
 /**
  * Has bem-mod for DOM element?
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string} m - Mod name.
  * @param {string} [val] - Mod value.
  */
@@ -76,7 +76,7 @@ function hasMod(el, m, val) {
 
 /**
  * Has bem-element?
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string} e - Element name.
  * @return {boolean}
  */
@@ -86,7 +86,7 @@ function hasElem(el, e) {
 
 /**
  * Get bem-element name.
- * @param {Element} el
+ * @param {DOMElement} el
  * @return {string}
  */
 function getElemName(el) {

@@ -1,6 +1,16 @@
+/*
+ * Extension: Timeout
+*/
 Cln.addExt('timeout', function() {
     this._buf = [];
 }, {    
+    /**
+     * Set timeout.
+     * @param {Function} callback
+     * @param {number} time
+     * @param {string} [ns] - Namespace.
+     * @return {Timeout} this
+    */
     set: function(callback, time, ns) {
         var that = this,
             id = setTimeout(function() {
@@ -15,6 +25,11 @@ Cln.addExt('timeout', function() {
 
         return id;
     },
+    /**
+     * Clear timeout.
+     * @param {string} id
+     * @return {Timeout} this
+    */
     clear: function(id) {
         var buf = this._buf,
             index = -1;
@@ -37,6 +52,11 @@ Cln.addExt('timeout', function() {
         
         return this;
     },
+    /**
+     * Clear all timeouts.
+     * @param {string} [ns] - Namespace.
+     * @return {Timeout} this
+    */
     clearAll: function(ns) {
         var oldBuf = this._buf,
             newBuf = [],
@@ -58,6 +78,9 @@ Cln.addExt('timeout', function() {
         
         return this;
     },
+    /**
+     * Destructor.
+    */
     destroy: function() {
         this.clearAll();
 

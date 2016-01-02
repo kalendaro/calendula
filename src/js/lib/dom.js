@@ -1,7 +1,7 @@
 var div = document.createElement('div'),
     /**
-     * Get data attribute.
-     * @param {Element} el
+     * Get a data attribute.
+     * @param {DOMElement} el
      * @param {string} name
      * @return {string|undefined}
      */
@@ -12,8 +12,8 @@ var div = document.createElement('div'),
     },
     hasClassList = !!div.classList,
     /**
-     * Add CSS class.
-     * @param {Element} el
+     * Add a CSS class.
+     * @param {DOMElement} el
      * @param {string} name
      */
     addClass = hasClassList ? function(el, name) {
@@ -25,8 +25,8 @@ var div = document.createElement('div'),
         }
     },
     /**
-     * Remove CSS class.
-     * @param {Element} el
+     * Remove a CSS class.
+     * @param {DOMElement} el
      * @param {string} name
      */
     removeClass = hasClassList ? function(el, name) {
@@ -37,7 +37,7 @@ var div = document.createElement('div'),
     },
     /**
      * Has CSS class.
-     * @param {Element} el
+     * @param {DOMElement} el
      * @param {string} name
      */
     hasClass = hasClassList ? function(el, name) {

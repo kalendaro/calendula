@@ -1,6 +1,6 @@
 /*
  * Get offset of element.
- * @param {Element} el
+ * @param {DOMElement} el
  * @return {Object}
  */
  
@@ -21,7 +21,7 @@ function getOffset(el) {
 
 /*
  * Set position of element.
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {Object} coords
  * @param {string|number} coords.left
  * @param {string|number} coords.top
@@ -32,8 +32,8 @@ function setPosition(elem, coords) {
 }
 
 /*
- * Set left.
- * @param {Element} el
+ * Set left for a DOM element.
+ * @param {DOMElement} el
  * @param {string|number} left
  */
 function setLeft(elem, left) {
@@ -41,8 +41,8 @@ function setLeft(elem, left) {
 }
 
 /*
- * Set top.
- * @param {Element} el
+ * Set top for a DOM element.
+ * @param {DOMElement} el
  * @param {string|number} top
  */
 function setTop(elem, top) {
@@ -51,7 +51,7 @@ function setTop(elem, top) {
 
 /*
  * Set translateY.
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string|number} top
  */
 var setTranslateY = (function() {

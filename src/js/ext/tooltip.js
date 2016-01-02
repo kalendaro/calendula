@@ -1,22 +1,19 @@
+/*
+ * Extension: Tooltip
+*/
 Cln.addExt('tooltip', null, {
-    create: function() {
-        if(this._container) {
-            return;
-        }
-
-        var el = document.createElement('div');
-        addClass(el, elem('tooltip'));
-        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}]);
-
-        document.body.appendChild(el);
-
-        this._container = el;
-    },
+    /**
+     * Show tooltip.
+     * @param {DOMElement} target
+     * @param {Object} data
+     * @param {string} data.text
+     * @param {string} data.color
+    */
     show: function(target, data) {
         var dataBuf = data || {},
             margin = 5;
 
-        this.create();
+        this._create();
         setMod(this._container, 'theme', this.parent.setting('theme'));
         setMod(this._container, 'visible');
 
@@ -38,17 +35,36 @@ Cln.addExt('tooltip', null, {
             top: y
         });
     },
+    /**
+     * Hide tooltip.
+    */
     hide: function() {
         if(this._isOpened) {
             delMod(this._container, 'visible');
             this._isOpened = false;
         }
     },
+    /**
+     * Destructor.
+    */
     destroy: function() {
         if(this._container) {
             this.hide();
             document.body.removeChild(this._container);
             delete this._container;
         }
+    },
+    _create: function() {
+        if(this._container) {
+            return;
+        }
+
+        var el = document.createElement('div');
+        addClass(el, elem('tooltip'));
+        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}]);
+
+        document.body.appendChild(el);
+
+        this._container = el;
     }
 });
