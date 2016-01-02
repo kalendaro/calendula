@@ -1,13 +1,29 @@
+/*
+ * Extension: Title
+*/
 Cln.addExt('title', function() {
     this._title = {};
 }, {
+    /**
+     * Initialize title.
+     * @param {Object} data
+    */
     init: function(data) {
         this.set(data.title);
     },
+    /**
+     * Get title by date.
+     * @param {Date|number|string} date
+     * @return {?Object}
+    */
     get: function(date) {
         var bufDate = parseDateToISO(date);
-        return bufDate ? this._title[bufDate] : undefined;
+        return bufDate ? this._title[bufDate] : null;
     },
+    /**
+     * Set title by date.
+     * @param {Object|Array} data
+    */
     set: function(data) {
         if(isArray(data)) {
             data.forEach(function(el) {
@@ -34,6 +50,10 @@ Cln.addExt('title', function() {
             }
         }
     },
+    /**
+     * Remove title.
+     * @param {Date|number|string} date
+    */
     remove: function(date) {
         if(isArray(date)) {
             date.forEach(function(el) {
@@ -59,6 +79,9 @@ Cln.addExt('title', function() {
             }
         }
     },
+    /**
+     * Remove all titles.
+    */
     removeAll: function() {
         this._title = {};
 
@@ -72,6 +95,9 @@ Cln.addExt('title', function() {
             }
         }
     },
+    /**
+     * Destructor.
+    */
     destroy: function() {
         delete this._title;
     }

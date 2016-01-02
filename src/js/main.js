@@ -222,44 +222,44 @@ extend(Cln.prototype, {
 
         document.body.appendChild(container);
     },
+    _isAuto: function(prop) {
+        return prop === 'auto' || isUndefined(prop);
+    },
     _position: function(pos) {
-        pos = pos || {};
+        pos = (pos || '').split(' ');
 
         var switcher = this.setting('switcher'),
-            left = pos.left,
-            top = pos.top,
-            isAuto = function(prop) {
-                return prop === 'auto' || isUndefined(prop);
-            };
+            left = pos[0],
+            top = pos[1];
 
-        if(switcher && (isAuto(left) || isAuto(top))) {
-            var bestPos = this._calcBestPosition(switcher);
+        if(switcher && (this._isAuto(left) || this._isAuto(top))) {
+            var bestPos = this._calcBestPosition(left, top, switcher);
             left = bestPos.left;
             top = bestPos.top;
         }
 
         setPosition(this._container, this._calcPosition(left, top, switcher));
-
-        return this;
     },
     _calcPosition: function(left, top, switcher) {
         var offset = getOffset(switcher),
             con = this._container,
             conWidth = con.offsetWidth,
             conHeight = con.offsetHeight,
+            offsetLeft = offset.left,
+            offsetTop = offset.top,
             x,
             y;
 
         if(isString(left)) {
             switch(left) {
                 case 'left':
-                    x = offset.left;
+                    x = offsetLeft;
                 break;
                 case 'center':
-                    x = offset.left + (switcher.offsetWidth - conWidth) / 2;
+                    x = offsetLeft + (switcher.offsetWidth - conWidth) / 2;
                 break;
                 case 'right':
-                    x = offset.left + switcher.offsetWidth - conWidth;
+                    x = offsetLeft + switcher.offsetWidth - conWidth;
                 break;
             }
         }
@@ -267,13 +267,13 @@ extend(Cln.prototype, {
         if(isString(top)) {
             switch(top) {
                 case 'top':
-                    y = offset.top - conHeight;
+                    y = offsetTop - conHeight;
                 break;
                 case 'center':
-                    y = offset.top - (conHeight - switcher.offsetHeight) / 2;
+                    y = offsetTop - (conHeight - switcher.offsetHeight) / 2;
                 break;
                 case 'bottom':
-                    y = offset.top + switcher.offsetHeight;
+                    y = offsetTop + switcher.offsetHeight;
                 break;
             }
         }
@@ -302,17 +302,28 @@ extend(Cln.prototype, {
 
         return width * height;
     },
-    _calcBestPosition: function(switcher) {
-        var maxArea = 0,
+    _calcBestPosition: function(left, top, switcher) {
+        var maxArea = -1,
             areaIndex = 0,
-            winArea = this._winArea();
+            winArea = this._winArea(),
+            isLeftAuto = this._isAuto(left),
+            isTopAuto = this._isAuto(top);
 
         this._bestPositions.forEach(function(position, i) {
-            var offset = this._calcPosition(position[0], position[1], switcher);
-            var area = this._calcVisibleSquare(offset.left, offset.top, winArea);
-            if(area > maxArea) {
-                maxArea = area;
-                areaIndex = i;
+            var leftPos = position[0],
+                topPos = position[1],
+                offset,
+                area;
+
+            if((isLeftAuto && isTopAuto) ||
+                (isLeftAuto && top === topPos) ||
+                (isTopAuto && left === leftPos)) {
+                offset = this._calcPosition(leftPos, topPos, switcher);
+                area = this._calcVisibleSquare(offset.left, offset.top, winArea);
+                if(area > maxArea) {
+                    maxArea = area;
+                    areaIndex = i;
+                }
             }
         }, this);
 

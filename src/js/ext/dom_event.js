@@ -1,10 +1,19 @@
 var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
     'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
-
+/*
+ * Extension: DOM event
+*/
 Cln.addExt('domEvent', function() {
     this._buf = [];
 }, {
+    /*
+     * Attach an wheel event handler function for a DOM element.
+     * @param {DOMElement} elem
+     * @param {Function} callback
+     * @param {string} [ns] - Namespace.
+     * @return {domEvent} this
+    */
     onWheel: function(elem, callback, ns) {
         // handle MozMousePixelScroll in older Firefox
         return this.on(elem,
@@ -41,6 +50,14 @@ Cln.addExt('domEvent', function() {
                 return callback(event);
         }, ns);
     },
+    /*
+     * Attach an event handler function for a DOM element.
+     * @param {DOMElement} elem
+     * @param {string} type
+     * @param {Function} callback
+     * @param {string} [ns] - Namespace.
+     * @return {domEvent} this
+    */
     on: function(elem, type, callback, ns) {
         if(elem && type && callback) {
             elem.addEventListener(type, callback, false);
@@ -55,6 +72,14 @@ Cln.addExt('domEvent', function() {
 
         return this;
     },
+    /*
+     * Remove an event handler.
+     * @param {DOMElement} elem
+     * @param {string} type
+     * @param {Function} callback
+     * @param {string} [ns] - Namespace.
+     * @return {domEvent} this
+    */
     off: function(elem, type, callback, ns) {
         var buf = this._buf;
 
@@ -69,6 +94,11 @@ Cln.addExt('domEvent', function() {
 
         return this;
     },
+    /*
+     * Remove all event handler.
+     * @param {string} [ns] - Namespace.
+     * @return {domEvent} this
+    */
     offAll: function(ns) {
         var buf = this._buf;
 
@@ -92,6 +122,9 @@ Cln.addExt('domEvent', function() {
 
         return this;
     },
+    /*
+     * Destructor.
+    */
     destroy: function() {
         this.offAll();
 

@@ -1,4 +1,4 @@
-# Calendula [![Build Status](https://img.shields.io/travis/hcodes/calendula.svg)](https://travis-ci.org/hcodes/calendula) [![devDependency Status](https://img.shields.io/david/dev/hcodes/calendula.svg)](https://david-dm.org/hcodes/calendula#info=devDependencies) [![Build Status](https://img.shields.io/travis/hcodes/calendula.svg?style=flat)](https://travis-ci.org/hcodes/calendula)
+# Calendula [![Build Status](https://img.shields.io/travis/hcodes/calendula.svg?style=flat)](https://travis-ci.org/hcodes/calendula) [![devDependency Status](https://img.shields.io/david/dev/hcodes/calendula.svg?style=flat)](https://david-dm.org/hcodes/calendula#info=devDependencies)
 
 Особенный календарь 📅 на JavaScript
 
@@ -10,9 +10,7 @@
 + отложенная инициализация;
 + темы оформления;
 + подсветка праздничных дней: `ru`, `tr` и `uk`;
-+ локализация;
-+ анимация с помощью CSS;
-+ поддержка тач-устройств.
++ локализация.
 
 Поддержка в браузерах:
 + Internet Explorer 9 и выше;
@@ -20,18 +18,29 @@
 + Google Chrome 6 и выше;
 + Safari 6 и выше.
 
+## Примеры
++ [Все темы](http://hcodes.github.io/calendula/examples/many.html)
++ [Расширенный](http://hcodes.github.io/calendula/examples/api.html)
++ [Цветные подсказки](http://hcodes.github.io/calendula/examples/color_title.html)
++ [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
++ [Простой](http://hcodes.github.io/calendula/examples/simple.html)
+
 ## Подключение
+```
+npm install calendula
+```
+
 ```HTML
-<link rel="stylesheet" href="dist/calendula.all.css" />
-<script src="dist/calendula.all.js"></script>
+<link rel="stylesheet" href="node_modules/calendula/dist/calendula.all.css" />
+<script src="node_modules/calendula/dist/calendula.all.js"></script>
 ```
 
 Для подключения только нужной локали и темы:
 ```HTML
-<link rel="stylesheet" href="dist/calendula.base.css" />
-<link rel="stylesheet" href="dist/calendula.ios.css" />
-<script src="dist/calendula.base.js"></script>
-<script src="dist/calendula.en.js"></script>
+<link rel="stylesheet" href="node_modules/calendula/dist/calendula.base.css" />
+<link rel="stylesheet" href="node_modules/calendula/dist/calendula.ios.css" />
+<script src="node_modules/calendula/dist/calendula.base.js"></script>
+<script src="node_modules/calendula/dist/calendula.en.js"></script>
 ```
 
 Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula-download/index.ru.html).
@@ -40,7 +49,7 @@
 ```JavaScript
 var c = new Calendula({
     theme: 'ios',
-    locale: 'fr',
+    locale: 'en',
     value: '2014-10-11'
     //...
 });
@@ -49,14 +58,15 @@ var c = new Calendula({
 | №  | Свойство  | Тип                  | По умолчанию  | Описание                                    |
 |:---|:----------|:---------------------|:--------------|:--------------------------------------------|
 | 1. | autocloseable | `Boolean`            | `true`        | Закрытие календаря при клике мимо него.     |
-| 2. | switcher  | `DOMElement`         |               | Кнопка, при клике на которую открывается и позиционируется календарь. |
-| 3. | closeAfterSelection| `Boolean`   | `true`        | Закрытие календаря при выборе даты.         |
-| 4. | locale    | `String`             | `en`          | Язык интерфейса.<br>`be` `de` `en` `es` `fr` `it` `pl` `ru` `tr` `uk` |
-| 5. | max       | `String`<br>`Date`<br>`Number` |               | Максимальная дата.                          |
-| 6. | min       | `String`<br>`Date`<br>`Number` |               | Минимальная дата.                           |
-| 7. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` `android`|
-| 8. | value     | `String`<br>`Date`<br>`Number` | текущая дата   | Выбранная дата.                            |
-| 9. | years     | `String`               | `-11:1`       | Установка диапазона для списка лет.         |
+| 2. | closeAfterSelection| `Boolean`   | `true`        | Закрытие календаря при выборе даты.         |
+| 3. | locale    | `String`             | `en`          | Язык интерфейса.<br>`be` `de` `en` `es` `fr` `it` `pl` `ru` `tr` `uk` |
+| 4. | max       | `String`<br>`Date`<br>`Number` |               | Максимальная дата.                          |
+| 5. | min       | `String`<br>`Date`<br>`Number` |               | Минимальная дата.                           |
+| 6. | position  | `String`             | `auto auto`   | Позиция календаря относительно `switcher`.<br/>Формат: `x y`.<br/>`x`: `auto`, `left`, `center` или `right`.<br/>`y`: `auto`, `top`, `center` или `bottom`.|
+| 7. | switcher  | `DOMElement`         |               | Кнопка, при клике на которую открывается и позиционируется календарь. |
+| 8. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` `android`|
+| 9. | value     | `String`<br>`Date`<br>`Number` | текущая дата   | Выбранная дата.                            |
+| 10. | years     | `String`               | `-11:1`       | Установка диапазона для списка лет.         |
 
 Поддерживаемые форматы дат:
  + `2014-11-22` `2014/11/22` `2014.11.22`
@@ -79,7 +89,7 @@ var c = new Calendula({
 Проверка открытия календаря.
 
 ### .setting(name, [value])
-Получить/установить значение настройки.
+Получить или установить значение настройки.
 
 ### .event.on(type, callback)
 Установить событие.
@@ -93,9 +103,10 @@ c.event.on('select', function(e, data) {
 Снять событие.
 
 ### .title.set(data)
-Установить цветную подсказку на день.
+Установить цветную подсказку на дату.
 ```JavaScript
 c.title.set({date: '2014-12-15', text: 'Hello world!', color: 'red'});
+
 c.title.set([
     {date: '2014-12-11', text: 'Hello world!', color: 'red'},
     {date: '2014-12-12', text: 'Hello world!', color: 'orange'},
@@ -106,6 +117,7 @@ c.title.set([
 Удалить цветную подсказку.
 ```JavaScript
 c.title.remove('2014-12-15');
+
 c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 ```
 
@@ -126,21 +138,17 @@ c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 ### select
 Выбрана дата.
 
-
-## Примеры
-+ [Расширенный](http://hcodes.github.io/calendula/examples/api.html)
-+ [Простой](http://hcodes.github.io/calendula/examples/simple.html)
-+ [Все темы](http://hcodes.github.io/calendula/examples/many.html)
-+ [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
-+ [Цветные подсказки](http://hcodes.github.io/calendula/examples/color_title.html)
-
 ## Разработка
 [Сборка на сайте](http://hcodes.github.io/calendula-download/index.ru.html)
 
-Ручная сборка:
+Тесты:
 ```
-npm i
 npm test
+```
+
+Пересборка:
+```
+gulp
 ```
 
 ## [Лицензия](https://github.com/hcodes/calendula/blob/master/LICENSE)
