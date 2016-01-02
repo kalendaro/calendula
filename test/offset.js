@@ -7,11 +7,17 @@ describe('Offset', function() {
     it('setPosition', function() {
         var div = document.createElement('div');
         div.style.position = 'absolute';
-        setPosition(div, 100, 200);
+        setPosition(div, {
+            left: 100,
+            top: 200
+        });
         assert.equal(div.style.left, '100px');
         assert.equal(div.style.top, '200px');
 
-        setPosition(div, '10em', '20em');
+        setPosition(div, {
+            left: '10em',
+            top: '20em'
+        });
         assert.equal(div.style.left, '10em');
         assert.equal(div.style.top, '20em');
     });

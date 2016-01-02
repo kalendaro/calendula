@@ -28,9 +28,8 @@
 
     "nomen": false,
     "onevar": false,
-    "predef": ["define"],
+    "predef": ["define", "chai"],
     "globals": {
-        "Calendula": true,
-        "chai": true
+        "Calendula": true
     }
 }
