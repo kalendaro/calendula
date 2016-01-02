@@ -976,8 +976,8 @@ function parseDateToObj(value) {
 
 var div = document.createElement('div'),
     /**
-     * Get data attribute.
-     * @param {Element} el
+     * Get a data attribute.
+     * @param {DOMElement} el
      * @param {string} name
      * @return {string|undefined}
      */
@@ -988,8 +988,8 @@ var div = document.createElement('div'),
     },
     hasClassList = !!div.classList,
     /**
-     * Add CSS class.
-     * @param {Element} el
+     * Add a CSS class.
+     * @param {DOMElement} el
      * @param {string} name
      */
     addClass = hasClassList ? function(el, name) {
@@ -1001,8 +1001,8 @@ var div = document.createElement('div'),
         }
     },
     /**
-     * Remove CSS class.
-     * @param {Element} el
+     * Remove a CSS class.
+     * @param {DOMElement} el
      * @param {string} name
      */
     removeClass = hasClassList ? function(el, name) {
@@ -1013,7 +1013,7 @@ var div = document.createElement('div'),
     },
     /**
      * Has CSS class.
-     * @param {Element} el
+     * @param {DOMElement} el
      * @param {string} name
      */
     hasClass = hasClassList ? function(el, name) {
@@ -1060,7 +1060,7 @@ function mod(name, val) {
 
 /**
  * Remove bem-mod from DOM element.
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string} m - Mod name.
  */
 function delMod(el, m) {
@@ -1077,7 +1077,7 @@ function delMod(el, m) {
 
 /**
  * Set bem-mod for DOM element.
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string} m - Mod name.
  * @param {string} [val] - Mod value.
  */
@@ -1089,7 +1089,7 @@ function setMod(el, m, val) {
 
 /**
  * Has bem-mod for DOM element?
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string} m - Mod name.
  * @param {string} [val] - Mod value.
  */
@@ -1101,7 +1101,7 @@ function hasMod(el, m, val) {
 
 /**
  * Has bem-element?
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string} e - Element name.
  * @return {boolean}
  */
@@ -1111,7 +1111,7 @@ function hasElem(el, e) {
 
 /**
  * Get bem-element name.
- * @param {Element} el
+ * @param {DOMElement} el
  * @return {string}
  */
 function getElemName(el) {
@@ -1320,7 +1320,7 @@ function isUndefined(obj) {
 
 /*
  * Get offset of element.
- * @param {Element} el
+ * @param {DOMElement} el
  * @return {Object}
  */
  
@@ -1341,7 +1341,7 @@ function getOffset(el) {
 
 /*
  * Set position of element.
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {Object} coords
  * @param {string|number} coords.left
  * @param {string|number} coords.top
@@ -1352,8 +1352,8 @@ function setPosition(elem, coords) {
 }
 
 /*
- * Set left.
- * @param {Element} el
+ * Set left for a DOM element.
+ * @param {DOMElement} el
  * @param {string|number} left
  */
 function setLeft(elem, left) {
@@ -1361,8 +1361,8 @@ function setLeft(elem, left) {
 }
 
 /*
- * Set top.
- * @param {Element} el
+ * Set top for a DOM element.
+ * @param {DOMElement} el
  * @param {string|number} top
  */
 function setTop(elem, top) {
@@ -1371,7 +1371,7 @@ function setTop(elem, top) {
 
 /*
  * Set translateY.
- * @param {Element} el
+ * @param {DOMElement} el
  * @param {string|number} top
  */
 var setTranslateY = (function() {
@@ -1395,10 +1395,19 @@ var setTranslateY = (function() {
 var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
     document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
     'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
-
+/*
+ * Extension: DOM event
+*/
 Cln.addExt('domEvent', function() {
     this._buf = [];
 }, {
+    /*
+     * Attach an wheel event handler function for a DOM element.
+     * @param {DOMElement} elem
+     * @param {Function} callback
+     * @param {string} [ns] - Namespace.
+     * @return {domEvent} this
+    */
     onWheel: function(elem, callback, ns) {
         // handle MozMousePixelScroll in older Firefox
         return this.on(elem,
@@ -1435,6 +1444,14 @@ Cln.addExt('domEvent', function() {
                 return callback(event);
         }, ns);
     },
+    /*
+     * Attach an event handler function for a DOM element.
+     * @param {DOMElement} elem
+     * @param {string} type
+     * @param {Function} callback
+     * @param {string} [ns] - Namespace.
+     * @return {domEvent} this
+    */
     on: function(elem, type, callback, ns) {
         if(elem && type && callback) {
             elem.addEventListener(type, callback, false);
@@ -1449,6 +1466,14 @@ Cln.addExt('domEvent', function() {
 
         return this;
     },
+    /*
+     * Remove an event handler.
+     * @param {DOMElement} elem
+     * @param {string} type
+     * @param {Function} callback
+     * @param {string} [ns] - Namespace.
+     * @return {domEvent} this
+    */
     off: function(elem, type, callback, ns) {
         var buf = this._buf;
 
@@ -1463,6 +1488,11 @@ Cln.addExt('domEvent', function() {
 
         return this;
     },
+    /*
+     * Remove all event handler.
+     * @param {string} [ns] - Namespace.
+     * @return {domEvent} this
+    */
     offAll: function(ns) {
         var buf = this._buf;
 
@@ -1486,6 +1516,9 @@ Cln.addExt('domEvent', function() {
 
         return this;
     },
+    /*
+     * Destructor.
+    */
     destroy: function() {
         this.offAll();
 
@@ -1493,9 +1526,18 @@ Cln.addExt('domEvent', function() {
     }
 });
 
+/*
+ * Extension: Event
+*/
 Cln.addExt('event', function() {
     this._buf = [];
 }, {
+    /*
+     * Attach a handler to an custom event.
+     * @param {string} type
+     * @param {Function} callback
+     * @return {Event} this
+    */
     on: function(type, callback) {
         if(type && callback) {
             this._buf.push({
@@ -1506,6 +1548,12 @@ Cln.addExt('event', function() {
 
         return this;
     },
+    /*
+     * Remove a previously-attached custom event handler.
+     * @param {string} type
+     * @param {Function} callback
+     * @return {Event} this
+    */
     off: function(type, callback) {
         var buf = this._buf;
 
@@ -1518,6 +1566,12 @@ Cln.addExt('event', function() {
 
         return this;
     },
+    /*
+     * Execute all handlers for the given event type.
+     * @param {string} type
+     * @param {*} [data]
+     * @return {Event} this
+    */
     trigger: function(type, data) {
         var buf = this._buf;
 
@@ -1529,18 +1583,32 @@ Cln.addExt('event', function() {
 
         return this;
     },
+    /*
+     * Destructor.
+    */
     destroy: function() {
         delete this._buf;
     }
 });
 
-var SATURDAY = 6,
-    SUNDAY = 0;
-
+/*
+ * Extension: Template
+*/
 Cln.addExt('template', null, {
+    /**
+     * Get a template.
+     * @param {string} name
+     * @return {*}
+    */
     get: function(name) {
         return jshtml(this[name]());
     },
+    SATURDAY: 6,
+    SUNDAY: 0,
+    /**
+     * Template: days
+     * @return {Array}
+    */
     days: function() {
         var buf = [];
 
@@ -1550,11 +1618,15 @@ Cln.addExt('template', null, {
 
         return buf;
     },
+    /**
+     * Template: dayNames
+     * @return {Object}
+    */
     dayNames: function() {
         var first = this.parent.text('firstWeekday') || 0,
             w = {
                 first: first,
-                last: !first ? SATURDAY : first - 1
+                last: !first ? this.SATURDAY : first - 1
             },
             n = first;
 
@@ -1562,13 +1634,19 @@ Cln.addExt('template', null, {
             w[n] = i;
 
             n++;
-            if(n > SATURDAY) {
-                n = SUNDAY;
+            if(n > this.SATURDAY) {
+                n = this.SUNDAY;
             }
         }
 
         return w;
     },
+    /**
+     * Template: month
+     * @param {number} m - Month.
+     * @param {number} y - Year.
+     * @return {Array}
+    */
     month: function(m, y) {
         var date = new Date(y, m, 1, 12, 0, 0, 0),
             dateTs = date.getTime(),
@@ -1650,7 +1728,7 @@ Cln.addExt('template', null, {
             holiday = par.getHoliday(day, m, y);
             mods = {};
 
-            if(weekday === SUNDAY || weekday === SATURDAY) {
+            if(weekday === this.SUNDAY || weekday === this.SATURDAY) {
                 mods.holiday = true;
             } else {
                 mods.workday = true;
@@ -1703,6 +1781,10 @@ Cln.addExt('template', null, {
 
         return obj;
     },
+    /**
+     * Template: years
+     * @return {Array}
+    */
     years: function() {
         var data = this.parent._data,
             startYear = data._startYear,
@@ -1724,6 +1806,10 @@ Cln.addExt('template', null, {
 
         return buf;
     },
+    /**
+     * Template: months
+     * @return {Array}
+    */
     months: function() {
         var buf = [{
             e: 'month-selector',
@@ -1742,9 +1828,13 @@ Cln.addExt('template', null, {
 
         return buf;
     },
+    /**
+     * Template: main
+     * @return {Array}
+    */
     main: function() {
         var par = this.parent,
-            wd = par.text('firstWeekday') || SUNDAY,
+            wd = par.text('firstWeekday') || this.SUNDAY,
             dayNames = par.text('dayNames') || [],
             bufDayNames = [];
 
@@ -1759,8 +1849,8 @@ Cln.addExt('template', null, {
             });
 
             wd++;
-            if(wd > SATURDAY) {
-                wd = SUNDAY;
+            if(wd > this.SATURDAY) {
+                wd = this.SUNDAY;
             }
         }, this);
 
@@ -1792,12 +1882,25 @@ Cln.addExt('template', null, {
             }
         ];
     },
+    /**
+     * Destructor.
+    */
     destroy: function() {}
 });
 
+/*
+ * Extension: Timeout
+*/
 Cln.addExt('timeout', function() {
     this._buf = [];
 }, {    
+    /**
+     * Set timeout.
+     * @param {Function} callback
+     * @param {number} time
+     * @param {string} [ns] - Namespace.
+     * @return {Timeout} this
+    */
     set: function(callback, time, ns) {
         var that = this,
             id = setTimeout(function() {
@@ -1812,6 +1915,11 @@ Cln.addExt('timeout', function() {
 
         return id;
     },
+    /**
+     * Clear timeout.
+     * @param {string} id
+     * @return {Timeout} this
+    */
     clear: function(id) {
         var buf = this._buf,
             index = -1;
@@ -1834,6 +1942,11 @@ Cln.addExt('timeout', function() {
         
         return this;
     },
+    /**
+     * Clear all timeouts.
+     * @param {string} [ns] - Namespace.
+     * @return {Timeout} this
+    */
     clearAll: function(ns) {
         var oldBuf = this._buf,
             newBuf = [],
@@ -1855,6 +1968,9 @@ Cln.addExt('timeout', function() {
         
         return this;
     },
+    /**
+     * Destructor.
+    */
     destroy: function() {
         this.clearAll();
 
@@ -1862,16 +1978,32 @@ Cln.addExt('timeout', function() {
     }
 });
 
+/*
+ * Extension: Title
+*/
 Cln.addExt('title', function() {
     this._title = {};
 }, {
+    /**
+     * Initialize title.
+     * @param {Object} data
+    */
     init: function(data) {
         this.set(data.title);
     },
+    /**
+     * Get title by date.
+     * @param {Date|number|string} date
+     * @return {?Object}
+    */
     get: function(date) {
         var bufDate = parseDateToISO(date);
-        return bufDate ? this._title[bufDate] : undefined;
+        return bufDate ? this._title[bufDate] : null;
     },
+    /**
+     * Set title by date.
+     * @param {Object|Array} data
+    */
     set: function(data) {
         if(isArray(data)) {
             data.forEach(function(el) {
@@ -1898,6 +2030,10 @@ Cln.addExt('title', function() {
             }
         }
     },
+    /**
+     * Remove title.
+     * @param {Date|number|string} date
+    */
     remove: function(date) {
         if(isArray(date)) {
             date.forEach(function(el) {
@@ -1923,6 +2059,9 @@ Cln.addExt('title', function() {
             }
         }
     },
+    /**
+     * Remove all titles.
+    */
     removeAll: function() {
         this._title = {};
 
@@ -1936,30 +2075,30 @@ Cln.addExt('title', function() {
             }
         }
     },
+    /**
+     * Destructor.
+    */
     destroy: function() {
         delete this._title;
     }
 });
 
+/*
+ * Extension: Tooltip
+*/
 Cln.addExt('tooltip', null, {
-    create: function() {
-        if(this._container) {
-            return;
-        }
-
-        var el = document.createElement('div');
-        addClass(el, elem('tooltip'));
-        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}]);
-
-        document.body.appendChild(el);
-
-        this._container = el;
-    },
+    /**
+     * Show tooltip.
+     * @param {DOMElement} target
+     * @param {Object} data
+     * @param {string} data.text
+     * @param {string} data.color
+    */
     show: function(target, data) {
         var dataBuf = data || {},
             margin = 5;
 
-        this.create();
+        this._create();
         setMod(this._container, 'theme', this.parent.setting('theme'));
         setMod(this._container, 'visible');
 
@@ -1981,18 +2120,37 @@ Cln.addExt('tooltip', null, {
             top: y
         });
     },
+    /**
+     * Hide tooltip.
+    */
     hide: function() {
         if(this._isOpened) {
             delMod(this._container, 'visible');
             this._isOpened = false;
         }
     },
+    /**
+     * Destructor.
+    */
     destroy: function() {
         if(this._container) {
             this.hide();
             document.body.removeChild(this._container);
             delete this._container;
         }
+    },
+    _create: function() {
+        if(this._container) {
+            return;
+        }
+
+        var el = document.createElement('div');
+        addClass(el, elem('tooltip'));
+        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}]);
+
+        document.body.appendChild(el);
+
+        this._container = el;
     }
 });
 
