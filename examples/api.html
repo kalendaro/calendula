@@ -214,10 +214,7 @@ window.addEventListener('load', function() {
     });
 
     var getPosition = function() {
-        return {
-            left: clPositionLeft.value,
-            top: clPositionTop.value
-        };
+        return clPositionLeft.value + ' ' + clPositionTop.value;
     };
 
     var getShowOn = function() {
