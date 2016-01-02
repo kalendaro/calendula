@@ -19,17 +19,21 @@
 + Safari 6 и выше.
 
 ## Подключение
+```
+npm install calendula
+```
+
 ```HTML
-<link rel="stylesheet" href="dist/calendula.all.css" />
-<script src="dist/calendula.all.js"></script>
+<link rel="stylesheet" href="node_modules/calendula/dist/calendula.all.css" />
+<script src="node_modules/calendula/dist/calendula.all.js"></script>
 ```
 
 Для подключения только нужной локали и темы:
 ```HTML
-<link rel="stylesheet" href="dist/calendula.base.css" />
-<link rel="stylesheet" href="dist/calendula.ios.css" />
-<script src="dist/calendula.base.js"></script>
-<script src="dist/calendula.en.js"></script>
+<link rel="stylesheet" href="node_modules/calendula/dist/calendula.base.css" />
+<link rel="stylesheet" href="node_modules/calendula/dist/calendula.ios.css" />
+<script src="node_modules/calendula/dist/calendula.base.js"></script>
+<script src="node_modules/calendula/dist/calendula.en.js"></script>
 ```
 
 Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula-download/index.ru.html).
