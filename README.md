@@ -55,7 +55,7 @@ var c = new Calendula({
 | 3. | locale    | `String`             | `en`          | Язык интерфейса.<br>`be` `de` `en` `es` `fr` `it` `pl` `ru` `tr` `uk` |
 | 4. | max       | `String`<br>`Date`<br>`Number` |               | Максимальная дата.                          |
 | 5. | min       | `String`<br>`Date`<br>`Number` |               | Минимальная дата.                           |
-| 6. | position  | `String`             | `auto auto`   | Позиция календаря относительно `switcher`, формат: `x y`.<br/>`x`: `auto`, `left`, `center` и `right`.<br/>`y`: `auto`, `top`, `center` и `bottom`.|
+| 6. | position  | `String`             | `auto auto`   | Позиция календаря относительно `switcher`.<br/>Формат: `x y`.<br/>`x`: `auto`, `left`, `center` или `right`.<br/>`y`: `auto`, `top`, `center` или `bottom`.|
 | 7. | switcher  | `DOMElement`         |               | Кнопка, при клике на которую открывается и позиционируется календарь. |
 | 8. | theme     | `String`               | `default`     | Тема оформления.<br>`default` `black` `ios` `metro` `android`|
 | 9. | value     | `String`<br>`Date`<br>`Number` | текущая дата   | Выбранная дата.                            |
