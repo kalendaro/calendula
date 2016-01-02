@@ -18,6 +18,13 @@
 + Google Chrome 6 и выше;
 + Safari 6 и выше.
 
+## Примеры
++ [Все темы](http://hcodes.github.io/calendula/examples/many.html)
++ [Расширенный](http://hcodes.github.io/calendula/examples/api.html)
++ [Цветные подсказки](http://hcodes.github.io/calendula/examples/color_title.html)
++ [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
++ [Простой](http://hcodes.github.io/calendula/examples/simple.html)
+
 ## Подключение
 ```
 npm install calendula
@@ -130,14 +137,6 @@ c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 
 ### select
 Выбрана дата.
-
-
-## Примеры
-+ [Расширенный](http://hcodes.github.io/calendula/examples/api.html)
-+ [Простой](http://hcodes.github.io/calendula/examples/simple.html)
-+ [Все темы](http://hcodes.github.io/calendula/examples/many.html)
-+ [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
-+ [Цветные подсказки](http://hcodes.github.io/calendula/examples/color_title.html)
 
 ## Разработка
 [Сборка на сайте](http://hcodes.github.io/calendula-download/index.ru.html)
