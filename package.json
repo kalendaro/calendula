@@ -12,12 +12,7 @@
     "url": "git://github.com/hcodes/calendula.git"
   },
   "homepage": "https://hcodes.github.io/calendula/",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/hcodes/calendula/blob/master/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "keywords": [
     "calendar",
     "calendula",
