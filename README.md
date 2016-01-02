@@ -10,9 +10,7 @@
 + отложенная инициализация;
 + темы оформления;
 + подсветка праздничных дней: `ru`, `tr` и `uk`;
-+ локализация;
-+ анимация с помощью CSS;
-+ поддержка тач-устройств.
++ локализация.
 
 Поддержка в браузерах:
 + Internet Explorer 9 и выше;
@@ -40,7 +38,7 @@
 ```JavaScript
 var c = new Calendula({
     theme: 'ios',
-    locale: 'fr',
+    locale: 'en',
     value: '2014-10-11'
     //...
 });
@@ -79,7 +77,7 @@ var c = new Calendula({
 Проверка открытия календаря.
 
 ### .setting(name, [value])
-Получить/установить значение настройки.
+Получить или установить значение настройки.
 
 ### .event.on(type, callback)
 Установить событие.
@@ -93,9 +91,10 @@ c.event.on('select', function(e, data) {
 Снять событие.
 
 ### .title.set(data)
-Установить цветную подсказку на день.
+Установить цветную подсказку на дату.
 ```JavaScript
 c.title.set({date: '2014-12-15', text: 'Hello world!', color: 'red'});
+
 c.title.set([
     {date: '2014-12-11', text: 'Hello world!', color: 'red'},
     {date: '2014-12-12', text: 'Hello world!', color: 'orange'},
@@ -106,6 +105,7 @@ c.title.set([
 Удалить цветную подсказку.
 ```JavaScript
 c.title.remove('2014-12-15');
+
 c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 ```
 
@@ -137,10 +137,14 @@ c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 ## Разработка
 [Сборка на сайте](http://hcodes.github.io/calendula-download/index.ru.html)
 
-Ручная сборка:
+Тесты:
 ```
-npm i
 npm test
+```
+
+Пересборка:
+```
+gulp
 ```
 
 ## [Лицензия](https://github.com/hcodes/calendula/blob/master/LICENSE)
