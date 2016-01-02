@@ -1,6 +1,6 @@
 {
   "name": "calendula",
-  "version": "0.9.10",
+  "version": "0.9.11",
   "description": "A special datepicker",
   "authors": [
     "Denis Seleznev <hcodes@yandex.ru>"
@@ -26,7 +26,7 @@
     "test",
     "*.yml",
     "package.json"
-  ],  
+  ],
   "main": [
     "dist/calendula.all.js",
     "dist/calendula.all.css"

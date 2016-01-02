@@ -1,7 +1,7 @@
 {
   "name": "calendula",
   "description": "A special datepicker",
-  "version": "0.9.10",
+  "version": "0.9.11",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
@@ -32,6 +32,7 @@
     "gulp-concat": "2.6.x",
     "gulp-less": "3.0.x",
     "gulp-rename": "1.2.x",
+    "gulp-replace": "^0.5.4",
     "gulp-uglify": "1.5.x",
     "jquery": "^2.1.4",
     "jscs": "2.x",

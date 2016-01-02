@@ -1,15 +1,18 @@
-var gulp = require('gulp'),
+var fs = require('fs'),
+    gulp = require('gulp'),
     path = require('path'),
     less = require('gulp-less');
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
+    replace = require('gulp-replace'),
     cleancss = require('gulp-cleancss'),
     autoprefixer = require('gulp-autoprefixer'),
     uglify = require('gulp-uglify'),
     apBrowsers = {
         browsers: ['ie >= 9', 'Firefox >= 24', 'Chrome >= 26', 'iOS >= 5', 'Safari >= 6', 'Android > 2.3']
     },
-    destDir = './dist';
+    destDir = './dist',
+    version = require('./package.json').version;
 
 var paths = {
     mainCss: [
@@ -20,6 +23,7 @@ var paths = {
         'src/js/start.js',
 
         'src/js/main.js',
+        'src/js/version.js',
         'src/js/ext.js',
         'src/js/lib/*.js',
         'src/js/ext/*.js',
@@ -39,7 +43,7 @@ var paths = {
 
 paths.devJs = paths.mainJs.concat('src/js/locale/*.js', 'src/js/holiday/*.js');
 paths.prodJsBase = paths.mainJs;
-paths.prodJsAll = paths.mainJs.concat('src/js/locale/calendula.locale.*.js', 'src/js/locale/calendula.holiday.*.js');
+paths.prodJsAll = paths.mainJs.concat('src/js/locale/calendula.locale.*.js', 'src/js/holiday/calendula.holiday.*.js');
 
 paths.devCss = paths.mainCss.concat('src/less/calendula.theme.*.less');
 paths.prodCssAll = paths.mainCss.concat('src/less/calendula.theme.*.less');
@@ -48,20 +52,34 @@ var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolid
     cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
     allTasks = [].concat(cssTasks, jsTasks);
 
-gulp.task('devJs', function() {
+gulp.task('version', function() {
+    var file = './src/js/version.js';
+    gulp.src(file, {base: './'})
+        .pipe(replace(/'[\d.]+'/, '\'' + version + '\''))
+        .pipe(gulp.dest(''))
+        .on('end', function() {
+            var bower = require('./bower.json');
+            if(version !== bower.version) {
+                bower.version = version;
+                fs.writeFileSync('./bower.json', JSON.stringify(bower, null, '  '));
+            }
+        });
+});
+
+gulp.task('devJs', ['version'], function() {
     return gulp.src(paths.devJs)
         .pipe(concat('calendula.dev.js'))
         .pipe(gulp.dest(destDir));
 });
 
-gulp.task('prodJsBase', function() {
+gulp.task('prodJsBase', ['version'], function() {
     return gulp.src(paths.prodJsBase)
         .pipe(concat('calendula.base.js'))
         .pipe(uglify({preserveComments: 'some'}))
         .pipe(gulp.dest(destDir));
 });
 
-gulp.task('prodJsAll', function() {
+gulp.task('prodJsAll', ['version'], function() {
     return gulp.src(paths.prodJsAll)
         .pipe(concat('calendula.all.js'))
         .pipe(uglify({preserveComments: 'some'}))

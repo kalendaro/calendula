@@ -847,6 +847,8 @@ extend(Cln.prototype, {
     }
 });
 
+Cln.version = '0.9.11';
+
 extend(Cln.prototype, {
     _initExts: function(data) {
         Cln._exts.forEach(function(ext) {
