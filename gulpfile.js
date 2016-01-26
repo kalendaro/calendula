@@ -11,8 +11,7 @@ var fs = require('fs'),
     apBrowsers = {
         browsers: ['ie >= 9', 'Firefox >= 24', 'Chrome >= 26', 'iOS >= 5', 'Safari >= 6', 'Android > 2.3']
     },
-    destDir = './dist',
-    version = require('./package.json').version;
+    destDir = './dist';
 
 var paths = {
     mainCss: [
@@ -56,14 +55,7 @@ gulp.task('version', function() {
     var file = './src/js/version.js';
     gulp.src(file, {base: './'})
         .pipe(replace(/'[\d.]+'/, '\'' + version + '\''))
-        .pipe(gulp.dest(''))
-        .on('end', function() {
-            var bower = require('./bower.json');
-            if(version !== bower.version) {
-                bower.version = version;
-                fs.writeFileSync('./bower.json', JSON.stringify(bower, null, '  '));
-            }
-        });
+        .pipe(gulp.dest(''));
 });
 
 gulp.task('devJs', ['version'], function() {
