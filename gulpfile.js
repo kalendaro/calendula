@@ -20,11 +20,10 @@ var paths = {
     ],
     mainJs: [
         'src/js/start.js',
-
+        'src/js/lib/*.js',
         'src/js/main.js',
         'src/js/version.js',
         'src/js/ext.js',
-        'src/js/lib/*.js',
         'src/js/ext/*.js',
 
         'src/js/end.js'

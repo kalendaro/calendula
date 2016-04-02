@@ -25,7 +25,7 @@ Cln.addExt('title', function() {
      * @param {Object|Array} data
     */
     set: function(data) {
-        if(isArray(data)) {
+        if(Array.isArray(data)) {
             data.forEach(function(el) {
                 this._set(data);
             }, this);
@@ -55,7 +55,7 @@ Cln.addExt('title', function() {
      * @param {Date|number|string} date
     */
     remove: function(date) {
-        if(isArray(date)) {
+        if(Array.isArray(date)) {
             date.forEach(function(el) {
                 this._remove(el);
             }, this);

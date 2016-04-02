@@ -4,7 +4,7 @@
  * @return {string}
  */
 var jshtml = (function() {
-    var buildItem = function(data) {
+    function buildItem(data) {
         if(data === null || data === undefined) {
             return '';
         }
@@ -13,7 +13,7 @@ var jshtml = (function() {
 
         if(isPlainObj(data)) {
             return tag(data);
-        } else if(isArray(data)) {
+        } else if(Array.isArray(data)) {
             for(var i = 0, len = data.length; i < len; i++) {
                 buf.push(buildItem(data[i]));
             }
@@ -22,9 +22,9 @@ var jshtml = (function() {
         } else {
             return '' + data;
         }
-    };
+    }
 
-    var tag = function(data) {
+    function tag(data) {
         var t = data.t || 'div',
             text = '<' + t + attrs(data) + '>';
 
@@ -35,9 +35,9 @@ var jshtml = (function() {
         text += '</' + t + '>';
 
         return text;
-    };
+    }
 
-    var attrs = function(data) {
+    function attrs(data) {
         var keys = Object.keys(data),
             ignoredItems = ['c', 't', 'e', 'm'], // content, tag, element, modifier
             text = [],
@@ -79,12 +79,12 @@ var jshtml = (function() {
         buf = text.join(' ');
 
         return buf ? ' ' + buf : '';
-    };
+    }
 
-    var attr = function(name, value) {
+    function attr(name, value) {
         return value !== null && value !== undefined ?
-            name + '="' + (isArray(value) ? value.join(' ') : value) + '"' : '';
-    };
+            name + '="' + (Array.isArray(value) ? value.join(' ') : value) + '"' : '';
+    }
 
     return buildItem;
 })();

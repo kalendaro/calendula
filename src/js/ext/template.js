@@ -55,51 +55,19 @@ Cln.addExt('template', null, {
      * @return {Array}
     */
     month: function(m, y) {
-        var date = new Date(y, m, 1, 12, 0, 0, 0),
-            dateTs = date.getTime(),
-            current = new Date(),
-            isSelected = function(d, m, y) {
-                var val = par._val;
-                return d === val.day && m === val.month && y === val.year;
-            },
-            getTs = function(d) {
-                if(!d.year) {
-                    return null;
-                }
-
-                return new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime();
-            },
-            getTitleMonth = function() {
-                var getValue = function(setting) {
-                        return parseNum('' + setting.year + leadZero(setting.month));
-                    },
-                    min = getValue(minSetting),
-                    max = getValue(maxSetting),
-                    mods = {},
-                    cur = parseNum('' + y + leadZero(m));
-
-                if((minSetting && cur < min) || (maxSetting && cur > max)) {
-                    mods.minmax = true;
-                }
-
-                return {
-                    e: 'days-title-month',
-                    m: mods,
-                    c: month
-                };
-            };
-
+        var current = new Date();
         current.setHours(12, 0, 0, 0);
 
-        var par = this.parent,
+        var date = new Date(y, m, 1, 12, 0, 0, 0),
+            dateTs = date.getTime(),
+            par = this.parent,
             weekday = date.getDay(),
             dayNames = this.dayNames(),
             dayIndex = dayNames[weekday],
-            month = par.text('months')[m],
             minSetting = par.setting('min'),
             maxSetting = par.setting('max'),
-            minTs = getTs(minSetting),
-            maxTs = getTs(maxSetting),
+            minTs = this._getTs(minSetting),
+            maxTs = this._getTs(maxSetting),
             currentTs = current.getTime(),
             title,
             holiday,
@@ -111,7 +79,7 @@ Cln.addExt('template', null, {
                         t: 'td',
                         colspan: dayIndex,
                         e: 'empty',
-                        c: dayIndex < 3 ? '' : getTitleMonth()
+                        c: dayIndex < 3 ? '' : this._getTitleMonth(minSetting, maxSetting, m, y)
                     } : ''
                 ]
             },
@@ -119,7 +87,7 @@ Cln.addExt('template', null, {
             obj = {
                 e: 'days-month',
                 c: [
-                    dayIndex < 3 ? getTitleMonth() : '',
+                    dayIndex < 3 ? this._getTitleMonth(minSetting, maxSetting, m, y) : '',
                     {
                         t: 'table',
                         e: 'days-table',
@@ -147,7 +115,7 @@ Cln.addExt('template', null, {
                 mods.highday = true;
             }
 
-            if(isSelected(day, m, y)) {
+            if(this._isSelected(par._val, day, m, y)) {
                 mods.selected = true;
             }
 
@@ -292,5 +260,38 @@ Cln.addExt('template', null, {
     /**
      * Destructor.
     */
-    destroy: function() {}
+    destroy: function() {},
+
+    _isSelected: function(val, d, m, y) {
+        return d === val.day && m === val.month && y === val.year;
+    },
+
+    _getTitleMonth: function(minSetting, maxSetting, m, y) {
+        function getValue(setting) {
+            return parseNum('' + setting.year + leadZero(setting.month));
+        }
+
+        var min = getValue(minSetting),
+            max = getValue(maxSetting),
+            mods = {},
+            cur = parseNum('' + y + leadZero(m));
+
+        if((minSetting && cur < min) || (maxSetting && cur > max)) {
+            mods.minmax = true;
+        }
+
+        return {
+            e: 'days-title-month',
+            m: mods,
+            c: this.parent.text('months')[m]
+        };
+    },
+
+    _getTs: function(d) {
+        if(!d.year) {
+            return null;
+        }
+
+        return new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime();
+    }
 });

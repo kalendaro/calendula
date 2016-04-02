@@ -1,16 +1,3 @@
-var MIN_MONTH = 0,
-    MAX_MONTH = 11;
-
-function extend(dest, source) {
-    for(var i in source) {
-        if(source.hasOwnProperty(i)) {
-            dest[i] = source[i];
-        }
-    }
-
-    return dest;
-}
-
 var Cln = function(data) {
     data = extend({}, data || {});
 
@@ -437,8 +424,27 @@ extend(Cln.prototype, {
                 that._onscroll();
             }, 'open')
             .on(document, 'keypress', function(e) {
-                if(e.keyCode === 27) { // ESC
-                    that.close();
+                var cd = that._currentDate;
+                switch(e.keyCode) {
+                    case keyCodes.ESC:
+                        that.close();
+                    break;
+                    case keyCodes.PAGE_DOWN:
+                        if(e.ctrlKey || e.altKey) {
+                            that._monthSelector(cd.month + 1, true);
+                        } else {
+                            that._yearSelector(cd.year + 1, true);
+                        }
+                        e.preventDefault();
+                    break;
+                    case keyCodes.PAGE_UP:
+                        if(e.ctrlKey || e.altKey) {
+                            that._monthSelector(cd.month - 1, true);
+                        } else {
+                            that._yearSelector(cd.year - 1, true);
+                        }
+                        e.preventDefault();
+                    break;
                 }
             }, 'open')
             .on(this._container, 'click', function(e) {
@@ -777,7 +783,7 @@ extend(Cln.prototype, {
     _addSwitcherEvents: function(showOn) {
         var switcher = this.setting('switcher'),
             that = this,
-            events = isArray(showOn) ? showOn : [showOn || 'click'],
+            events = Array.isArray(showOn) ? showOn : [showOn || 'click'],
             openedTagNames = ['input', 'textarea'],
             openedEvents = ['focus', 'mouseover'];
 
