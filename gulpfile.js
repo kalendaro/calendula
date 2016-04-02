@@ -54,7 +54,7 @@ var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolid
 gulp.task('version', function() {
     var file = './src/js/version.js';
     gulp.src(file, {base: './'})
-        .pipe(replace(/'[\d.]+'/, '\'' + version + '\''))
+        .pipe(replace(/'[\d.]+'/, '\'' + require('./package.json').version + '\''))
         .pipe(gulp.dest(''));
 });
 
