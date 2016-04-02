@@ -4,7 +4,7 @@
 var assert = chai.assert;
 
 describe('Object', function() {
-    it('isUndefined', function() {
+    it('extend', function() {
         assert.equal(extend({b: 1}, {a: 2}).a, 2);
         assert.equal(extend({b: 1}, {a: 2}).b, 1);
     });
