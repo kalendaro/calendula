@@ -1,0 +1,15 @@
+{
+    "rules": {
+        "semi": [2, "always"],
+        "quotes": [2, "single"]
+    },
+    "env": {
+        "node": true,
+        "mocha": true
+    },
+    "globals": {
+        "Calendula": true,
+        "chai": true
+    },
+    "extends": "eslint:recommended"
+}

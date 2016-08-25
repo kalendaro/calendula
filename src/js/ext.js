@@ -1,5 +1,5 @@
 extend(Cln.prototype, {
-    _initExts: function(data) {
+    _initExts: function() {
         Cln._exts.forEach(function(ext) {
             var name = ext[0],
                 Constr = ext[1] || function() {},

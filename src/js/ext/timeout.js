@@ -62,7 +62,7 @@ Cln.addExt('timeout', function() {
             newBuf = [],
             nsArray = Array.isArray(ns) ? ns : [ns];
 
-        oldBuf.forEach(function(el, i) {
+        oldBuf.forEach(function(el) {
             if(ns) {
                 if(nsArray.indexOf(el.ns) !== -1) {
                     clearTimeout(el.id);

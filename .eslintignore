@@ -1,0 +1,10 @@
+.*
+gulpfile.js
+tests/**
+examples/**
+src/**
+node_modules/**
+dist/calendula.all.js
+dist/calendula.base.js
+dist/calendula.locale.*.js
+dist/calendula.holiday.*.js

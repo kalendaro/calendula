@@ -27,7 +27,7 @@ Cln.addExt('title', function() {
     set: function(data) {
         if(Array.isArray(data)) {
             data.forEach(function(el) {
-                this._set(data);
+                this._set(el);
             }, this);
         } else if(isPlainObj(data)) {
             this._set(data);

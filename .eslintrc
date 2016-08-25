@@ -1,0 +1,15 @@
+{
+    "rules": {
+        "semi": [2, "always"],
+        "quotes": [2, "single"]
+    },
+    "env": {
+        "browser": true
+    },
+    "globals": {
+        "Calendula": true,
+        "define": true,
+        "module": true
+    },
+    "extends": "eslint:recommended"
+}
