@@ -1,19 +1,22 @@
-var fs = require('fs'),
-    gulp = require('gulp'),
-    path = require('path'),
-    less = require('gulp-less');
-    concat = require('gulp-concat'),
-    rename = require('gulp-rename'),
-    replace = require('gulp-replace'),
-    cleancss = require('gulp-cleancss'),
-    autoprefixer = require('gulp-autoprefixer'),
-    uglify = require('gulp-uglify'),
-    apBrowsers = {
-        browsers: ['ie >= 9', 'Firefox >= 24', 'Chrome >= 26', 'iOS >= 5', 'Safari >= 6', 'Android > 2.3']
-    },
-    destDir = './dist';
+const fs = require('fs');
+const path = require('path');
 
-var paths = {
+const gulp = require('gulp');
+const autoprefixer = require('gulp-autoprefixer');
+const cleancss = require('gulp-cleancss');
+const concat = require('gulp-concat');
+const less = require('gulp-less');
+const rename = require('gulp-rename');
+const replace = require('gulp-replace');
+const uglify = require('gulp-uglify');
+
+const apBrowsers = {
+    browsers: ['ie >= 9', 'Firefox >= 24', 'Chrome >= 26', 'iOS >= 5', 'Safari >= 6', 'Android > 2.3']
+};
+
+const destDir = './dist';
+
+const paths = {
     mainCss: [
         'src/less/calendula.less',
         'src/less/calendula__tooltip.less'
@@ -46,12 +49,12 @@ paths.prodJsAll = paths.mainJs.concat('src/js/locale/calendula.locale.*.js', 'sr
 paths.devCss = paths.mainCss.concat('src/less/calendula.theme.*.less');
 paths.prodCssAll = paths.mainCss.concat('src/less/calendula.theme.*.less');
 
-var jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolidays'],
-    cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'],
-    allTasks = [].concat(cssTasks, jsTasks);
+const jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolidays'];
+const cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'];
+const allTasks = [].concat(cssTasks, jsTasks);
 
 gulp.task('version', function() {
-    var file = './src/js/version.js';
+    const file = './src/js/version.js';
     gulp.src(file, {base: './'})
         .pipe(replace(/'[\d.]+'/, '\'' + require('./package.json').version + '\''))
         .pipe(gulp.dest(''));
