@@ -5,7 +5,7 @@ const gulp = require('gulp');
 const autoprefixer = require('gulp-autoprefixer');
 const cleancss = require('gulp-cleancss');
 const concat = require('gulp-concat');
-const less = require('gulp-less');
+const stylus = require('gulp-stylus');
 const rename = require('gulp-rename');
 const replace = require('gulp-replace');
 const uglify = require('gulp-uglify');
@@ -18,8 +18,7 @@ const destDir = './dist';
 
 const paths = {
     mainCss: [
-        'src/less/calendula.less',
-        'src/less/calendula__tooltip.less'
+        'src/styl/calendula.styl'
     ],
     mainJs: [
         'src/js/start.js',
@@ -38,7 +37,7 @@ const paths = {
         'src/js/holiday/*.js'
     ],
     prodCssThemes: [
-        'src/less/calendula.theme.*.less'
+        'src/styl/calendula.theme.*.styl'
     ]
 };
 
@@ -46,8 +45,8 @@ paths.devJs = paths.mainJs.concat('src/js/locale/*.js', 'src/js/holiday/*.js');
 paths.prodJsBase = paths.mainJs;
 paths.prodJsAll = paths.mainJs.concat('src/js/locale/calendula.locale.*.js', 'src/js/holiday/calendula.holiday.*.js');
 
-paths.devCss = paths.mainCss.concat('src/less/calendula.theme.*.less');
-paths.prodCssAll = paths.mainCss.concat('src/less/calendula.theme.*.less');
+paths.devCss = paths.mainCss.concat('src/styl/calendula.theme.*.styl');
+paths.prodCssAll = paths.mainCss.concat('src/styl/calendula.theme.*.styl');
 
 const jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHolidays'];
 const cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'];
@@ -94,16 +93,18 @@ gulp.task('prodJsHolidays', function() {
 
 gulp.task('devCss', function() {
     return gulp.src(paths.devCss)
-        .pipe(concat('calendula.dev.css'))
-        .pipe(less())
+        .pipe(concat('calendula.dev.styl'))
+        .pipe(stylus())
+        .pipe(replace('calendula.dev.css'))
         .pipe(autoprefixer(apBrowsers))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodCssBase', function() {
     return gulp.src(paths.mainCss)
-        .pipe(concat('calendula.base.css'))
-        .pipe(less())
+        .pipe(concat('calendula.base.styl'))
+        .pipe(stylus())
+        .pipe(replace('calendula.base.css'))
         .pipe(autoprefixer(apBrowsers))
         .pipe(cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
@@ -111,8 +112,9 @@ gulp.task('prodCssBase', function() {
 
 gulp.task('prodCssAll', function() {
     return gulp.src(paths.prodCssAll)
-        .pipe(concat('calendula.all.css'))
-        .pipe(less())
+        .pipe(concat('calendula.all.styl'))
+        .pipe(stylus())
+        .pipe(replace('calendula.all.css'))
         .pipe(autoprefixer(apBrowsers))
         .pipe(cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
@@ -120,7 +122,7 @@ gulp.task('prodCssAll', function() {
 
 gulp.task('prodCssThemes', function() {
     return gulp.src(paths.prodCssThemes)
-        .pipe(less())
+        .pipe(stylus())
         .pipe(autoprefixer(apBrowsers))
         .pipe(cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
@@ -128,7 +130,7 @@ gulp.task('prodCssThemes', function() {
 
 gulp.task('watch', function() {
     gulp.watch('src/js/**/*', jsTasks);
-    gulp.watch('src/less/**/*', cssTasks);
+    gulp.watch('src/styl/**/*', cssTasks);
 });
 
 gulp.task('default', allTasks);

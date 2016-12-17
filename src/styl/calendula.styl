@@ -1,24 +1,21 @@
 .calendula
 {
-    &
-    {
-        position: absolute;
+    position: absolute;
 
-        visibility: hidden;
+    visibility: hidden;
 
-        width: 310px;
-        height: 310px;
-        margin-top: 1px;
+    width: 310px;
+    height: 310px;
+    margin-top: 1px;
 
-        user-select: none;
-        transition: visibility 0s linear .2s, opacity .2s linear, transform .2s linear;
+    user-select: none;
+    transition: visibility 0s linear .2s, opacity .2s linear, transform .2s linear;
 
-        opacity: 0;
-        
-        z-index: 1000;
+    opacity: 0;
 
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    }
+    z-index: 1000;
+
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
     &_opened
     {
@@ -94,16 +91,16 @@
     &__days-month
     {
         margin-top: 7px;
-    }
 
-    &__days-month:first-child
-    {
-        margin-top: 4px;
-    }
+        &:first-child
+        {
+            margin-top: 4px;
+        }
 
-    &__days-month:last-child
-    {
-        padding-bottom: 8px;
+        &:last-child
+        {
+            padding-bottom: 8px;
+        }
     }
 
     &__days-table
@@ -144,11 +141,11 @@
         transition: border-radius .2s linear;
         text-align: center;
         vertical-align: middle;
-    }
 
-    &__day_minmax
-    {
-        cursor: default;
+        &_minmax
+        {
+            cursor: default;
+        }
     }
 
     &__month
@@ -250,3 +247,5 @@
         vertical-align: middle;
     }
 }
+
+@import "./calendula__tooltip.styl"
