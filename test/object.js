@@ -1,13 +1,13 @@
 (function() {
 
-/* globals isUndefined, isObject, isNumber, isString, isPlainObj, extend */
+/* globals isUndefined, isObject, isNumber, isString, isPlainObj */
 var assert = chai.assert;
 
 describe('Object', function() {
-    it('extend', function() {
+    /*it('extend', function() {
         assert.equal(extend({b: 1}, {a: 2}).a, 2);
         assert.equal(extend({b: 1}, {a: 2}).b, 1);
-    });
+    });*/
 
     it('isUndefined', function() {
         assert.isTrue(isUndefined());

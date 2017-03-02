@@ -1,4 +1,4 @@
-extend(Cln, {
+Cln.extend(Cln, {
     _locales: [],
     _texts: {},
     /**

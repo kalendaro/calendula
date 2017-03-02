@@ -1,11 +1,11 @@
-extend(Cln.prototype, {
-    _initExts: function() {
+Cln.extend(Cln.prototype, {
+    _initExtensions: function() {
         Cln._exts.forEach(function(ext) {
             var name = ext[0],
                 Constr = ext[1] || function() {},
                 prot = ext[2];
 
-            extend(Constr.prototype, prot);
+            Cln.extend(Constr.prototype, prot);
 
             this[name] = new Constr();
 
@@ -14,7 +14,7 @@ extend(Cln.prototype, {
             obj.init && obj.init(this._data, this._container);
         }, this);
     },
-    _removeExts: function() {
+    _removeExtensions: function() {
         Cln._exts.forEach(function(ext) {
             var name = ext[0];
 
@@ -26,6 +26,6 @@ extend(Cln.prototype, {
 
 Cln._exts = [];
 
-Cln.addExt = function(name, constr, prot) {
+Cln.addExtension = function(name, constr, prot) {
     Cln._exts.push([name, constr, prot]);
 };

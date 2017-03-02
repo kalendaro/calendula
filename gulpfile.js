@@ -5,6 +5,7 @@ const gulp = require('gulp');
 const autoprefixer = require('gulp-autoprefixer');
 const cleancss = require('gulp-cleancss');
 const concat = require('gulp-concat');
+const include = require('gulp-include');
 const stylus = require('gulp-stylus');
 const rename = require('gulp-rename');
 const replace = require('gulp-replace');
@@ -21,14 +22,7 @@ const paths = {
         'src/styl/calendula.styl'
     ],
     mainJs: [
-        'src/js/start.js',
-        'src/js/lib/*.js',
-        'src/js/main.js',
-        'src/js/version.js',
-        'src/js/ext.js',
-        'src/js/ext/*.js',
-
-        'src/js/end.js'
+        'src/js/main.js'
     ],
     prodJsLocales: [
         'src/js/locale/*.js'
@@ -62,12 +56,14 @@ gulp.task('version', function() {
 gulp.task('devJs', ['version'], function() {
     return gulp.src(paths.devJs)
         .pipe(concat('calendula.dev.js'))
+        .pipe(include())
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsBase', ['version'], function() {
     return gulp.src(paths.prodJsBase)
         .pipe(concat('calendula.base.js'))
+        .pipe(include())
         .pipe(uglify({preserveComments: 'some'}))
         .pipe(gulp.dest(destDir));
 });
@@ -75,6 +71,7 @@ gulp.task('prodJsBase', ['version'], function() {
 gulp.task('prodJsAll', ['version'], function() {
     return gulp.src(paths.prodJsAll)
         .pipe(concat('calendula.all.js'))
+        .pipe(include())
         .pipe(uglify({preserveComments: 'some'}))
         .pipe(gulp.dest(destDir));
 });

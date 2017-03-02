@@ -1,4 +1,4 @@
-extend(Cln, {
+Cln.extend(Cln, {
     /**
      * Add holidays.
      * @param {string} locale

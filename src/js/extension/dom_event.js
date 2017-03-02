@@ -4,7 +4,7 @@ var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Mod
 /*
  * Extension: DOM event
 */
-Cln.addExt('domEvent', function() {
+Cln.addExtension('domEvent', function() {
     this._buf = [];
 }, {
     /*

@@ -1,20 +1,4 @@
 /**
- * Extend a object.
- * @param {Object} dest
- * @param {Object} source
- * @return {Object}
- */
-function extend(dest, source) {
-    for(var i in source) {
-        if(source.hasOwnProperty(i)) {
-            dest[i] = source[i];
-        }
-    }
-
-    return dest;
-}
-
-/**
  * Is plain object?
  * @param {*} obj
  * @return {boolean}

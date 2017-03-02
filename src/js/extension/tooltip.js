@@ -1,7 +1,7 @@
 /*
  * Extension: Tooltip
 */
-Cln.addExt('tooltip', null, {
+Cln.addExtension('tooltip', null, {
     /**
      * Show tooltip.
      * @param {DOMElement} target

@@ -1,7 +1,7 @@
 /*
  * Extension: Timeout
 */
-Cln.addExt('timeout', function() {
+Cln.addExtension('timeout', function() {
     this._buf = [];
 }, {    
     /**

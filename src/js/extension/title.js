@@ -1,7 +1,7 @@
 /*
  * Extension: Title
 */
-Cln.addExt('title', function() {
+Cln.addExtension('title', function() {
     this._title = {};
 }, {
     /**

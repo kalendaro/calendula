@@ -1,7 +1,7 @@
 /*
  * Extension: Template
 */
-Cln.addExt('template', null, {
+Cln.addExtension('template', null, {
     /**
      * Get a template.
      * @param {string} name
@@ -19,7 +19,7 @@ Cln.addExt('template', null, {
     days: function() {
         var buf = [];
 
-        for(var m = MIN_MONTH; m <= MAX_MONTH; m++) {
+        for(var m = Cln.MIN_MONTH; m <= Cln.MAX_MONTH; m++) {
             buf.push(this.month(m, this.parent._currentDate.year));
         }
 

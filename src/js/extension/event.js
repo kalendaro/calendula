@@ -1,7 +1,7 @@
 /*
  * Extension: Event
 */
-Cln.addExt('event', function() {
+Cln.addExtension('event', function() {
     this._buf = [];
 }, {
     /*
