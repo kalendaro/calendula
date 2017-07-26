@@ -108,55 +108,6 @@
         }
     }
     
-        var div = document.createElement('div'),
-        /**
-         * Get a data attribute.
-         * @param {DOMElement} el
-         * @param {string} name
-         * @return {string|undefined}
-         */
-        dataAttr = div.dataset ? function(el, name) {
-            return el.dataset[name];
-        } : function(el, name) { // support IE9
-            return el.getAttribute('data-' + name);
-        },
-        hasClassList = !!div.classList,
-        /**
-         * Add a CSS class.
-         * @param {DOMElement} el
-         * @param {string} name
-         */
-        addClass = hasClassList ? function(el, name) {
-            el.classList.add(name);
-        } : function(el, name) { // support IE9
-            var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
-            if(!re.test(name.className)) {
-                el.className = (el.className + ' ' + name).replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
-            }
-        },
-        /**
-         * Remove a CSS class.
-         * @param {DOMElement} el
-         * @param {string} name
-         */
-        removeClass = hasClassList ? function(el, name) {
-            el.classList.remove(name);
-        } : function(el, name) { // support IE9
-            var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
-            el.className = el.className.replace(re, '$1').replace(/\s+/g, ' ').replace(/(^ | $)/g, '');
-        },
-        /**
-         * Has CSS class.
-         * @param {DOMElement} el
-         * @param {string} name
-         */
-        hasClass = hasClassList ? function(el, name) {
-            return el.classList.contains(name);
-        } : function(el, name) { // support IE9
-            var re = new RegExp('(^|\\s)' + name + '(\\s|$)', 'g');
-            return el.className.search(re) !== -1;
-        };
-    
         var NS = 'calendula';
     
     /**
@@ -204,7 +155,7 @@
     
         classes.forEach(function(cl) {
             if(cl === selector || cl.search(selector + '_') !== -1) {
-                removeClass(el, cl);
+                el.classList.remove(cl);
             }
         });
     }
@@ -218,7 +169,7 @@
     function setMod(el, m, val) {
         var e = getElemName(el);
         delMod(el, m);
-        addClass(el, e ? elem(e, m, val) : mod(m, val));
+        el.classList.add(e ? elem(e, m, val) : mod(m, val));
     }
     
     /**
@@ -229,8 +180,7 @@
      */
     function hasMod(el, m, val) {
         var e = getElemName(el);
-    
-        return hasClass(el, e ? elem(e, m, val) : mod(m, val));
+        return el.classList.contains(e ? elem(e, m, val) : mod(m, val));
     }
     
     /**
@@ -240,7 +190,7 @@
      * @return {boolean}
      */
     function hasElem(el, e) {
-        return hasClass(el, elem(e));
+        return el.classList.contains(elem(e));
     }
     
     /**
@@ -702,7 +652,7 @@
             }
             this._container = container;
 
-            addClass(container, NS);
+            container.classList.add(NS);
             setMod(container, 'theme', this._data.theme);
 
             if(this.setting('daysAfterMonths')) {
@@ -990,9 +940,9 @@
             };
 
             this.domEvent
-                .onWheel(days, this._onwheelmonths, 'open')
-                .onWheel(months, this._onwheelmonths, 'open')
-                .onWheel(years, this._onwheelyears, 'open');
+                .on(days, 'wheel', this._onwheelmonths, 'open')
+                .on(months, 'wheel', this._onwheelmonths, 'open')
+                .on(years, 'wheel', this._onwheelyears, 'open');
 
             this.domEvent.on(months, 'click', function(e) {
                 if(e.button) {
@@ -1000,7 +950,8 @@
                 }
 
                 if(hasElem(e.target, 'month')) {
-                    that._monthSelector(+dataAttr(e.target, 'month'), true);
+                    el.dataset[name]
+                    that._monthSelector(+e.target.dataset.month, true);
                 }
             }, 'open');
 
@@ -1009,7 +960,7 @@
                     return;
                 }
 
-                var y = dataAttr(e.target, 'year');
+                var y = e.target.dataset.year;
                 if(y) {
                     that._yearSelector(+y, true);
                 }
@@ -1017,8 +968,8 @@
 
             this.domEvent.on(days, 'mouseover', function(e) {
                 var target = e.target,
-                    d = +dataAttr(target, 'day'),
-                    m = +dataAttr(target, 'month'),
+                    d = +target.dataset.day,
+                    m = +target.dataset.month,
                     y = +that._currentDate.year;
 
                 if(hasElem(target, 'day') && hasMod(target, 'has-title')) {
@@ -1039,8 +990,8 @@
 
                 var cd = that._currentDate,
                     target = e.target,
-                    day = dataAttr(target, 'day'),
-                    month = dataAttr(target, 'month');
+                    day = target.dataset.day,
+                    month = target.dataset.month;
 
                 if(day) {
                     if(hasMod(target, 'minmax')) {
@@ -1376,58 +1327,12 @@
         Cln._exts.push([name, constr, prot]);
     };
     
-    var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
-        document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
-        'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
     /*
      * Extension: DOM event
     */
     Cln.addExtension('domEvent', function() {
         this._buf = [];
     }, {
-        /*
-         * Attach an wheel event handler function for a DOM element.
-         * @param {DOMElement} elem
-         * @param {Function} callback
-         * @param {string} [ns] - Namespace.
-         * @return {domEvent} this
-        */
-        onWheel: function(elem, callback, ns) {
-            // handle MozMousePixelScroll in older Firefox
-            return this.on(elem,
-                supportWheel === 'DOMMouseScroll' ? 'MozMousePixelScroll' : supportWheel,
-                supportWheel === 'wheel' ? callback : function(originalEvent) {
-                    if(!originalEvent) {
-                        originalEvent = window.event;
-                    }
-    
-                    var event = {
-                        originalEvent: originalEvent,
-                        target: originalEvent.target || originalEvent.srcElement,
-                        type: 'wheel',
-                        deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
-                        deltaX: 0,
-                        delatZ: 0,
-                        preventDefault: function() {
-                            originalEvent.preventDefault ?
-                                originalEvent.preventDefault() :
-                                originalEvent.returnValue = false;
-                        }
-                    },
-                    k = -1 / 40;
-    
-                    if(supportWheel === 'mousewheel') {
-                        event.deltaY = k * originalEvent.wheelDelta;
-                        if(originalEvent.wheelDeltaX) {
-                            event.deltaX = k * originalEvent.wheelDeltaX;
-                        }
-                    } else {
-                        event.deltaY = originalEvent.detail;
-                    }
-    
-                    return callback(event);
-            }, ns);
-        },
         /*
          * Attach an event handler function for a DOM element.
          * @param {DOMElement} elem
@@ -2183,7 +2088,7 @@
             }
     
             var el = document.createElement('div');
-            addClass(el, elem('tooltip'));
+            el.classList.add(elem('tooltip'));
             el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}]);
     
             document.body.appendChild(el);
