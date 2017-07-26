@@ -1,55 +1,9 @@
-var supportWheel = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
-    document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
-    'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
 /*
  * Extension: DOM event
 */
 Cln.addExtension('domEvent', function() {
     this._buf = [];
 }, {
-    /*
-     * Attach an wheel event handler function for a DOM element.
-     * @param {DOMElement} elem
-     * @param {Function} callback
-     * @param {string} [ns] - Namespace.
-     * @return {domEvent} this
-    */
-    onWheel: function(elem, callback, ns) {
-        // handle MozMousePixelScroll in older Firefox
-        return this.on(elem,
-            supportWheel === 'DOMMouseScroll' ? 'MozMousePixelScroll' : supportWheel,
-            supportWheel === 'wheel' ? callback : function(originalEvent) {
-                if(!originalEvent) {
-                    originalEvent = window.event;
-                }
-
-                var event = {
-                    originalEvent: originalEvent,
-                    target: originalEvent.target || originalEvent.srcElement,
-                    type: 'wheel',
-                    deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
-                    deltaX: 0,
-                    delatZ: 0,
-                    preventDefault: function() {
-                        originalEvent.preventDefault ?
-                            originalEvent.preventDefault() :
-                            originalEvent.returnValue = false;
-                    }
-                },
-                k = -1 / 40;
-
-                if(supportWheel === 'mousewheel') {
-                    event.deltaY = k * originalEvent.wheelDelta;
-                    if(originalEvent.wheelDeltaX) {
-                        event.deltaX = k * originalEvent.wheelDeltaX;
-                    }
-                } else {
-                    event.deltaY = originalEvent.detail;
-                }
-
-                return callback(event);
-        }, ns);
-    },
     /*
      * Attach an event handler function for a DOM element.
      * @param {DOMElement} elem

@@ -45,7 +45,7 @@ function delMod(el, m) {
 
     classes.forEach(function(cl) {
         if(cl === selector || cl.search(selector + '_') !== -1) {
-            removeClass(el, cl);
+            el.classList.remove(cl);
         }
     });
 }
@@ -59,7 +59,7 @@ function delMod(el, m) {
 function setMod(el, m, val) {
     var e = getElemName(el);
     delMod(el, m);
-    addClass(el, e ? elem(e, m, val) : mod(m, val));
+    el.classList.add(e ? elem(e, m, val) : mod(m, val));
 }
 
 /**
@@ -70,8 +70,7 @@ function setMod(el, m, val) {
  */
 function hasMod(el, m, val) {
     var e = getElemName(el);
-
-    return hasClass(el, e ? elem(e, m, val) : mod(m, val));
+    return el.classList.contains(e ? elem(e, m, val) : mod(m, val));
 }
 
 /**
@@ -81,7 +80,7 @@ function hasMod(el, m, val) {
  * @return {boolean}
  */
 function hasElem(el, e) {
-    return hasClass(el, elem(e));
+    return el.classList.contains(elem(e));
 }
 
 /**

@@ -60,7 +60,7 @@ Cln.addExtension('tooltip', null, {
         }
 
         var el = document.createElement('div');
-        addClass(el, elem('tooltip'));
+        el.classList.add(elem('tooltip'));
         el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}]);
 
         document.body.appendChild(el);

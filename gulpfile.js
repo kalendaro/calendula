@@ -12,10 +12,10 @@ const stylus = require('gulp-stylus');
 const rename = require('gulp-rename');
 const replace = require('gulp-replace');
 const uglify = require('gulp-uglify');
-const uglifyOptions = {output: {comments: 'license'}};
+const uglifyOptions = {output: {comments: /^!/}};
 
 const apBrowsers = {
-    browsers: ['ie > 9', 'Firefox >= 46', 'Chrome >= 26', 'iOS >= 7', 'Safari >= 6', 'Android > 4.4']
+    browsers: ['ie > 9', 'Firefox >= 46', 'Chrome >= 46', 'iOS >= 7', 'Safari >= 7', 'Android > 4.4']
 };
 
 const destDir = './dist';

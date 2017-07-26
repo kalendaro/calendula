@@ -13,10 +13,10 @@
 + локализация.
 
 Поддержка в браузерах:
-+ Internet Explorer 9 и выше;
-+ Mozilla Firefox 4 и выше;
-+ Google Chrome 6 и выше;
-+ Safari 6 и выше.
++ Internet Explorer 10 и выше;
++ Mozilla Firefox 46 и выше;
++ Google Chrome 46 и выше;
++ Safari 7 и выше.
 
 ## Примеры
 + [Все темы](http://hcodes.github.io/calendula/examples/many.html)

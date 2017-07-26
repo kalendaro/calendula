@@ -234,7 +234,7 @@
             }
             this._container = container;
 
-            addClass(container, NS);
+            container.classList.add(NS);
             setMod(container, 'theme', this._data.theme);
 
             if(this.setting('daysAfterMonths')) {
@@ -522,9 +522,9 @@
             };
 
             this.domEvent
-                .onWheel(days, this._onwheelmonths, 'open')
-                .onWheel(months, this._onwheelmonths, 'open')
-                .onWheel(years, this._onwheelyears, 'open');
+                .on(days, 'wheel', this._onwheelmonths, 'open')
+                .on(months, 'wheel', this._onwheelmonths, 'open')
+                .on(years, 'wheel', this._onwheelyears, 'open');
 
             this.domEvent.on(months, 'click', function(e) {
                 if(e.button) {
@@ -532,7 +532,8 @@
                 }
 
                 if(hasElem(e.target, 'month')) {
-                    that._monthSelector(+dataAttr(e.target, 'month'), true);
+                    el.dataset[name]
+                    that._monthSelector(+e.target.dataset.month, true);
                 }
             }, 'open');
 
@@ -541,7 +542,7 @@
                     return;
                 }
 
-                var y = dataAttr(e.target, 'year');
+                var y = e.target.dataset.year;
                 if(y) {
                     that._yearSelector(+y, true);
                 }
@@ -549,8 +550,8 @@
 
             this.domEvent.on(days, 'mouseover', function(e) {
                 var target = e.target,
-                    d = +dataAttr(target, 'day'),
-                    m = +dataAttr(target, 'month'),
+                    d = +target.dataset.day,
+                    m = +target.dataset.month,
                     y = +that._currentDate.year;
 
                 if(hasElem(target, 'day') && hasMod(target, 'has-title')) {
@@ -571,8 +572,8 @@
 
                 var cd = that._currentDate,
                     target = e.target,
-                    day = dataAttr(target, 'day'),
-                    month = dataAttr(target, 'month');
+                    day = target.dataset.day,
+                    month = target.dataset.month;
 
                 if(day) {
                     if(hasMod(target, 'minmax')) {
