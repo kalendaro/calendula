@@ -950,7 +950,6 @@
                 }
 
                 if(hasElem(e.target, 'month')) {
-                    el.dataset[name]
                     that._monthSelector(+e.target.dataset.month, true);
                 }
             }, 'open');
