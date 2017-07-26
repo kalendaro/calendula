@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
 
@@ -10,9 +12,10 @@ const stylus = require('gulp-stylus');
 const rename = require('gulp-rename');
 const replace = require('gulp-replace');
 const uglify = require('gulp-uglify');
+const uglifyOptions = {output: {comments: 'license'}};
 
 const apBrowsers = {
-    browsers: ['ie >= 9', 'Firefox >= 24', 'Chrome >= 26', 'iOS >= 5', 'Safari >= 6', 'Android > 2.3']
+    browsers: ['ie > 9', 'Firefox >= 46', 'Chrome >= 26', 'iOS >= 7', 'Safari >= 6', 'Android > 4.4']
 };
 
 const destDir = './dist';
@@ -64,7 +67,7 @@ gulp.task('prodJsBase', ['version'], function() {
     return gulp.src(paths.prodJsBase)
         .pipe(concat('calendula.base.js'))
         .pipe(include())
-        .pipe(uglify({preserveComments: 'some'}))
+        .pipe(uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
 
@@ -72,19 +75,19 @@ gulp.task('prodJsAll', ['version'], function() {
     return gulp.src(paths.prodJsAll)
         .pipe(concat('calendula.all.js'))
         .pipe(include())
-        .pipe(uglify({preserveComments: 'some'}))
+        .pipe(uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsLocales', function() {
     return gulp.src(paths.prodJsLocales)
-        .pipe(uglify({preserveComments: 'some'}))
+        .pipe(uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsHolidays', function() {
     return gulp.src(paths.prodJsHolidays)
-        .pipe(uglify())
+        .pipe(uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
 
