@@ -1,7 +1,7 @@
 {
   "name": "calendula",
   "description": "A special datepicker",
-  "version": "0.9.11",
+  "version": "0.9.12",
   "author": {
     "name": "Denis Seleznev",
     "email": "hcodes@yandex.ru",
@@ -41,8 +41,7 @@
     "yaspeller": "3.x"
   },
   "scripts": {
-    "test": "npm run-script gulp && npm run-script eslint && npm run-script jscs && npm run-script mocha-phantomjs",
-    "jscs": "./node_modules/.bin/jscs .",
+    "test": "npm run-script gulp && npm run-script eslint && npm run-script mocha-phantomjs",
     "eslint": "./node_modules/.bin/eslint .",
     "gulp": "./node_modules/.bin/gulp",
     "mocha-phantomjs": "./node_modules/.bin/mocha-phantomjs test/index.html",

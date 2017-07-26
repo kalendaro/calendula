@@ -1292,7 +1292,7 @@
         }
     });
 
-    Cln.version = '0.9.11';
+    Cln.version = '0.9.12';
     
     Cln.extend(Cln.prototype, {
         _initExtensions: function() {
