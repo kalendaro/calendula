@@ -23,8 +23,8 @@
     "node": ">= 6.0"
   },
   "devDependencies": {
-    "chai": "4.1.x",
-    "eslint": "4.x",
+    "chai": "^4.1.2",
+    "eslint": "^4.6.1",
     "gulp": "3.9.x",
     "gulp-autoprefixer": "4.0.x",
     "gulp-cleancss": "0.2.x",
@@ -36,9 +36,9 @@
     "gulp-uglify": "3.0.x",
     "jquery": "3.2.x",
     "jscs": "3.x",
-    "mocha": "3.4.x",
+    "mocha": "3.5.x",
     "mocha-phantomjs": "4.1.x",
-    "yaspeller": "3.x"
+    "yaspeller": "4.x"
   },
   "scripts": {
     "test": "npm run-script gulp && npm run-script eslint && npm run-script mocha-phantomjs",
