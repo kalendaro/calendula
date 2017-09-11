@@ -38,6 +38,13 @@ const paths = {
     ]
 };
 
+const includeOptions = {
+    extensions: 'js',
+    includePaths: [
+      __dirname + '/src/js'
+    ]
+};
+
 paths.devJs = paths.mainJs.concat('src/js/locale/*.js', 'src/js/holiday/*.js');
 paths.prodJsBase = paths.mainJs;
 paths.prodJsAll = paths.mainJs.concat('src/js/locale/calendula.locale.*.js', 'src/js/holiday/calendula.holiday.*.js');
@@ -59,14 +66,14 @@ gulp.task('version', function() {
 gulp.task('devJs', ['version'], function() {
     return gulp.src(paths.devJs)
         .pipe(concat('calendula.dev.js'))
-        .pipe(include())
+        .pipe(include(includeOptions))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsBase', ['version'], function() {
     return gulp.src(paths.prodJsBase)
         .pipe(concat('calendula.base.js'))
-        .pipe(include())
+        .pipe(include(includeOptions))
         .pipe(uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
@@ -74,7 +81,7 @@ gulp.task('prodJsBase', ['version'], function() {
 gulp.task('prodJsAll', ['version'], function() {
     return gulp.src(paths.prodJsAll)
         .pipe(concat('calendula.all.js'))
-        .pipe(include())
+        .pipe(include(includeOptions))
         .pipe(uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
