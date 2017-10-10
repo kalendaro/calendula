@@ -457,6 +457,8 @@
 
         this._addSwitcherEvents(d.showOn);
     };
+    
+    Cln.version = '0.9.12';
 
     /**
      * Extend a object.
@@ -1292,8 +1294,6 @@
         }
     });
 
-    Cln.version = '0.9.12';
-    
     Cln.extend(Cln.prototype, {
         _initExtensions: function() {
             Cln._exts.forEach(function(ext) {

@@ -7,6 +7,9 @@ const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const uglifyOptions = {output: {comments: /^!/}};
 
+const version = require('./package.json').version;
+function updateVersion() { return $.replace(/\{\{version\}\}/, version); }
+
 const apBrowsers = {
     browsers: ['ie > 9', 'Firefox >= 46', 'Chrome >= 46', 'iOS >= 7', 'Safari >= 7', 'Android > 4.4']
 };
@@ -49,32 +52,28 @@ const jsTasks = ['devJs', 'prodJsBase', 'prodJsAll', 'prodJsLocales', 'prodJsHol
 const cssTasks = ['devCss', 'prodCssBase', 'prodCssAll', 'prodCssThemes'];
 const allTasks = [].concat(cssTasks, jsTasks);
 
-gulp.task('version', function() {
-    const file = './src/js/version.js';
-    gulp.src(file, {base: './'})
-        .pipe($.replace(/'[\d.]+'/, '\'' + require('./package.json').version + '\''))
-        .pipe(gulp.dest(''));
-});
-
-gulp.task('devJs', ['version'], function() {
+gulp.task('devJs', function() {
     return gulp.src(paths.devJs)
         .pipe($.concat('calendula.dev.js'))
         .pipe($.include(includeOptions))
+        .pipe(updateVersion())
         .pipe(gulp.dest(destDir));
 });
 
-gulp.task('prodJsBase', ['version'], function() {
+gulp.task('prodJsBase', function() {
     return gulp.src(paths.prodJsBase)
         .pipe($.concat('calendula.base.js'))
         .pipe($.include(includeOptions))
+        .pipe(updateVersion())
         .pipe($.uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
 
-gulp.task('prodJsAll', ['version'], function() {
+gulp.task('prodJsAll', function() {
     return gulp.src(paths.prodJsAll)
         .pipe($.concat('calendula.all.js'))
         .pipe($.include(includeOptions))
+        .pipe(updateVersion())
         .pipe($.uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });

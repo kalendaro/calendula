@@ -39,6 +39,8 @@
 
         this._addSwitcherEvents(d.showOn);
     };
+    
+    Cln.version = '{{version}}';
 
     /**
      * Extend a object.
@@ -874,7 +876,6 @@
         }
     });
 
-    //=include version.js
     //=include extension.js
     //=include extension/*.js
 
