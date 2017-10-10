@@ -1,1 +1,0 @@
-Calendula.addLocale("de",{months:["Januar","Februar","Marz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"],shortDayNames:["So","Mo","Di","Mi","Do","Fr","Sa"],dayNames:["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"],today:"Heute",firstWeekday:1});
