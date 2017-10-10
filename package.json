@@ -22,6 +22,11 @@
   "engines": {
     "node": ">= 8.0"
   },
+  "files": [
+    "dist/",
+    "LICENSE",
+    "README.md"
+  ],
   "devDependencies": {
     "chai": "4.x",
     "eslint": "4.x",
