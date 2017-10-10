@@ -4,14 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const gulp = require('gulp');
-const autoprefixer = require('gulp-autoprefixer');
-const cleancss = require('gulp-cleancss');
-const concat = require('gulp-concat');
-const include = require('gulp-include');
-const stylus = require('gulp-stylus');
-const rename = require('gulp-rename');
-const replace = require('gulp-replace');
-const uglify = require('gulp-uglify');
+const $ = require('gulp-load-plugins')();
 const uglifyOptions = {output: {comments: /^!/}};
 
 const apBrowsers = {
@@ -59,79 +52,79 @@ const allTasks = [].concat(cssTasks, jsTasks);
 gulp.task('version', function() {
     const file = './src/js/version.js';
     gulp.src(file, {base: './'})
-        .pipe(replace(/'[\d.]+'/, '\'' + require('./package.json').version + '\''))
+        .pipe($.replace(/'[\d.]+'/, '\'' + require('./package.json').version + '\''))
         .pipe(gulp.dest(''));
 });
 
 gulp.task('devJs', ['version'], function() {
     return gulp.src(paths.devJs)
-        .pipe(concat('calendula.dev.js'))
-        .pipe(include(includeOptions))
+        .pipe($.concat('calendula.dev.js'))
+        .pipe($.include(includeOptions))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsBase', ['version'], function() {
     return gulp.src(paths.prodJsBase)
-        .pipe(concat('calendula.base.js'))
-        .pipe(include(includeOptions))
-        .pipe(uglify(uglifyOptions))
+        .pipe($.concat('calendula.base.js'))
+        .pipe($.include(includeOptions))
+        .pipe($.uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsAll', ['version'], function() {
     return gulp.src(paths.prodJsAll)
-        .pipe(concat('calendula.all.js'))
-        .pipe(include(includeOptions))
-        .pipe(uglify(uglifyOptions))
+        .pipe($.concat('calendula.all.js'))
+        .pipe($.include(includeOptions))
+        .pipe($.uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsLocales', function() {
     return gulp.src(paths.prodJsLocales)
-        .pipe(uglify(uglifyOptions))
+        .pipe($.uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodJsHolidays', function() {
     return gulp.src(paths.prodJsHolidays)
-        .pipe(uglify(uglifyOptions))
+        .pipe($.uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('devCss', function() {
     return gulp.src(paths.devCss)
-        .pipe(concat('calendula.dev.styl'))
-        .pipe(stylus())
-        .pipe(replace('calendula.dev.css'))
-        .pipe(autoprefixer(apBrowsers))
+        .pipe($.concat('calendula.dev.styl'))
+        .pipe($.stylus())
+        .pipe($.replace('calendula.dev.css'))
+        .pipe($.autoprefixer(apBrowsers))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodCssBase', function() {
     return gulp.src(paths.mainCss)
-        .pipe(concat('calendula.base.styl'))
-        .pipe(stylus())
-        .pipe(replace('calendula.base.css'))
-        .pipe(autoprefixer(apBrowsers))
-        .pipe(cleancss({keepBreaks: false}))
+        .pipe($.concat('calendula.base.styl'))
+        .pipe($.stylus())
+        .pipe($.replace('calendula.base.css'))
+        .pipe($.autoprefixer(apBrowsers))
+        .pipe($.cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodCssAll', function() {
     return gulp.src(paths.prodCssAll)
-        .pipe(concat('calendula.all.styl'))
-        .pipe(stylus())
-        .pipe(replace('calendula.all.css'))
-        .pipe(autoprefixer(apBrowsers))
-        .pipe(cleancss({keepBreaks: false}))
+        .pipe($.concat('calendula.all.styl'))
+        .pipe($.stylus())
+        .pipe($.replace('calendula.all.css'))
+        .pipe($.autoprefixer(apBrowsers))
+        .pipe($.cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
 });
 
 gulp.task('prodCssThemes', function() {
     return gulp.src(paths.prodCssThemes)
-        .pipe(stylus())
-        .pipe(autoprefixer(apBrowsers))
-        .pipe(cleancss({keepBreaks: false}))
+        .pipe($.stylus())
+        .pipe($.autoprefixer(apBrowsers))
+        .pipe($.cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
 });
 

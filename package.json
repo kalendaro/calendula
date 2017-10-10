@@ -20,23 +20,24 @@
     "календарь"
   ],
   "engines": {
-    "node": ">= 6.0"
+    "node": ">= 8.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^4.6.1",
+    "chai": "4.x",
+    "eslint": "4.x",
     "gulp": "3.9.x",
     "gulp-autoprefixer": "4.0.x",
     "gulp-cleancss": "0.2.x",
     "gulp-concat": "2.6.x",
     "gulp-include": "2.3.x",
+    "gulp-load-plugins": "1.5.x",
     "gulp-rename": "1.2.x",
     "gulp-replace": "0.6.x",
     "gulp-stylus": "2.6.x",
     "gulp-uglify": "3.0.x",
     "jquery": "3.2.x",
     "jscs": "3.x",
-    "mocha": "3.5.x",
+    "mocha": "4.0.x",
     "mocha-phantomjs": "4.1.x",
     "yaspeller": "4.x"
   },
