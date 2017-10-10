@@ -1,94 +1,102 @@
-/**
- * Add a leading zero.
- * @param {number} value
- * @return {string}
- */
-function leadZero(value) {
-    return (value < 10 ? '0' : '') + value;
-}
+import obj from './object';
 
-/**
- * Convert a date to ISO format.
- * @param {number} year
- * @param {number} month - 0-11
- * @param {number} day
- * @return {string}
- */
-function ymdToISO(year, month, day) {
-    return [year, leadZero(month + 1), leadZero(day)].join('-');
-}
+var MDate = {
+    /**
+     * Add a leading zero.
+     * @param {number} value
+     * @return {string}
+     */
+    leadZero(value) {
+        return (value < 10 ? '0' : '') + value;
+    },
 
-/**
- * Parse a date.
- * @param {string|number|Date} value
- * @return {Date}
- */
-function parseDate(value) {
-    var date = null,
-        match,
-        buf;
+    /**
+     * Convert a date to ISO format.
+     *
+     * @param {number} year
+     * @param {number} month - 0-11
+     * @param {number} day
+     * @returns {string}
+     */
+    ymdToISO(year, month, day) {
+        return [year, MDate.leadZero(month + 1), MDate.leadZero(day)].join('-');
+    },
 
-    if(value) {
-        if(isString(value)) {
-            if(value === 'today') {
-                return new Date();
-            }
+    /**
+     * Parse a date.
+     *
+     * @param {string|number|Date} value
+     * @returns {Date}
+     */
+    parseDate(value) {
+        var date = null,
+            match,
+            buf;
 
-            match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
-            if(match) {
-                    buf = [match[3], match[2], match[1]];
-            } else {
-                match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
-                if(match) {
-                    buf = [match[1], match[2], match[3]];
+        if (value) {
+            if (obj.isString(value)) {
+                if (value === 'today') {
+                    return new Date();
                 }
-            }
 
-            if(buf) {
-                date = new Date(parseNum(buf[2]), parseNum(buf[1] - 1), parseNum(buf[0]));
+                match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
+                if (match) {
+                        buf = [match[3], match[2], match[1]];
+                } else {
+                    match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
+                    if (match) {
+                        buf = [match[1], match[2], match[3]];
+                    }
+                }
+
+                if (buf) {
+                    date = new Date(parseInt(buf[2], 10), parseInt(buf[1] - 1, 10), parseInt(buf[0], 10));
+                }
+            } else if (obj.isObject(value)) {
+                if (value instanceof Date) {
+                    date = value;
+                } else if (value.year && value.day) {
+                    date = new Date(value.year, value.month, value.day, 12, 0, 0, 0);
+                }
+            } else if (obj.isNumber(value)) {
+                date = new Date(value);
             }
-        } else if(isObject(value)) {
-            if(value instanceof Date) {
-                date = value;
-            } else if(value.year && value.day) {
-                date = new Date(value.year, value.month, value.day, 12, 0, 0, 0);
-            }
-        } else if(isNumber(value)) {
-            date = new Date(value);
         }
-    }
 
-    return date;
-}
+        return date;
+    },
 
-/**
- * Parse a date and convert to ISO format.
- * @param {string|number|Date} value
- * @return {string|null}
- */
-function parseDateToISO(value) {
-    var d = parseDate(value);
-    if(d) {
-        return [d.getFullYear(), leadZero(d.getMonth() + 1), leadZero(d.getDate())].join('-');
-    } else {
-        return null;
-    }
-}
+    /**
+     * Parse a date and convert to ISO format.
+     *
+     * @param {string|number|Date} value
+     * @returns {string|null}
+     */
+    parseDateToISO(value) {
+        var date = MDate.parseDate(value);
+        return date ? 
+            [
+                date.getFullYear(),
+                MDate.leadZero(date.getMonth() + 1),
+                MDate.leadZero(date.getDate())
+            ].join('-') :
+            null
+    },
 
-/**
- * Convert a date to a object.
- * @param {string|number|Date} value
- * @return {Object}
- */
-function parseDateToObj(value) {
-    var d = parseDate(value);
-    if(d) {
-        return {
-            day: d.getDate(),
-            month: d.getMonth(),
-            year: d.getFullYear()
-        };
-    } else {
-        return {};
+    /**
+     * Convert a date to a object.
+     *
+     * @param {string|number|Date} value
+     * @returns {Object}
+     */
+    parseDateToObj(value) {
+        var date = MDate.parseDate(value);
+        return date ? {
+            day: date.getDate(),
+            month: date.getMonth(),
+            year: date.getFullYear()
+        } : {};
     }
-}
+};
+
+export default MDate;

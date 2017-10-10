@@ -1,178 +1,212 @@
 /*
  * Extension: Template
 */
-Cln.addExtension('template', null, {
+import mdate from '../lib/date';
+import Calendula from '../calendula';
+import jstohtml from 'jstohtml';
+
+const SATURDAY = 6;
+const SUNDAY = 0;
+
+export default class Template {
     /**
      * Get a template.
+     *
      * @param {string} name
-     * @return {*}
-    */
-    get: function(name) {
-        return jshtml(this[name]());
-    },
-    SATURDAY: 6,
-    SUNDAY: 0,
+     * @returns {*}
+     */
+    get(name) {
+        return jstohtml(this[name]());
+    }
+    
     /**
      * Template: days
-     * @return {Array}
-    */
-    days: function() {
-        var buf = [];
+     *
+     * @returns {Array}
+     */
+    days() {
+        const buf = [];
 
-        for(var m = Cln.MIN_MONTH; m <= Cln.MAX_MONTH; m++) {
+        for (let m = Calendula.MIN_MONTH; m <= Calendula.MAX_MONTH; m++) {
             buf.push(this.month(m, this.parent._currentDate.year));
         }
 
         return buf;
-    },
+    }
+
     /**
      * Template: dayNames
-     * @return {Object}
-    */
-    dayNames: function() {
-        var first = this.parent.text('firstWeekday') || 0,
-            w = {
+     *
+     * @returns {Object}
+     */
+    dayNames() {
+        const
+            first = this.parent.text('firstWeekday') || 0,
+            week = {
                 first: first,
-                last: !first ? this.SATURDAY : first - 1
-            },
-            n = first;
+                last: !first ? SATURDAY : first - 1
+            };
 
-        for(var i = 0; i < 7; i++) {
-            w[n] = i;
+        let day = first;
 
-            n++;
-            if(n > this.SATURDAY) {
-                n = this.SUNDAY;
+        for (let i = 0; i < 7; i++) {
+            week[day] = i;
+
+            day++;
+            if (day > SATURDAY) {
+                day = SUNDAY;
             }
         }
 
-        return w;
-    },
+        return week;
+    }
+
     /**
      * Template: month
+     *
      * @param {number} m - Month.
      * @param {number} y - Year.
-     * @return {Array}
-    */
-    month: function(m, y) {
-        var current = new Date();
-        current.setHours(12, 0, 0, 0);
-
-        var date = new Date(y, m, 1, 12, 0, 0, 0),
-            dateTs = date.getTime(),
-            par = this.parent,
-            weekday = date.getDay(),
-            dayNames = this.dayNames(),
-            dayIndex = dayNames[weekday],
-            minSetting = par.setting('min'),
-            maxSetting = par.setting('max'),
-            minTs = this._getTs(minSetting),
-            maxTs = this._getTs(maxSetting),
-            currentTs = current.getTime(),
-            title,
-            holiday,
-            mods,
-            objFirstRow = {
-                t: 'tr',
-                c: [
-                    weekday !== dayNames.first ? {
-                        t: 'td',
-                        colspan: dayIndex,
-                        e: 'empty',
-                        c: dayIndex < 3 ? '' : this._getTitleMonth(minSetting, maxSetting, m, y)
-                    } : ''
-                ]
+     * @returns {Array}
+     */
+    month(m, y) {
+        const
+            date = new Date(y, m, 1, 12, 0, 0, 0),
+            parent = this.parent,
+            data = {
+                weekday: date.getDay(),
+                min: parent.setting('min'),
+                max: parent.setting('max'),
+                dayNames: this.dayNames()
             },
-            objRow = objFirstRow,
-            obj = {
-                e: 'days-month',
-                c: [
-                    dayIndex < 3 ? this._getTitleMonth(minSetting, maxSetting, m, y) : '',
-                    {
-                        t: 'table',
-                        e: 'days-table',
-                        c: [objRow]
-                    }
-                ]
-            };
+            minTs = this._getTs(data.min),
+            maxTs = this._getTs(data.max),
+            todayTs = this._todayAt12();
 
-        for(var day = 1; date.getMonth() === m; date.setDate(++day)) {
-            title = '';
-            dateTs = +date;
-            weekday = date.getDay();
-            holiday = par.getHoliday(day, m, y);
-            mods = {};
+        let row = this._monthFirstRow(data, m, y);
+        const result = this._daysMonth(data, m, y, row);
+            
+        for (let day = 1; date.getMonth() === m; date.setDate(++day)) {
+            let title = '';
+            
+            const dateTs = +date,
+                mods = {},
+                weekday = date.getDay(),
+                holiday = parent.getHoliday(day, m, y);
 
-            if(weekday === this.SUNDAY || weekday === this.SATURDAY) {
+            if (weekday === SUNDAY || weekday === SATURDAY) {
                 mods.holiday = true;
             } else {
                 mods.workday = true;
             }
 
-            if(holiday === 0) {
+            if (holiday === 0) {
                 mods.nonholiday = true;
-            } else if(holiday === 1) {
+            } else if (holiday === 1) {
                 mods.highday = true;
             }
 
-            if(this._isSelected(par._val, day, m, y)) {
+            if (this._isSelected(parent._val, day, m, y)) {
                 mods.selected = true;
             }
 
-            if(currentTs === dateTs) {
+            if (todayTs === dateTs) {
                 mods.now = true;
-                title = par.text('today');
+                title = parent.text('today');
             }
 
-            if((minTs && dateTs < minTs) || (maxTs && dateTs > maxTs)) {
+            if ((minTs && dateTs < minTs) || (maxTs && dateTs > maxTs)) {
                 mods.minmax = true;
             }
 
-            var tt = par.title.get(ymdToISO(y, m, day));
-            if(tt) {
+            var tt = parent.title.get(mdate.ymdToISO(y, m, day));
+            if (tt) {
                 mods['has-title'] = true;
                 mods['title-color'] = tt.color || 'default';
             }
 
-            if(weekday === dayNames.first) {
-                objRow = {
+            if (weekday === data.dayNames.first) {
+                row = {
                     t: 'tr',
                     c: []
                 };
 
-                obj.c[1].c.push(objRow);
+                result.c[1].c.push(row);
             }
 
-            objRow.c.push({
+            row.c.push({
                 t: 'td',
                 e: 'day',
                 m: mods,
-                title: title,
+                title,
                 'data-month': m,
                 'data-day': day,
                 c: day
             });
         }
 
-        return obj;
-    },
+        return result;
+    }
+    
+    _todayAt12() {
+        const current = new Date();
+        current.setHours(12, 0, 0, 0);
+        return current.getTime();
+    }
+    
+    _monthFirstRow(data, m, y) {
+        const dayIndex = data.dayNames[data.weekday];
+
+        return {
+            t: 'tr',
+            c: [
+                data.weekday !== data.dayNames.first ? {
+                    t: 'td',
+                    colspan: dayIndex,
+                    e: 'empty',
+                    c: dayIndex < 3 ? '' : this._getTitleMonth(data.min, data.max, m, y)
+                } : ''
+            ]
+        }
+    }
+    
+    _daysMonth(data, m, y, content) {
+        const dayIndex = data.dayNames[data.weekday];
+
+        return {
+            b: this.parent._name,
+            e: 'days-month',
+            c: [
+                dayIndex < 3 ? this._getTitleMonth(data.min, data.max, m, y) : '',
+                {
+                    t: 'table',
+                    e: 'days-table',
+                    c: [content]
+                }
+            ]
+        };
+    }
+
     /**
      * Template: years
-     * @return {Array}
-    */
-    years: function() {
-        var data = this.parent._data,
+     *
+     * @returns {Array}
+     */
+    years() {
+        const
+            data = this.parent._data,
             startYear = data._startYear,
             endYear = data._endYear,
-            buf = [{
-                e: 'year-selector',
-                c: {
-                    e: 'year-selector-i'
+            buf = [
+                {
+                    b: this.parent._name,
+                    e: 'year-selector',
+                    c: { e: 'year-selector-i' }
                 }
-            }];
+            ];
 
-        for(var i = startYear; i <= endYear; i++) {
+        for (let i = startYear; i <= endYear; i++) {
             buf.push({
+                b: this.parent._name,
                 e: 'year',
                 'data-year': i,
                 c: i
@@ -180,60 +214,68 @@ Cln.addExtension('template', null, {
          }
 
         return buf;
-    },
+    }
+    
     /**
      * Template: months
-     * @return {Array}
-    */
-    months: function() {
-        var buf = [{
-            e: 'month-selector',
-            c: {
-                e: 'month-selector-i'
+     *
+     * @returns {Array}
+     */
+    months() {
+        const buf = [
+            {
+                b: this.parent._name,
+                e: 'month-selector',
+                c: { e: 'month-selector-i' }
             }
-        }];
+        ];
 
         this.parent.text('months').forEach(function(el, i) {
             buf.push({
+                b: this.parent._name,
                 e: 'month',
                 'data-month': i,
                 c: el
             });
-        });
+        }, this);
 
         return buf;
-    },
+    }
+    
     /**
      * Template: main
-     * @return {Array}
-    */
-    main: function() {
-        var par = this.parent,
-            wd = par.text('firstWeekday') || this.SUNDAY,
-            dayNames = par.text('dayNames') || [],
+     *
+     * @returns {Array}
+     */
+    main() {
+        const 
+            parent = this.parent,
+            dayNames = parent.text('dayNames') || [],
             bufDayNames = [];
+            
+        let weekday = parent.text('firstWeekday') || SUNDAY;
 
-        par.text('shortDayNames').forEach(function(el, i, data) {
+        parent.text('shortDayNames').forEach(function(el, i, data) {
             bufDayNames.push({
                 e: 'short-daynames-cell',
-                m: {
-                    n: wd
-                },
-                title: dayNames[wd] || data[wd],
-                c: data[wd]
+                m: { n: weekday },
+                title: dayNames[weekday] || data[weekday],
+                c: data[weekday]
             });
 
-            wd++;
-            if(wd > this.SATURDAY) {
-                wd = this.SUNDAY;
+            weekday++;
+            if (weekday > SATURDAY) {
+                weekday = SUNDAY;
             }
         }, this);
 
         return [
             {
+                b: this.parent._name,
                 e: 'short-daynames',
                 c: bufDayNames
             }, {
+                b: this.parent._name,
                 e: 'container',
                 c: [{
                         e: 'days',
@@ -256,27 +298,24 @@ Cln.addExtension('template', null, {
                 ]
             }
         ];
-    },
-    /**
-     * Destructor.
-    */
-    destroy: function() {},
+    }
 
-    _isSelected: function(val, d, m, y) {
+    _isSelected(val, d, m, y) {
         return d === val.day && m === val.month && y === val.year;
-    },
+    }
 
-    _getTitleMonth: function(minSetting, maxSetting, m, y) {
+    _getTitleMonth(min, max, m, y) {
         function getValue(setting) {
-            return parseNum('' + setting.year + leadZero(setting.month));
+            return parseInt('' + setting.year + mdate.leadZero(setting.month), 10);
         }
 
-        var min = getValue(minSetting),
-            max = getValue(maxSetting),
+        const
+            minValue = getValue(min),
+            maxValue = getValue(max),
             mods = {},
-            cur = parseNum('' + y + leadZero(m));
+            cur = parseInt('' + y + mdate.leadZero(m), 10);
 
-        if((minSetting && cur < min) || (maxSetting && cur > max)) {
+        if ((minValue && cur < minValue) || (maxValue && cur > maxValue)) {
             mods.minmax = true;
         }
 
@@ -285,13 +324,13 @@ Cln.addExtension('template', null, {
             m: mods,
             c: this.parent.text('months')[m]
         };
-    },
-
-    _getTs: function(d) {
-        if(!d.year) {
-            return null;
-        }
-
-        return new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime();
     }
-});
+
+    _getTs(d) {
+        return d.year ? new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime() : null;
+    }
+    
+    destroy() {}
+}
+
+Calendula.addExtension(Template);

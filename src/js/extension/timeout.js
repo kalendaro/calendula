@@ -1,18 +1,24 @@
-/*
+/**
  * Extension: Timeout
-*/
-Cln.addExtension('timeout', function() {
-    this._buf = [];
-}, {    
+ */
+import Calendula from '../calendula';
+
+export default class Timeout {
+    constructor() {
+        this._buf = [];
+    }
+
     /**
      * Set timeout.
+     *
      * @param {Function} callback
      * @param {number} time
      * @param {string} [ns] - Namespace.
-     * @return {Timeout} this
-    */
-    set: function(callback, time, ns) {
-        var that = this,
+     * @returns {Timeout} this
+     */
+    set(callback, time, ns) {
+        const
+            that = this,
             id = setTimeout(function() {
                 callback();
                 that.clear(id);
@@ -24,19 +30,21 @@ Cln.addExtension('timeout', function() {
         });
 
         return id;
-    },
+    }
+    
     /**
      * Clear timeout.
+     *
      * @param {string} id
-     * @return {Timeout} this
-    */
-    clear: function(id) {
-        var buf = this._buf,
-            index = -1;
+     * @returns {Timeout} this
+     */
+    clear(id) {
+        const buf = this._buf;
+        let index = -1;
 
-        if(buf) {
+        if (buf) {
             buf.some(function(el, i) {
-                if(el.id === id) {
+                if (el.id === id) {
                     index = i;
                     return true;
                 }
@@ -51,20 +59,23 @@ Cln.addExtension('timeout', function() {
         }
         
         return this;
-    },
+    }
+
     /**
      * Clear all timeouts.
+     *
      * @param {string} [ns] - Namespace.
-     * @return {Timeout} this
-    */
-    clearAll: function(ns) {
-        var oldBuf = this._buf,
+     * @returns {Timeout} this
+     */
+    clearAll(ns) {
+        const
+            oldBuf = this._buf,
             newBuf = [],
             nsArray = Array.isArray(ns) ? ns : [ns];
 
         oldBuf.forEach(function(el) {
-            if(ns) {
-                if(nsArray.indexOf(el.ns) !== -1) {
+            if (ns) {
+                if (nsArray.indexOf(el.ns) !== -1) {
                     clearTimeout(el.id);
                 } else {
                     newBuf.push(el);
@@ -77,13 +88,13 @@ Cln.addExtension('timeout', function() {
         this._buf = ns ? newBuf : [];
         
         return this;
-    },
-    /**
-     * Destructor.
-    */
-    destroy: function() {
+    }
+
+    destroy() {
         this.clearAll();
 
         delete this._buf;
     }
-});
+}
+
+Calendula.addExtension(Timeout);
