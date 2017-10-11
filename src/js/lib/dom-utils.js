@@ -1,6 +1,6 @@
 import obj from './object';
 
-var Dom = {
+var DomUtils = {
     /**
      * Get offset of element.
      *
@@ -8,7 +8,7 @@ var Dom = {
      * @returns {Object}
      */
     getOffset(el) {
-        var box = {top: 0, left: 0};
+        let box = {top: 0, left: 0};
 
         // If we don't have gBCR, just use 0,0 rather than error
         // BlackBerry 5, iOS 3 (original iPhone)
@@ -61,12 +61,12 @@ var Dom = {
      * @param {string|number} top
      */
     setTranslateY: (function() {
-        var div = document.createElement('div'),
-            prop = false;
+        const div = document.createElement('div');
+        let prop = false;
 
         ['Moz', 'Webkit', 'O', 'ms', ''].forEach(function(el) {
-            var propBuf = el + (el ? 'T' : 't') + 'ransform';
-            if(propBuf in div.style) {
+            const propBuf = el + (el ? 'T' : 't') + 'ransform';
+            if (propBuf in div.style) {
                 prop = propBuf;
             }
         });
@@ -79,4 +79,4 @@ var Dom = {
     })()
 };
 
-export default Dom;
+export default DomUtils;

@@ -29,7 +29,8 @@ var MDate = {
      * @returns {Date}
      */
     parseDate(value) {
-        var date = null,
+        let
+            date = null,
             match,
             buf;
 
@@ -73,8 +74,8 @@ var MDate = {
      * @returns {string|null}
      */
     parseDateToISO(value) {
-        var date = MDate.parseDate(value);
-        return date ? 
+        const date = MDate.parseDate(value);
+        return date ?
             [
                 date.getFullYear(),
                 MDate.leadZero(date.getMonth() + 1),
@@ -90,7 +91,7 @@ var MDate = {
      * @returns {Object}
      */
     parseDateToObj(value) {
-        var date = MDate.parseDate(value);
+        const date = MDate.parseDate(value);
         return date ? {
             day: date.getDate(),
             month: date.getMonth(),

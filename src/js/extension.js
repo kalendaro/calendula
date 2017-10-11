@@ -5,7 +5,7 @@ import Calendula from './calendula';
 Calendula.extend(Calendula.prototype, {
     _initExtensions: function() {
         Calendula._exts.forEach(function(Ext) {
-            var obj = new Ext(this._data, this._dom);
+            const obj = new Ext(this._data, this._dom);
             obj.parent = this;
             this[this._getExtensionName(Ext)] = obj;
         }, this);
@@ -15,7 +15,7 @@ Calendula.extend(Calendula.prototype, {
     },
     _removeExtensions: function() {
         Calendula._exts.forEach(function(ext) {
-            var name = this._getExtensionName(ext);
+            const name = this._getExtensionName(ext);
             this[name].destroy();
             delete this[name];
         }, this);

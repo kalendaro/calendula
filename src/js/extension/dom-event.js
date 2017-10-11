@@ -17,7 +17,7 @@ export default class DomEvent {
      * @param {string} type
      * @param {Function} callback
      * @param {string} [ns] - Namespace.
-     * @returns {domEvent} this
+     * @returns {DomEvent} this
      */
     on(elem, type, callback, ns) {
         if (elem && type && callback) {
@@ -41,7 +41,7 @@ export default class DomEvent {
      * @param {string} type
      * @param {Function} callback
      * @param {string} [ns] - Namespace.
-     * @returns {domEvent} this
+     * @returns {DomEvent} this
      */
     off(elem, type, callback, ns) {
         const buf = this._buf;
@@ -62,7 +62,7 @@ export default class DomEvent {
      * Remove all event handler.
      *
      * @param {string} [ns] - Namespace.
-     * @returns {domEvent} this
+     * @returns {DomEvent} this
      */
     offAll(ns) {
         const buf = this._buf;
