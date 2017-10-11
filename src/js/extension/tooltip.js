@@ -28,7 +28,7 @@ export default class Tooltip {
         parent
             .setMod(dom, 'theme', parent.setting('theme'))
             .setMod(dom, 'visible')
-            .setMod(dom, 'color', data.color || 'default')
+            .setMod(dom, 'color', data.color || 'default');
 
         parent.findElemContext(dom, 'tooltip-text').innerHTML = jstohtml({
             b: this.parent._name,

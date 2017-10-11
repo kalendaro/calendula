@@ -48,7 +48,7 @@ export default class Title {
             this._title[iso] = {text: data.text, color: data.color};
 
             if (parent._isInited) {
-                const el = parent._findDayByDate(parseDateToObj(data.date));
+                const el = parent._findDayByDate(mdate.parseDateToObj(data.date));
                 el && parent
                     .setMod(el, 'has-title')
                     .setMod(el, 'title-color', data.color);
@@ -80,7 +80,7 @@ export default class Title {
             delete this._title[iso];
 
             if (parent._isInited) {
-                const day = parent._findDayByDate(parseDateToObj(date));
+                const day = parent._findDayByDate(mdate.parseDateToObj(date));
                 if (day) {
                     parent
                         .delMod(day, 'has-title')

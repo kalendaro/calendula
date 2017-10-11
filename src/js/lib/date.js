@@ -80,7 +80,7 @@ var MDate = {
                 MDate.leadZero(date.getMonth() + 1),
                 MDate.leadZero(date.getDate())
             ].join('-') :
-            null
+            null;
     },
 
     /**

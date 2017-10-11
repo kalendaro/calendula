@@ -168,7 +168,7 @@ export default class Template {
                     c: dayIndex < 3 ? '' : this._getTitleMonth(data.min, data.max, m, y)
                 } : ''
             ]
-        }
+        };
     }
 
     _daysMonth(data, m, y, content) {

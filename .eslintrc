@@ -3,8 +3,13 @@
         "semi": [2, "always"],
         "quotes": [2, "single"]
     },
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
     "env": {
-        "browser": true
+        "browser": true,
+        "node": true
     },
     "globals": {
         "Calendula": true,
