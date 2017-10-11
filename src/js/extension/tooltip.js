@@ -1,70 +1,84 @@
-/*
+/**
  * Extension: Tooltip
-*/
-Cln.addExtension('tooltip', null, {
+ */
+import domUtils from '../lib/dom-utils';
+import Calendula from '../calendula';
+import jstohtml from 'jstohtml';
+
+export default class Tooltip {
     /**
      * Show tooltip.
      * @param {DOMElement} target
      * @param {Object} data
      * @param {string} data.text
      * @param {string} data.color
-    */
-    show: function(target, data) {
-        var dataBuf = data || {},
-            margin = 5;
-
+     */
+    show(target, data) {
         this._create();
-        setMod(this._container, 'theme', this.parent.setting('theme'));
-        setMod(this._container, 'visible');
 
-        this._container.querySelector('.calendula__tooltip-text').innerHTML = jshtml({
-            c: dataBuf.text,
-            e: 'tooltip-row'
+        data = data || {};
+
+        const
+            parent = this.parent,
+            margin = 5,
+            dom = this._dom;
+
+        parent
+            .setMod(dom, 'theme', parent.setting('theme'))
+            .setMod(dom, 'visible')
+            .setMod(dom, 'color', data.color || 'default')
+
+        parent.findElemContext(dom, 'tooltip-text').innerHTML = jstohtml({
+            b: this.parent._name,
+            e: 'tooltip-row',
+            c: data.text
         });
 
-        setMod(this._container, 'color', dataBuf.color || 'default');
+        const offset = domUtils.getOffset(target);
+        domUtils.setPosition(dom, {
+            left: offset.left - (dom.offsetWidth - target.offsetWidth) / 2,
+            top: offset.top - dom.offsetHeight - margin
+        });
 
         this._isOpened = true;
+    }
 
-        var offset = getOffset(target),
-            x = offset.left - (this._container.offsetWidth - target.offsetWidth) / 2,
-            y = offset.top - this._container.offsetHeight - margin;
-
-        setPosition(this._container, {
-            left: x,
-            top: y
-        });
-    },
     /**
      * Hide tooltip.
-    */
-    hide: function() {
-        if(this._isOpened) {
-            delMod(this._container, 'visible');
+     */
+    hide() {
+        if (this._isOpened) {
+            this.parent.delMod(this._dom, 'visible');
             this._isOpened = false;
         }
-    },
-    /**
-     * Destructor.
-    */
-    destroy: function() {
-        if(this._container) {
-            this.hide();
-            document.body.removeChild(this._container);
-            delete this._container;
-        }
-    },
-    _create: function() {
-        if(this._container) {
-            return;
-        }
+    }
 
-        var el = document.createElement('div');
-        el.classList.add(elem('tooltip'));
-        el.innerHTML = jshtml([{e: 'tooltip-text'}, {e: 'tooltip-tail'}]);
+    _create() {
+        if (this._dom) { return; }
+
+        const
+            el = document.createElement('div'),
+            parent = this.parent,
+            block = parent._name;
+
+        el.classList.add(parent.e('tooltip'));
+        el.innerHTML = jstohtml([
+            {b: block, e: 'tooltip-text'},
+            {b: block, e: 'tooltip-tail'}
+        ]);
 
         document.body.appendChild(el);
 
-        this._container = el;
+        this._dom = el;
     }
-});
+
+    destroy() {
+        if (this._dom) {
+            this.hide();
+            document.body.removeChild(this._dom);
+            delete this._dom;
+        }
+    }
+}
+
+Calendula.addExtension(Tooltip);

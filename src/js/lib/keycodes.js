@@ -1,4 +1,4 @@
-var keyCodes = {
+export default {
     ESC: 27,
     PAGE_DOWN: 34,
     PAGE_UP: 33,

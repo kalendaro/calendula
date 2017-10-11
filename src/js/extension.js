@@ -1,31 +1,29 @@
-Cln.extend(Cln.prototype, {
+import Calendula from './calendula';
+
+Calendula.extend(Calendula.prototype, {
     _initExtensions: function() {
-        Cln._exts.forEach(function(ext) {
-            var name = ext[0],
-                Constr = ext[1] || function() {},
-                prot = ext[2];
-
-            Cln.extend(Constr.prototype, prot);
-
-            this[name] = new Constr();
-
-            var obj = this[name];
+        Calendula._exts.forEach(function(Ext) {
+            var name = this._getExtensionName(Ext);
+            var obj = new Ext();
             obj.parent = this;
-            obj.init && obj.init(this._data, this._container);
+            obj.init && obj.init(this._data, this._dom);
+            this[name] = obj;
         }, this);
     },
+    _getExtensionName: function(ext) {
+        return ext.name[0].toLowerCase() + ext.name.substr(1);
+    },
     _removeExtensions: function() {
-        Cln._exts.forEach(function(ext) {
-            var name = ext[0];
-
+        Calendula._exts.forEach(function(ext) {
+            var name = this._getExtensionName(ext);
             this[name].destroy();
             delete this[name];
         }, this);
     }
 });
 
-Cln._exts = [];
+Calendula._exts = [];
 
-Cln.addExtension = function(name, constr, prot) {
-    Cln._exts.push([name, constr, prot]);
+Calendula.addExtension = function(klass) {
+    Calendula._exts.push(klass);
 };

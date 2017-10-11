@@ -1,4 +1,8 @@
-Cln.extend(Cln, {
+'use strict';
+
+import Calendula from './calendula';
+
+Calendula.extend(Calendula, {
     _locales: [],
     _texts: {},
     /**
@@ -10,7 +14,7 @@ Cln.extend(Cln, {
         this._locales.push(locale);
         this._texts[locale] = texts;
         
-        if(texts.def) {
+        if (texts.def) {
             this._defaultLocale = locale;
         }
     }
@@ -18,9 +22,10 @@ Cln.extend(Cln, {
 
 /**
  * Get text by id for current locale.
+ *
  * @param {string} id
- * @return {*}
+ * @returns {*}
  */
-Cln.prototype.text = function(id) {
-    return Cln._texts[this._data.locale][id];
+Calendula.prototype.text = function(id) {
+    return Calendula._texts[this._data.locale][id];
 };
