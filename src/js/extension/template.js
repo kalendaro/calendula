@@ -1,6 +1,8 @@
-/*
+'use strict';
+
+/**
  * Extension: Template
-*/
+ */
 import mdate from '../lib/date';
 import Calendula from '../calendula';
 import jstohtml from 'jstohtml';
@@ -18,7 +20,7 @@ export default class Template {
     get(name) {
         return jstohtml(this[name]());
     }
-    
+
     /**
      * Template: days
      *
@@ -84,10 +86,10 @@ export default class Template {
 
         let row = this._monthFirstRow(data, m, y);
         const result = this._daysMonth(data, m, y, row);
-            
+
         for (let day = 1; date.getMonth() === m; date.setDate(++day)) {
             let title = '';
-            
+
             const dateTs = +date,
                 mods = {},
                 weekday = date.getDay(),
@@ -146,13 +148,13 @@ export default class Template {
 
         return result;
     }
-    
+
     _todayAt12() {
         const current = new Date();
         current.setHours(12, 0, 0, 0);
         return current.getTime();
     }
-    
+
     _monthFirstRow(data, m, y) {
         const dayIndex = data.dayNames[data.weekday];
 
@@ -168,7 +170,7 @@ export default class Template {
             ]
         }
     }
-    
+
     _daysMonth(data, m, y, content) {
         const dayIndex = data.dayNames[data.weekday];
 
@@ -215,7 +217,7 @@ export default class Template {
 
         return buf;
     }
-    
+
     /**
      * Template: months
      *
@@ -241,18 +243,18 @@ export default class Template {
 
         return buf;
     }
-    
+
     /**
      * Template: main
      *
      * @returns {Array}
      */
     main() {
-        const 
+        const
             parent = this.parent,
             dayNames = parent.text('dayNames') || [],
             bufDayNames = [];
-            
+
         let weekday = parent.text('firstWeekday') || SUNDAY;
 
         parent.text('shortDayNames').forEach(function(el, i, data) {
@@ -329,7 +331,7 @@ export default class Template {
     _getTs(d) {
         return d.year ? new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime() : null;
     }
-    
+
     destroy() {}
 }
 

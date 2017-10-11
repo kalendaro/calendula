@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Extension: Timeout
  */
@@ -31,7 +33,7 @@ export default class Timeout {
 
         return id;
     }
-    
+
     /**
      * Clear timeout.
      *
@@ -57,7 +59,7 @@ export default class Timeout {
                 buf.splice(index, 1);
             }
         }
-        
+
         return this;
     }
 
@@ -86,7 +88,7 @@ export default class Timeout {
         }, this);
 
         this._buf = ns ? newBuf : [];
-        
+
         return this;
     }
 

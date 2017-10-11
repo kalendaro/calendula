@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Extension: Title
  */
@@ -6,16 +8,8 @@ import obj from '../lib/object';
 import Calendula from '../calendula';
 
 export default class Title {
-    constructor() {
+    constructor(data) {
         this._title = {};
-    }
-
-    /**
-     * Initialize title.
-     *
-     * @param {Object} data
-     */
-    init(data) {
         this.set(data.title);
     }
 
@@ -37,8 +31,8 @@ export default class Title {
      */
     set(data) {
         if (Array.isArray(data)) {
-            data.forEach(function(el) {
-                this._set(el);
+            data.forEach(function(item) {
+                this._set(item);
             }, this);
         } else if (obj.isPlainObj(data)) {
             this._set(data);

@@ -1,3 +1,5 @@
+'use strict';
+
 import Calendula from '../calendula';
 
 Calendula.extend(Calendula.prototype, {
@@ -54,7 +56,7 @@ Calendula.extend(Calendula.prototype, {
                 dom.classList.remove(cl);
             }
         });
-        
+
         return this;
     },
 
@@ -69,7 +71,7 @@ Calendula.extend(Calendula.prototype, {
         const elem = this.getElemName(dom);
         this.delMod(dom, m);
         dom.classList.add(elem ? this.e(elem, m, val) : this.m(m, val));
-        
+
         return this;
     },
 

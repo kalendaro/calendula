@@ -1,3 +1,5 @@
+'use strict';
+
 export {default as default} from './calendula';
 
 import './locale';

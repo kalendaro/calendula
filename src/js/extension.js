@@ -1,13 +1,13 @@
+'use strict';
+
 import Calendula from './calendula';
 
 Calendula.extend(Calendula.prototype, {
     _initExtensions: function() {
         Calendula._exts.forEach(function(Ext) {
-            var name = this._getExtensionName(Ext);
-            var obj = new Ext();
+            var obj = new Ext(this._data, this._dom);
             obj.parent = this;
-            obj.init && obj.init(this._data, this._dom);
-            this[name] = obj;
+            this[this._getExtensionName(Ext)] = obj;
         }, this);
     },
     _getExtensionName: function(ext) {

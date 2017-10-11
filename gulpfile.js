@@ -61,7 +61,6 @@ gulp.task('js', function() {
 gulp.task('jsMin', function() {
     return gulp.src('./dist/calendula.js')
         .pipe($.concat('calendula.min.js'))
-//        .pipe($.babel())
         .pipe($.uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });

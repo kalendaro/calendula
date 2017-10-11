@@ -1,3 +1,5 @@
+'use strict';
+
 import './dom-event';
 import './em';
 import './event';
