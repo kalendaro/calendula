@@ -6,32 +6,30 @@ import obj from './lib/object';
 import keyCodes from './lib/keycodes';
 
 export default class Calendula {
-    constructor(data) {
-        data = Calendula.extend({}, data || {});
-
+    constructor(rawParams) {
         const
-            years = this._prepareYears(data.years),
-            d = Calendula.extend(data, {
-                autocloseable: obj.isUndefined(data.autocloseable) ? true : data.autocloseable,
-                closeAfterSelection: obj.isUndefined(data.closeAfterSelection) ? true : data.closeAfterSelection,
-                locale: data.locale || Calendula._defaultLocale,
-                max: mdate.parseDateToObj(data.max),
-                min: mdate.parseDateToObj(data.min),
-                showOn: data.showOn || 'click',
-                theme: data.theme || 'default',
-                _startYear: years.start,
-                _endYear: years.end
-            });
+            params = Calendula.extend({}, rawParams || {}),
+            years = this._prepareYears(params.years);
 
-        this._data = d;
+        this._data = Calendula.extend(params, {
+            autocloseable: obj.isUndefined(params.autocloseable) ? true : params.autocloseable,
+            closeAfterSelection: obj.isUndefined(params.closeAfterSelection) ? true : params.closeAfterSelection,
+            locale: params.locale || Calendula._defaultLocale,
+            max: mdate.parseDateToObj(params.max),
+            min: mdate.parseDateToObj(params.min),
+            showOn: params.showOn || 'click',
+            theme: params.theme || 'default',
+            _startYear: years.start,
+            _endYear: years.end
+        });
 
         this._name = 'calendula';
 
         this._initExtensions();
 
-        this.val(d.value);
+        this.val(this._data.value);
 
-        this._addSwitcherEvents(d.showOn);
+        this._addSwitcherEvents(this._data.showOn);
     }
 
     /**
@@ -161,20 +159,13 @@ export default class Calendula {
      * @returns {*}
      */
     setting(name, value) {
-        const
-            d = this._data,
-            dom = this._dom,
-            rebuild = {
-                min: true,
-                max: true,
-                locale: true
-            };
+        const dom = this._dom;
 
         if (arguments.length === 1) {
-            return d[name];
+            return this._data[name];
         }
 
-        d[name] = ['min', 'max', 'value'].indexOf(name) > -1 ? mdate.parseDateToObj(value) : value;
+        this._data[name] = ['min', 'max', 'value'].indexOf(name) > -1 ? mdate.parseDateToObj(value) : value;
 
         if (name === 'showOn') {
             this._addSwitcherEvents(value);
@@ -195,7 +186,7 @@ export default class Calendula {
                 this.isOpened() && this._position(value);
             }
 
-            if (rebuild[name]) {
+            if ({min: true, max: true, locale: true}[name]) {
                 this._rebuild();
             }
         }
@@ -207,23 +198,21 @@ export default class Calendula {
      * Destroy the datepicker.
      */
     destroy() {
-        if (this._isInited) {
-            this.close();
+        if (!this._isInited) { return; }
 
-            this._removeExtensions();
+        this.close();
 
-            document.body.removeChild(this._dom);
+        this._removeExtensions();
 
-            this._data = null;
-            this._dom = null;
-            this._isInited = null;
-        }
+        document.body.removeChild(this._dom);
+
+        this._data = null;
+        this._dom = null;
+        this._isInited = null;
     }
 
     _init() {
-        if (this._isInited) {
-            return;
-        }
+        if (this._isInited) { return; }
 
         this._isInited = true;
 
@@ -386,12 +375,12 @@ export default class Calendula {
     }
 
     _current() {
-        const d = new Date();
+        const date = new Date();
 
         return {
-            day: d.getDate(),
-            month: d.getMonth(),
-            year: d.getFullYear()
+            day: date.getDate(),
+            month: date.getMonth(),
+            year: date.getFullYear()
         };
     }
 
@@ -458,9 +447,7 @@ export default class Calendula {
 
     _openedEvents() {
         this.domEvent.on(document, 'click', (e) => {
-            if (e.button || !this.setting('autocloseable')) {
-                return;
-            }
+            if (e.button || !this.setting('autocloseable')) { return; }
 
             if (e.target !== this.setting('switcher') && !this._intoContainer(e.target)) {
                 this.close();
@@ -499,9 +486,7 @@ export default class Calendula {
                 }
             }, 'open')
             .on(this._dom, 'click', e => {
-                if (e.button) {
-                    return;
-                }
+                if (e.button) { return; }
 
                 this.tooltip.hide();
             }, 'open');
@@ -510,29 +495,20 @@ export default class Calendula {
             days = this.findElem('days'),
             months = this.findElem('months'),
             years = this.findElem('years'),
-            getK = function(e) {
-                var k = 0;
-                if (e.deltaY > 0) {
-                    k = 1;
-                } else if (e.deltaY < 0) {
-                    k = -1;
-                }
-
-                return k;
-            };
+            getDelta = function(e) { return e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0; };
 
         this._onwheelmonths = e => {
-            const k = getK(e);
-            if (k) {
-                this._monthSelector(this._currentDate.month + k, true);
+            const delta = getDelta(e);
+            if (delta) {
+                this._monthSelector(this._currentDate.month + delta, true);
                 e.preventDefault();
             }
         };
 
         this._onwheelyears = e => {
-            const k = getK(e);
-            if (k) {
-                this._yearSelector(this._currentDate.year + k, true);
+            const delta = getDelta(e);
+            if (delta) {
+                this._yearSelector(this._currentDate.year + delta, true);
                 e.preventDefault();
             }
         };
@@ -769,7 +745,7 @@ export default class Calendula {
         }
 
         n = 1;
-        for(let c = month + 2; c <= Calendula.MAX_MONTH && n < this._maxColor; c++, n++) {
+        for (let c = month + 2; c <= Calendula.MAX_MONTH && n < this._maxColor; c++, n++) {
             this.setMod(months[c], 'color', n);
         }
     }
@@ -801,14 +777,14 @@ export default class Calendula {
     _prepareYears(y) {
         const current = this._current();
         let
-            buf,
+            buffer,
             startYear,
             endYear;
 
         if (obj.isString(y)) {
-            buf = y.trim().split(/[:,; ]/);
-            startYear = parseInt(buf[0], 10);
-            endYear = parseInt(buf[1], 10);
+            buffer = y.trim().split(/[:,; ]/);
+            startYear = parseInt(buffer[0], 10);
+            endYear = parseInt(buffer[1], 10);
 
             if (!isNaN(startYear) && !isNaN(endYear)) {
                 if (Math.abs(startYear) < 1000) {
@@ -828,20 +804,20 @@ export default class Calendula {
     }
 
     _updateSelection() {
-        const elSelected = this.findElem('day', 'selected');
-        if (elSelected) {
-            this.delMod(elSelected, 'selected');
+        const daySelected = this.findElem('day', 'selected');
+        if (daySelected) {
+            this.delMod(daySelected, 'selected');
         }
 
         if (this._currentDate.year === this._val.year) {
             const months = this.findElemAll('days-month');
             if (months && months[this._val.month]) {
                 const
-                    el = this.findElemAllContext(months[this._val.month], 'day'),
-                    d = this._val.day - 1;
+                    elem = this.findElemAllContext(months[this._val.month], 'day'),
+                    day = this._val.day - 1;
 
-                if (el && el[d]) {
-                    this.setMod(el[d], 'selected');
+                if (elem && elem[day]) {
+                    this.setMod(elem[day], 'selected');
                 }
             }
         }
@@ -862,9 +838,9 @@ export default class Calendula {
 
         if (switcher) {
             const tagName = switcher.tagName.toLowerCase();
-            events.forEach(el => {
-                this.domEvent.on(switcher, el, () => {
-                    if (openedTagNames.indexOf(tagName) !== -1 || openedEvents.indexOf(el) !== -1) {
+            events.forEach(item => {
+                this.domEvent.on(switcher, item, () => {
+                    if (openedTagNames.indexOf(tagName) !== -1 || openedEvents.indexOf(item) !== -1) {
                         this.open();
                     } else {
                         this.toggle();
@@ -885,15 +861,15 @@ export default class Calendula {
 
     _updateSwitcher() {
         const
-            el = this.setting('switcher'),
+            elem = this.setting('switcher'),
             text = this._switcherText();
 
-        if (el) {
-            let tagName = el.tagName.toLowerCase();
+        if (elem) {
+            let tagName = elem.tagName.toLowerCase();
             if (tagName === 'input' || tagName === 'textarea') {
-                el.value = text;
+                elem.value = text;
             } else {
-                el.innerHTML = text;
+                elem.innerHTML = text;
             }
         }
     }

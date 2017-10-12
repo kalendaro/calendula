@@ -32,7 +32,7 @@ var MDate = {
         let
             date = null,
             match,
-            buf;
+            buffer;
 
         if (value) {
             if (obj.isString(value)) {
@@ -42,16 +42,16 @@ var MDate = {
 
                 match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
                 if (match) {
-                        buf = [match[3], match[2], match[1]];
+                        buffer = [match[3], match[2], match[1]];
                 } else {
                     match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
                     if (match) {
-                        buf = [match[1], match[2], match[3]];
+                        buffer = [match[1], match[2], match[3]];
                     }
                 }
 
-                if (buf) {
-                    date = new Date(parseInt(buf[2], 10), parseInt(buf[1] - 1, 10), parseInt(buf[0], 10));
+                if (buffer) {
+                    date = new Date(parseInt(buffer[2], 10), parseInt(buffer[1] - 1, 10), parseInt(buffer[0], 10));
                 }
             } else if (obj.isObject(value)) {
                 if (value instanceof Date) {

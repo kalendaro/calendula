@@ -26,7 +26,9 @@ Calendula.extend(Calendula, {
 Calendula.prototype.getHoliday = function(day, month, year) {
     const
         locale = this._data.locale,
-        c = Calendula._holidays;
+        holidays = Calendula._holidays;
 
-    return c && c[locale] && c[locale][year] ? c[locale][year][day + '-' + (month + 1)] : undefined;
+    return holidays && holidays[locale] && holidays[locale][year] ?
+        holidays[locale][year][day + '-' + (month + 1)] :
+        undefined;
 };

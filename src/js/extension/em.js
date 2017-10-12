@@ -2,40 +2,44 @@
 
 import Calendula from '../calendula';
 
+function bem(b, e, m, val) {
+    return b + '__' + e + (m ? '_' + m + (val === '' ? '' : '_' + val) : '');
+}
+
 Calendula.extend(Calendula.prototype, {
     /**
      * Build CSS class for element.
      *
-     * @param {string} name
+     * @param {string} e
      * @param {string} [m]
      * @param {string} [val]
      * @returns {string}
      */
-    e(name, m, val) {
+    e(e, m, val) {
         if (val === null || val === false) {
             m = '';
         } else if (val === true || val === undefined) {
             val = '';
         }
 
-        return this._name + '__' + name + (m ? '_' + m + (val === '' ? '' : '_' + val) : '');
+        return bem(this._name, e, m, val);
     },
 
     /**
      * Build CSS class for mod.
      *
-     * @param {string} name
+     * @param {string} m
      * @param {string} [val]
      * @returns {string}
      */
-    m(name, val) {
+    m(m, val) {
         if (val === null || val === false) {
-            name = '';
+            m = '';
         } else if (val === true || val === undefined) {
             val = '';
         }
 
-        return this._name + (name ? '_' + name + (val === '' ? '' : '_' + val) : '');
+        return bem(this._name, '', m, val);
     },
 
     /**
@@ -47,8 +51,8 @@ Calendula.extend(Calendula.prototype, {
      */
     delMod(dom, m) {
         const
-            elem = this.getElemName(dom),
-            selector = elem ? this.e(elem, m) : this.m(m),
+            e = this.getElemName(dom),
+            selector = e ? this.e(e, m) : this.m(m),
             classes = (dom.className || '').split(' ');
 
         classes.forEach(function(cl) {
@@ -68,9 +72,9 @@ Calendula.extend(Calendula.prototype, {
      * @returns {this}
      */
     setMod(dom, m, val) {
-        const elem = this.getElemName(dom);
+        const e = this.getElemName(dom);
         this.delMod(dom, m);
-        dom.classList.add(elem ? this.e(elem, m, val) : this.m(m, val));
+        dom.classList.add(e ? this.e(e, m, val) : this.m(m, val));
 
         return this;
     },
@@ -84,8 +88,8 @@ Calendula.extend(Calendula.prototype, {
      * @returns {boolean}
      */
     hasMod(dom, m, val) {
-        const elem = this.getElemName(dom);
-        return dom.classList.contains(elem ? this.e(elem, m, val) : this.m(m, val));
+        const e = this.getElemName(dom);
+        return dom.classList.contains(e ? this.e(e, m, val) : this.m(m, val));
     },
 
     /**
@@ -95,8 +99,8 @@ Calendula.extend(Calendula.prototype, {
      * @param {string} elem
      * @returns {boolean}
      */
-    hasElem(dom, elem) {
-        return dom.classList.contains(this.e(elem));
+    hasElem(dom, e) {
+        return dom.classList.contains(this.e(e));
     },
 
     /**

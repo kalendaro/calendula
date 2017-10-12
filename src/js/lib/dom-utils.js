@@ -62,19 +62,19 @@ var DomUtils = {
      */
     setTranslateY: (function() {
         const div = document.createElement('div');
-        let prop = false;
+        let property = false;
 
-        ['Moz', 'Webkit', 'O', 'ms', ''].forEach(function(el) {
-            const propBuf = el + (el ? 'T' : 't') + 'ransform';
-            if (propBuf in div.style) {
-                prop = propBuf;
+        ['Moz', 'Webkit', 'O', 'ms', ''].forEach(function(item) {
+            const propertyBuffer = item + (item ? 'T' : 't') + 'ransform';
+            if (propertyBuffer in div.style) {
+                property = propertyBuffer;
             }
         });
 
-        return prop === false ? function(el, top) {
-            el.style.top = obj.isNumber(top) ? top + 'px' : top;
-        } : function(el, top) {
-            el.style[prop] = 'translateY(' + (obj.isNumber(top) ? top + 'px' : top) + ')';
+        return property === false ? function(elem, top) {
+            elem.style.top = obj.isNumber(top) ? top + 'px' : top;
+        } : function(elem, top) {
+            elem.style[property] = 'translateY(' + (obj.isNumber(top) ? top + 'px' : top) + ')';
         };
     })()
 };

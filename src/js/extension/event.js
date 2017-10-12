@@ -7,7 +7,7 @@ import Calendula from '../calendula';
 
 export default class Event {
     constructor() {
-        this._buf = [];
+        this._buffer = [];
     }
 
     /**
@@ -19,7 +19,7 @@ export default class Event {
      */
     on(type, callback) {
         if (type && callback) {
-            this._buf.push({
+            this._buffer.push({
                 type: type,
                 callback: callback
             });
@@ -36,11 +36,10 @@ export default class Event {
      * @returns {Event} this
      */
     off(type, callback) {
-        const buf = this._buf;
-
-        for (let i = 0; i < buf.length; i++) {
-            if (callback === buf[i].callback && type === buf[i].type) {
-                buf.splice(i, 1);
+        for (let i = 0; i < this._buffer.length; i++) {
+            const item = this._buffer[i];
+            if (callback === item.callback && type === item.type) {
+                this._buffer.splice(i, 1);
                 i--;
             }
         }
@@ -56,11 +55,10 @@ export default class Event {
      * @returns {Event} this
      */
     trigger(type, data) {
-        const buf = this._buf;
-
-        for (let i = 0; i < buf.length; i++) {
-            if(type === buf[i].type) {
-                buf[i].callback.call(this, {type: type}, data);
+        for (let i = 0; i < this._buffer.length; i++) {
+            const item = this._buffer[i];
+            if (type === item.type) {
+                item.callback.call(this, {type: type}, data);
             }
         }
 

@@ -31,9 +31,7 @@ export default class Title {
      */
     set(data) {
         if (Array.isArray(data)) {
-            data.forEach(function(item) {
-                this._set(item);
-            }, this);
+            data.forEach(item => this._set(item));
         } else if (obj.isPlainObj(data)) {
             this._set(data);
         }
@@ -48,10 +46,10 @@ export default class Title {
             this._title[iso] = {text: data.text, color: data.color};
 
             if (parent._isInited) {
-                const el = parent._findDayByDate(mdate.parseDateToObj(data.date));
-                el && parent
-                    .setMod(el, 'has-title')
-                    .setMod(el, 'title-color', data.color);
+                const day = parent._findDayByDate(mdate.parseDateToObj(data.date));
+                day && parent
+                    .setMod(day, 'has-title')
+                    .setMod(day, 'title-color', data.color);
             }
         }
     }
@@ -63,9 +61,7 @@ export default class Title {
      */
     remove(date) {
         if (Array.isArray(date)) {
-            date.forEach(function(el) {
-                this._remove(el);
-            }, this);
+            date.forEach(item => this._remove(item));
         } else {
             this._remove(date);
         }

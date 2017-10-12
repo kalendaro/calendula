@@ -4,7 +4,7 @@ const
     gulp = require('gulp'),
     del = require('del'),
     $ = require('gulp-load-plugins')(),
-    helpers = require('./gulp/helpers'),
+    generator = require('./gulp/generator'),
     babel = require('rollup-plugin-babel'),
     commonjs = require('rollup-plugin-commonjs'),
     nodeResolve = require('rollup-plugin-node-resolve');
@@ -67,8 +67,8 @@ gulp.task('jsMin', ['js'], function() {
         .pipe(gulp.dest(destDir));
 });
 
-gulp.task('jsLocales', ['clean'], function() { helpers.generateLocales(destDir); });
-gulp.task('jsHolidays', ['clean'], function() { helpers.generateHolidays(destDir); });
+gulp.task('jsLocales', ['clean'], function() { generator.generateLocales(destDir); });
+gulp.task('jsHolidays', ['clean'], function() { generator.generateHolidays(destDir); });
 
 gulp.task('jsAll', ['js', 'jsHolidays', 'jsLocales'], function() {
     return gulp.src([].concat('./dist/calendula.js', paths.jsAll))

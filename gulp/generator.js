@@ -1,3 +1,4 @@
+/*eslint no-console: 0 */
 const
     fs = require('fs'),
     path = require('path'),

@@ -7,7 +7,7 @@ import Calendula from '../calendula';
 
 export default class DomEvent {
     constructor() {
-        this._buf = [];
+        this._buffer = [];
     }
 
     /**
@@ -23,7 +23,7 @@ export default class DomEvent {
         if (elem && type && callback) {
             elem.addEventListener(type, callback, false);
 
-            this._buf.push({
+            this._buffer.push({
                 elem: elem,
                 type: type,
                 callback: callback,
@@ -44,13 +44,11 @@ export default class DomEvent {
      * @returns {DomEvent} this
      */
     off(elem, type, callback, ns) {
-        const buf = this._buf;
-
-        for (let i = 0; i < buf.length; i++) {
-            const el = buf[i];
-            if (el && el.elem === elem && el.callback === callback && el.type === type && el.ns === ns) {
+        for (let i = 0; i < this._buffer.length; i++) {
+            const item = this._buffer[i];
+            if (item && item.elem === elem && item.callback === callback && item.type === type && item.ns === ns) {
                 elem.removeEventListener(type, callback, false);
-                buf.splice(i, 1);
+                this._buffer.splice(i, 1);
                 i--;
             }
         }
@@ -65,24 +63,22 @@ export default class DomEvent {
      * @returns {DomEvent} this
      */
     offAll(ns) {
-        const buf = this._buf;
-
-        for (let i = 0; i < buf.length; i++) {
-            const el = buf[i];
+        for (let i = 0; i < this._buffer.length; i++) {
+            const item = this._buffer[i];
 
             if (ns) {
-                if (ns === el.ns) {
-                    el.elem.removeEventListener(el.type, el.callback, false);
-                    buf.splice(i, 1);
+                if (ns === item.ns) {
+                    item.elem.removeEventListener(item.type, item.callback, false);
+                    this._buffer.splice(i, 1);
                     i--;
                 }
             } else {
-                el.elem.removeEventListener(el.type, el.callback, false);
+                item.elem.removeEventListener(item.type, item.callback, false);
             }
         }
 
         if (!ns) {
-            this._buf = [];
+            this._buffer = [];
         }
 
         return this;
@@ -91,7 +87,7 @@ export default class DomEvent {
     destroy() {
         this.offAll();
 
-        delete this._buf;
+        delete this._buffer;
     }
 }
 

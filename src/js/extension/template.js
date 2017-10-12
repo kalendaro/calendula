@@ -331,8 +331,6 @@ export default class Template {
     _getTs(d) {
         return d.year ? new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime() : null;
     }
-
-    destroy() {}
 }
 
 Calendula.addExtension(Template);

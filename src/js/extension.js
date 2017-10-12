@@ -16,7 +16,7 @@ Calendula.extend(Calendula.prototype, {
     _removeExtensions: function() {
         Calendula._exts.forEach(function(ext) {
             const name = this._getExtensionName(ext);
-            this[name].destroy();
+            this[name].destroy && this[name].destroy();
             delete this[name];
         }, this);
     }

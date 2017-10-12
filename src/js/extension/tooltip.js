@@ -59,19 +59,19 @@ export default class Tooltip {
         if (this._dom) { return; }
 
         const
-            el = document.createElement('div'),
+            elem = document.createElement('div'),
             parent = this.parent,
-            block = parent._name;
+            b = parent._name;
 
-        el.classList.add(parent.e('tooltip'));
-        el.innerHTML = jstohtml([
-            {b: block, e: 'tooltip-text'},
-            {b: block, e: 'tooltip-tail'}
+        elem.classList.add(parent.e('tooltip'));
+        elem.innerHTML = jstohtml([
+            {b, e: 'tooltip-text'},
+            {b, e: 'tooltip-tail'}
         ]);
 
-        document.body.appendChild(el);
+        document.body.appendChild(elem);
 
-        this._dom = el;
+        this._dom = elem;
     }
 
     destroy() {

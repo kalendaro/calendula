@@ -7,7 +7,7 @@ import Calendula from '../calendula';
 
 export default class Timeout {
     constructor() {
-        this._buf = [];
+        this._buffer = [];
     }
 
     /**
@@ -19,17 +19,12 @@ export default class Timeout {
      * @returns {Timeout} this
      */
     set(callback, time, ns) {
-        const
-            that = this,
-            id = setTimeout(function() {
-                callback();
-                that.clear(id);
-            }, time);
+        const id = setTimeout(() => {
+            callback();
+            this.clear(id);
+        }, time);
 
-        this._buf.push({
-            id: id,
-            ns: ns
-        });
+        this._buffer.push({id, ns});
 
         return id;
     }
@@ -41,12 +36,11 @@ export default class Timeout {
      * @returns {Timeout} this
      */
     clear(id) {
-        const buf = this._buf;
         let index = -1;
 
-        if (buf) {
-            buf.some(function(el, i) {
-                if (el.id === id) {
+        if (this._buffer) {
+            this._buffer.some(function(item, i) {
+                if (item.id === id) {
                     index = i;
                     return true;
                 }
@@ -54,9 +48,9 @@ export default class Timeout {
                 return false;
             });
 
-            if(index >= 0) {
-                clearTimeout(buf[index].id);
-                buf.splice(index, 1);
+            if (index >= 0) {
+                clearTimeout(this._buffer[index].id);
+                this._buffer.splice(index, 1);
             }
         }
 
@@ -71,23 +65,23 @@ export default class Timeout {
      */
     clearAll(ns) {
         const
-            oldBuf = this._buf,
-            newBuf = [],
+            oldBuffer = this._buffer,
+            newBuffer = [],
             nsArray = Array.isArray(ns) ? ns : [ns];
 
-        oldBuf.forEach(function(el) {
+        oldBuffer.forEach(item => {
             if (ns) {
-                if (nsArray.indexOf(el.ns) !== -1) {
-                    clearTimeout(el.id);
+                if (nsArray.indexOf(item.ns) !== -1) {
+                    clearTimeout(item.id);
                 } else {
-                    newBuf.push(el);
+                    newBuffer.push(item);
                 }
             } else {
-                clearTimeout(el.id);
+                clearTimeout(item.id);
             }
-        }, this);
+        });
 
-        this._buf = ns ? newBuf : [];
+        this._buffer = ns ? newBuffer : [];
 
         return this;
     }
@@ -95,7 +89,7 @@ export default class Timeout {
     destroy() {
         this.clearAll();
 
-        delete this._buf;
+        delete this._buffer;
     }
 }
 
