@@ -96,7 +96,7 @@ Calendula.extend(Calendula.prototype, {
      * Has a element?
      *
      * @param {DOMElement} dom
-     * @param {string} elem
+     * @param {string} e
      * @returns {boolean}
      */
     hasElem(dom, e) {
@@ -129,7 +129,7 @@ Calendula.extend(Calendula.prototype, {
     /**
      * Find a element by name in context.
      *
-     * @param {DOMElement} e
+     * @param {DOMElement} dom
      * @param {DOMElement} e
      * @param {string} m
      * @param {string|boolean} [val]
@@ -142,13 +142,13 @@ Calendula.extend(Calendula.prototype, {
     /**
      * Find all elements by name.
      *
-     * @param {DOMElement} el
+     * @param {DOMElement} dom
      * @param {string} m
      * @param {string|boolean} [val]
      * @returns {string}
      */
-    findElemAll(e, m, val) {
-        return this._dom.querySelectorAll('.' + this.e(e, m, val));
+    findElemAll(dom, m, val) {
+        return this._dom.querySelectorAll('.' + this.e(dom, m, val));
     },
 
     /**

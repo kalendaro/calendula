@@ -182,7 +182,7 @@ export default class Template {
                 {
                     t: 'table',
                     e: 'days-table',
-                    c: [content]
+                    c: [ content ]
                 }
             ]
         };
@@ -213,7 +213,7 @@ export default class Template {
                 'data-year': i,
                 c: i
             });
-         }
+        }
 
         return buf;
     }
@@ -280,24 +280,23 @@ export default class Template {
                 b: this.parent._name,
                 e: 'container',
                 c: [{
-                        e: 'days',
-                        c: {
-                            e: 'days-container',
-                            c: this.days()
-                        }
-                    },
-                    {
-                        e: 'months',
-                        c: this.months()
-                    },
-                    {
-                        e: 'years',
-                        c: {
-                            e: 'years-container',
-                            c: this.years()
-                        }
+                    e: 'days',
+                    c: {
+                        e: 'days-container',
+                        c: this.days()
                     }
-                ]
+                },
+                {
+                    e: 'months',
+                    c: this.months()
+                },
+                {
+                    e: 'years',
+                    c: {
+                        e: 'years-container',
+                        c: this.years()
+                    }
+                }]
             }
         ];
     }

@@ -25,7 +25,7 @@ var DomUtils = {
     /**
      * Set position of element.
      *
-     * @param {DOMElement} el
+     * @param {DOMElement} elem
      * @param {Object} coords
      * @param {string|number} coords.left
      * @param {string|number} coords.top
@@ -38,7 +38,7 @@ var DomUtils = {
     /**
      * Set left for a DOM element.
      *
-     * @param {DOMElement} el
+     * @param {DOMElement} elem
      * @param {string|number} left
      */
     setLeft(elem, left) {

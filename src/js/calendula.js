@@ -260,7 +260,7 @@ export default class Calendula {
 
     _calcPosition(left, top, switcher) {
         const
-             offset = domUtils.getOffset(switcher),
+            offset = domUtils.getOffset(switcher),
             con = this._dom,
             conWidth = con.offsetWidth,
             conHeight = con.offsetHeight,
@@ -270,30 +270,30 @@ export default class Calendula {
         let x, y;
 
         if (obj.isString(left)) {
-            switch(left) {
+            switch (left) {
                 case 'left':
                     x = offsetLeft;
-                break;
+                    break;
                 case 'center':
                     x = offsetLeft + (switcher.offsetWidth - conWidth) / 2;
-                break;
+                    break;
                 case 'right':
                     x = offsetLeft + switcher.offsetWidth - conWidth;
-                break;
+                    break;
             }
         }
 
         if (obj.isString(top)) {
-            switch(top) {
+            switch (top) {
                 case 'top':
                     y = offsetTop - conHeight;
-                break;
+                    break;
                 case 'center':
                     y = offsetTop - (conHeight - switcher.offsetHeight) / 2;
-                break;
+                    break;
                 case 'bottom':
                     y = offsetTop + switcher.offsetHeight;
-                break;
+                    break;
             }
         }
 
@@ -305,7 +305,7 @@ export default class Calendula {
 
     _calcVisibleSquare(left, top, winArea) {
         const
-             conArea = {
+            conArea = {
                 x1: left,
                 y1: top,
                 x2: left + this._dom.offsetWidth,
@@ -434,7 +434,7 @@ export default class Calendula {
     _intoContainer(target) {
         let node = target;
 
-        while(node) {
+        while (node) {
             if (node === this._dom) {
                 return true;
             }
@@ -463,10 +463,10 @@ export default class Calendula {
             }, 'open')
             .on(document, 'keypress', e => {
                 var cd = this._currentDate;
-                switch(e.keyCode) {
+                switch (e.keyCode) {
                     case keyCodes.ESC:
                         this.close();
-                    break;
+                        break;
                     case keyCodes.PAGE_DOWN:
                         if (e.ctrlKey || e.altKey) {
                             this._monthSelector(cd.month + 1, true);
@@ -474,7 +474,7 @@ export default class Calendula {
                             this._yearSelector(cd.year + 1, true);
                         }
                         e.preventDefault();
-                    break;
+                        break;
                     case keyCodes.PAGE_UP:
                         if (e.ctrlKey || e.altKey) {
                             this._monthSelector(cd.month - 1, true);
@@ -482,7 +482,7 @@ export default class Calendula {
                             this._yearSelector(cd.year - 1, true);
                         }
                         e.preventDefault();
-                    break;
+                        break;
                 }
             }, 'open')
             .on(this._dom, 'click', e => {
@@ -765,7 +765,7 @@ export default class Calendula {
         }
 
         n = 1;
-        for(let c = year + 1; c <= this._data._endYear && n < this._maxColor; c++, n++) {
+        for (let c = year + 1; c <= this._data._endYear && n < this._maxColor; c++, n++) {
             this.setMod(years[c - startYear], 'color', n);
         }
     }
@@ -826,7 +826,7 @@ export default class Calendula {
     _addSwitcherEvents(showOn) {
         const
             switcher = this.setting('switcher'),
-            events = Array.isArray(showOn) ? showOn : [showOn || 'click'],
+            events = Array.isArray(showOn) ? showOn : [ showOn || 'click' ],
             openedTagNames = ['input', 'textarea'],
             openedEvents = ['focus', 'mouseover'];
 

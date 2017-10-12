@@ -3,8 +3,9 @@ import obj from './object';
 var MDate = {
     /**
      * Add a leading zero.
+     *
      * @param {number} value
-     * @return {string}
+     * @returns {string}
      */
     leadZero(value) {
         return (value < 10 ? '0' : '') + value;
@@ -42,7 +43,7 @@ var MDate = {
 
                 match = /^\s*(\d{4})[-/.](\d\d)(?:[-/.](\d\d))?\s*$/.exec(value);
                 if (match) {
-                        buffer = [match[3], match[2], match[1]];
+                    buffer = [match[3], match[2], match[1]];
                 } else {
                     match = /^\s*(\d{1,2})[-/.](\d{1,2})(?:[-/.](\d{4}|\d\d))?\s*$/.exec(value);
                     if (match) {

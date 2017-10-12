@@ -67,7 +67,7 @@ export default class Timeout {
         const
             oldBuffer = this._buffer,
             newBuffer = [],
-            nsArray = Array.isArray(ns) ? ns : [ns];
+            nsArray = Array.isArray(ns) ? ns : [ ns ];
 
         oldBuffer.forEach(item => {
             if (ns) {

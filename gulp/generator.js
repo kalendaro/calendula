@@ -15,7 +15,7 @@ module.exports = {
 
                 try {
                     JSON.parse(text);
-                } catch(e) {
+                } catch (e) {
                     console.error(`${file} - invalid JSON format.`);
                     throw e;
                 }
@@ -35,7 +35,7 @@ module.exports = {
 
                 try {
                     JSON.parse(text);
-                } catch(e) {
+                } catch (e) {
                     console.error(`${file} - invalid JSON format.`);
                     throw e;
                 }

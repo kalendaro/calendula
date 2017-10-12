@@ -2,7 +2,7 @@ export default {
     /**
      * Is plain object?
      * @param {*} obj
-     * @return {boolean}
+     * @returns {boolean}
      */
     isPlainObj(obj) {
         return Object.prototype.toString.call(obj) === '[object Object]';
@@ -11,7 +11,7 @@ export default {
     /**
      * Is a string?
      * @param {*} obj
-     * @return {boolean}
+     * @returns {boolean}
      */
     isString(obj) {
         return typeof obj === 'string';
@@ -20,7 +20,7 @@ export default {
     /**
      * Is a number?
      * @param {*} obj
-     * @return {boolean}
+     * @returns {boolean}
      */
     isNumber(obj) {
         return typeof obj === 'number';
@@ -29,7 +29,7 @@ export default {
     /**
      * Is a object?
      * @param {*} obj
-     * @return {boolean}
+     * @returns {boolean}
      */
     isObject(obj) {
         return typeof obj === 'object';
@@ -38,10 +38,9 @@ export default {
     /**
      * Is a undefined?
      * @param {*} obj
-     * @return {boolean}
+     * @returns {boolean}
      */
     isUndefined(obj) {
         return typeof obj === 'undefined';
     }
 };
-
