@@ -4,7 +4,7 @@ const
     gulp = require('gulp'),
     del = require('del'),
     $ = require('gulp-load-plugins')(),
-    generator = require('./gulp/generator'),
+    helpers = require('./gulp/helpers'),
     babel = require('rollup-plugin-babel'),
     commonjs = require('rollup-plugin-commonjs'),
     nodeResolve = require('rollup-plugin-node-resolve');
@@ -25,8 +25,8 @@ const
     };
 
 const
-    jsTasks = ['js', 'jsAll', 'jsLocales', 'jsHolidays'],
-    cssTasks = ['css', 'cssAll', 'cssThemes'],
+    jsTasks = ['js', 'jsAll', 'jsMin', 'jsLocales', 'jsHolidays'],
+    cssTasks = ['css', 'cssAll', 'cssMin', 'cssThemes'],
     allTasks = [].concat(cssTasks, jsTasks);
 
 gulp.task('clean', function() {
@@ -40,8 +40,10 @@ gulp.task('js', [ 'clean' ], function() {
         .pipe($.rollup({
             allowRealFiles: true,
             input: paths.js,
-            format: 'umd',
-            name: 'Calendula',
+            output: {
+                format: 'umd',
+                name: 'Calendula'
+            },
             plugins: [
                 nodeResolve({
                     jsnext: true,
@@ -60,15 +62,9 @@ gulp.task('js', [ 'clean' ], function() {
         .pipe(gulp.dest(destDir));
 });
 
-gulp.task('jsMin', [ 'js' ], function() {
-    return gulp.src('./dist/calendula.js')
-        .pipe($.concat('calendula.min.js'))
-        .pipe($.uglify(uglifyOptions))
-        .pipe(gulp.dest(destDir));
-});
 
-gulp.task('jsLocales', [ 'clean' ], function() { generator.generateLocales(destDir); });
-gulp.task('jsHolidays', [ 'clean' ], function() { generator.generateHolidays(destDir); });
+gulp.task('jsLocales', [ 'clean' ], function() { helpers.generateLocales(destDir); });
+gulp.task('jsHolidays', [ 'clean' ], function() { helpers.generateHolidays(destDir); });
 
 gulp.task('jsAll', ['js', 'jsHolidays', 'jsLocales'], function() {
     return gulp.src([].concat('./dist/calendula.js', paths.jsAll))
@@ -77,10 +73,11 @@ gulp.task('jsAll', ['js', 'jsHolidays', 'jsLocales'], function() {
         .pipe(gulp.dest(destDir));
 });
 
-gulp.task('jsAllMin', ['js', 'jsHolidays', 'jsLocales'], function() {
-    return gulp.src([].concat('./dist/calendula.js', paths.jsAll))
-        .pipe($.concat('calendula.all.min.js'))
-        .pipe($.babel())
+gulp.task('jsMin', [ 'jsAll' ], function() {
+    return gulp.src(`${destDir}/*.js`)
+        .pipe($.rename(function(path) {
+            path.basename += '.min';
+        }))
         .pipe($.uglify(uglifyOptions))
         .pipe(gulp.dest(destDir));
 });
@@ -89,9 +86,7 @@ gulp.task('css', [ 'clean' ], function() {
     return gulp.src(paths.css)
         .pipe($.concat('calendula.styl'))
         .pipe($.stylus())
-        .pipe($.replace('calendula.css'))
-        .pipe($.autoprefixer(apBrowsers))
-        .pipe($.cleancss({keepBreaks: false}))
+        .pipe($.rename('calendula.css'))
         .pipe(gulp.dest(destDir));
 });
 
@@ -99,7 +94,15 @@ gulp.task('cssAll', [ 'cssThemes' ], function() {
     return gulp.src(paths.cssAll)
         .pipe($.concat('calendula.all.styl'))
         .pipe($.stylus())
-        .pipe($.replace('calendula.all.css'))
+        .pipe($.rename('calendula.all.css'))
+        .pipe(gulp.dest(destDir));
+});
+
+gulp.task('cssMin', [ 'cssAll' ], function() {
+    return gulp.src(`${destDir}/*.css`)
+        .pipe($.rename(function(path) {
+            path.basename += '.min';
+        }))
         .pipe($.autoprefixer(apBrowsers))
         .pipe($.cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
@@ -108,8 +111,6 @@ gulp.task('cssAll', [ 'cssThemes' ], function() {
 gulp.task('cssThemes', [ 'clean' ], function() {
     return gulp.src(paths.cssThemes)
         .pipe($.stylus())
-        .pipe($.autoprefixer(apBrowsers))
-        .pipe($.cleancss({keepBreaks: false}))
         .pipe(gulp.dest(destDir));
 });
 
