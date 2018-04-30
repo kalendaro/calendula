@@ -1,8 +1,8 @@
-# Calendula [![Build Status](https://img.shields.io/travis/hcodes/calendula.svg?style=flat)](https://travis-ci.org/hcodes/calendula) [![devDependency Status](https://img.shields.io/david/dev/hcodes/calendula.svg?style=flat)](https://david-dm.org/hcodes/calendula#info=devDependencies)
+# Calendula [![Build Status](https://img.shields.io/travis/kalendaro/calendula.svg?style=flat)](https://travis-ci.org/kalendaro/calendula) [![devDependency Status](https://img.shields.io/david/dev/kalendaro/calendula.svg?style=flat)](https://david-dm.org/kalendaro/calendula#info=devDependencies)
 
 Особенный календарь 📅 на JavaScript
 
-![Calendula](https://raw.githubusercontent.com/hcodes/calendula/master/examples/theme.default.png)
+![Calendula](https://raw.githubusercontent.com/kalendaro/calendula/master/examples/theme.default.png)
 
 Возможности:
 + эргономичный дизайн;
