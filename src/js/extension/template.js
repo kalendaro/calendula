@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Extension: Template
  */
@@ -120,7 +118,7 @@ export default class Template {
                 mods.minmax = true;
             }
 
-            var tt = parent.title.get(mdate.ymdToISO(y, m, day));
+            const tt = parent.title.get(mdate.ymdToISO(y, m, day));
             if (tt) {
                 mods['has-title'] = true;
                 mods['title-color'] = tt.color || 'default';
@@ -232,14 +230,14 @@ export default class Template {
             }
         ];
 
-        this.parent.text('months').forEach(function(el, i) {
+        this.parent.text('months').forEach((el, i) => {
             buf.push({
                 b: this.parent._name,
                 e: 'month',
                 'data-month': i,
                 c: el
             });
-        }, this);
+        });
 
         return buf;
     }
@@ -257,7 +255,7 @@ export default class Template {
 
         let weekday = parent.text('firstWeekday') || SUNDAY;
 
-        parent.text('shortDayNames').forEach(function(el, i, data) {
+        parent.text('shortDayNames').forEach((el, i, data) => {
             bufDayNames.push({
                 e: 'short-daynames-cell',
                 m: { n: weekday },

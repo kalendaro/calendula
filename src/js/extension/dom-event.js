@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Extension: DOM event
  */

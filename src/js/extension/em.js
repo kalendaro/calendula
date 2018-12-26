@@ -1,5 +1,3 @@
-'use strict';
-
 import Calendula from '../calendula';
 
 function bem(b, e, m, val) {
@@ -55,7 +53,7 @@ Calendula.extend(Calendula.prototype, {
             selector = e ? this.e(e, m) : this.m(m),
             classes = (dom.className || '').split(' ');
 
-        classes.forEach(function(cl) {
+        classes.forEach((cl) => {
             if (cl === selector || cl.search(selector + '_') !== -1) {
                 dom.classList.remove(cl);
             }

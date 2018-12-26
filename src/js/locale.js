@@ -1,5 +1,3 @@
-'use strict';
-
 import Calendula from './calendula';
 
 Calendula.extend(Calendula, {
@@ -10,10 +8,10 @@ Calendula.extend(Calendula, {
      * @param {string} locale
      * @param {Object} texts
      */
-    addLocale: function(locale, texts) {
+    addLocale(locale, texts) {
         this._locales.push(locale);
         this._texts[locale] = texts;
-        
+
         if (texts.def) {
             this._defaultLocale = locale;
         }
@@ -26,6 +24,6 @@ Calendula.extend(Calendula, {
  * @param {string} id
  * @returns {*}
  */
-Calendula.prototype.text = function(id) {
+Calendula.prototype.text = (id) => {
     return Calendula._texts[this._data.locale][id];
 };

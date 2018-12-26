@@ -1,5 +1,3 @@
-'use strict';
-
 import Calendula from './calendula';
 
 Calendula.extend(Calendula, {
@@ -23,7 +21,7 @@ Calendula.extend(Calendula, {
  * @param {number} year
  * @returns {number|undefined}
  */
-Calendula.prototype.getHoliday = function(day, month, year) {
+Calendula.prototype.getHoliday = (day, month, year) => {
     const
         locale = this._data.locale,
         holidays = Calendula._holidays;

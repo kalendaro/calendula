@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Extension: Timeout
  */
@@ -39,7 +37,7 @@ export default class Timeout {
         let index = -1;
 
         if (this._buffer) {
-            this._buffer.some(function(item, i) {
+            this._buffer.some((item, i) => {
                 if (item.id === id) {
                     index = i;
                     return true;

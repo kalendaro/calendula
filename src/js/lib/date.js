@@ -1,6 +1,6 @@
 import obj from './object';
 
-var MDate = {
+const MDate = {
     /**
      * Add a leading zero.
      *

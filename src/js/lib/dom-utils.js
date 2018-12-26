@@ -1,6 +1,6 @@
 import obj from './object';
 
-var DomUtils = {
+const DomUtils = {
     /**
      * Get offset of element.
      *
@@ -60,23 +60,9 @@ var DomUtils = {
      * @param {DOMElement} el
      * @param {string|number} top
      */
-    setTranslateY: (function() {
-        const div = document.createElement('div');
-        let property = false;
-
-        ['Moz', 'Webkit', 'O', 'ms', ''].forEach(function(item) {
-            const propertyBuffer = item + (item ? 'T' : 't') + 'ransform';
-            if (propertyBuffer in div.style) {
-                property = propertyBuffer;
-            }
-        });
-
-        return property === false ? function(elem, top) {
-            elem.style.top = obj.isNumber(top) ? top + 'px' : top;
-        } : function(elem, top) {
-            elem.style[property] = 'translateY(' + (obj.isNumber(top) ? top + 'px' : top) + ')';
-        };
-    })()
+    setTranslateY(el, top) {
+        el.style.top = 'translateY(' + (obj.isNumber(top) ? top + 'px' : top) + ')';
+    }
 };
 
 export default DomUtils;

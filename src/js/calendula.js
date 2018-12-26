@@ -1,5 +1,3 @@
-'use strict';
-
 import domUtils from './lib/dom-utils';
 import mdate from './lib/date.js';
 import obj from './lib/object';
@@ -311,7 +309,7 @@ export default class Calendula {
                 x2: left + this._dom.offsetWidth,
                 y2: top + this._dom.offsetHeight
             },
-            getIntersection = function(d1, d2, d3, d4) {
+            getIntersection = (d1, d2, d3, d4) => {
                 if (d2 <= d3 || d1 >= d4) {
                     return 0;
                 }
@@ -333,7 +331,7 @@ export default class Calendula {
             maxArea = -1,
             areaIndex = 0;
 
-        this._bestPositions.forEach(function(position, i) {
+        this._bestPositions.forEach((position, i) => {
             const
                 leftPos = position[0],
                 topPos = position[1];
@@ -351,7 +349,7 @@ export default class Calendula {
                     areaIndex = i;
                 }
             }
-        }, this);
+        });
 
         const bestPosition = this._bestPositions[areaIndex];
         return {
@@ -462,7 +460,7 @@ export default class Calendula {
                 this._onscroll();
             }, 'open')
             .on(document, 'keypress', e => {
-                var cd = this._currentDate;
+                const cd = this._currentDate;
                 switch (e.keyCode) {
                     case keyCodes.ESC:
                         this.close();
@@ -495,7 +493,7 @@ export default class Calendula {
             days = this.findElem('days'),
             months = this.findElem('months'),
             years = this.findElem('years'),
-            getDelta = function(e) { return e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0; };
+            getDelta = (e) => { return e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0; };
 
         this._onwheelmonths = e => {
             const delta = getDelta(e);
@@ -577,7 +575,7 @@ export default class Calendula {
                     cd.day = +day;
                     cd.month = +month;
 
-                    var selected = days.querySelector('.' + this.e('day', 'selected'));
+                    const selected = days.querySelector('.' + this.e('day', 'selected'));
                     if (selected) {
                         this.delMod(selected, 'selected');
                     }
