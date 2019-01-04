@@ -1,8 +1,6 @@
 /**
  * Extension: Timeout
  */
-import Calendula from '../calendula';
-
 export default class Timeout {
     constructor() {
         this._buffer = [];
@@ -90,5 +88,3 @@ export default class Timeout {
         delete this._buffer;
     }
 }
-
-Calendula.addExtension(Timeout);

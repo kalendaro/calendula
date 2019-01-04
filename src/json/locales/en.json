@@ -24,6 +24,5 @@
     "Saturday"
   ],
   "today": "Today",
-  "firstWeekday": 0,
-  "def": true
+  "firstWeekday": 0
 }

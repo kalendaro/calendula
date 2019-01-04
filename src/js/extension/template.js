@@ -1,12 +1,9 @@
 /**
  * Extension: Template
  */
-import mdate from '../lib/date';
-import Calendula from '../calendula';
-import jstohtml from 'jstohtml';
-
-const SATURDAY = 6;
-const SUNDAY = 0;
+import { leadZero, ymdToISO } from '../lib/date';
+import { MIN_MONTH, MAX_MONTH, SATURDAY, SUNDAY } from '../consts';
+import jstohtml from '../jstohtml';
 
 export default class Template {
     /**
@@ -27,7 +24,7 @@ export default class Template {
     days() {
         const buf = [];
 
-        for (let m = Calendula.MIN_MONTH; m <= Calendula.MAX_MONTH; m++) {
+        for (let m = MIN_MONTH; m <= MAX_MONTH; m++) {
             buf.push(this.month(m, this.parent._currentDate.year));
         }
 
@@ -118,7 +115,7 @@ export default class Template {
                 mods.minmax = true;
             }
 
-            const tt = parent.title.get(mdate.ymdToISO(y, m, day));
+            const tt = parent.title.get(ymdToISO(y, m, day));
             if (tt) {
                 mods['has-title'] = true;
                 mods['title-color'] = tt.color || 'default';
@@ -305,14 +302,14 @@ export default class Template {
 
     _getTitleMonth(min, max, m, y) {
         function getValue(setting) {
-            return parseInt('' + setting.year + mdate.leadZero(setting.month), 10);
+            return parseInt('' + setting.year + leadZero(setting.month), 10);
         }
 
         const
             minValue = getValue(min),
             maxValue = getValue(max),
             mods = {},
-            cur = parseInt('' + y + mdate.leadZero(m), 10);
+            cur = parseInt('' + y + leadZero(m), 10);
 
         if ((minValue && cur < minValue) || (maxValue && cur > maxValue)) {
             mods.minmax = true;
@@ -329,5 +326,3 @@ export default class Template {
         return d.year ? new Date(d.year, d.month, d.day, 12, 0, 0, 0).getTime() : null;
     }
 }
-
-Calendula.addExtension(Template);

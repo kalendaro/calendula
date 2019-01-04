@@ -1,9 +1,8 @@
 /**
  * Extension: Tooltip
  */
-import domUtils from '../lib/dom-utils';
-import Calendula from '../calendula';
-import jstohtml from 'jstohtml';
+import { getOffset, setPosition } from '../lib/dom-utils';
+import jstohtml from '../jstohtml';
 
 export default class Tooltip {
     /**
@@ -34,8 +33,8 @@ export default class Tooltip {
             c: data.text
         });
 
-        const offset = domUtils.getOffset(target);
-        domUtils.setPosition(dom, {
+        const offset = getOffset(target);
+        setPosition(dom, {
             left: offset.left - (dom.offsetWidth - target.offsetWidth) / 2,
             top: offset.top - dom.offsetHeight - margin
         });
@@ -80,5 +79,3 @@ export default class Tooltip {
         }
     }
 }
-
-Calendula.addExtension(Tooltip);

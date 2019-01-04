@@ -1,9 +1,8 @@
 /**
  * Extension: Title
  */
-import mdate from '../lib/date';
-import obj from '../lib/object';
-import Calendula from '../calendula';
+import { parseDateToObj, parseDateToISO } from '../lib/date';
+import { isPlainObj } from '../lib/type';
 
 export default class Title {
     constructor(data) {
@@ -18,7 +17,7 @@ export default class Title {
      * @returns {?Object}
      */
     get(date) {
-        const iso = mdate.parseDateToISO(date);
+        const iso = parseDateToISO(date);
         return iso ? this._title[iso] : null;
     }
 
@@ -30,21 +29,21 @@ export default class Title {
     set(data) {
         if (Array.isArray(data)) {
             data.forEach(item => this._set(item));
-        } else if (obj.isPlainObj(data)) {
+        } else if (isPlainObj(data)) {
             this._set(data);
         }
     }
 
     _set(data) {
         const
-            iso = mdate.parseDateToISO(data.date),
+            iso = parseDateToISO(data.date),
             parent = this.parent;
 
         if (iso) {
             this._title[iso] = {text: data.text, color: data.color};
 
             if (parent._isInited) {
-                const day = parent._findDayByDate(mdate.parseDateToObj(data.date));
+                const day = parent._findDayByDate(parseDateToObj(data.date));
                 day && parent
                     .setMod(day, 'has-title')
                     .setMod(day, 'title-color', data.color);
@@ -68,13 +67,13 @@ export default class Title {
     _remove(date) {
         const
             parent = this.parent,
-            iso = mdate.parseDateToISO(date);
+            iso = parseDateToISO(date);
 
         if (iso) {
             delete this._title[iso];
 
             if (parent._isInited) {
-                const day = parent._findDayByDate(mdate.parseDateToObj(date));
+                const day = parent._findDayByDate(parseDateToObj(date));
                 if (day) {
                     parent
                         .delMod(day, 'has-title')
@@ -108,5 +107,3 @@ export default class Title {
         delete this._title;
     }
 }
-
-Calendula.addExtension(Title);

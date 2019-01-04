@@ -1,22 +1,15 @@
 import Calendula from './calendula';
 
-Calendula.extend(Calendula, {
-    _locales: [],
-    _texts: {},
-    /**
-     * Add a locale.
-     * @param {string} locale
-     * @param {Object} texts
-     */
-    addLocale(locale, texts) {
-        this._locales.push(locale);
-        this._texts[locale] = texts;
+const locales = {};
 
-        if (texts.def) {
-            this._defaultLocale = locale;
-        }
-    }
-});
+/**
+ * Add a locale.
+ * @param {string} locale
+ * @param {Object} texts
+ */
+Calendula.addLocale = function(locale, texts) {
+    locales[locale] = texts;
+};
 
 /**
  * Get text by id for current locale.
@@ -24,6 +17,6 @@ Calendula.extend(Calendula, {
  * @param {string} id
  * @returns {*}
  */
-Calendula.prototype.text = (id) => {
-    return Calendula._texts[this._data.locale][id];
+Calendula.prototype.text = function(id) {
+    return locales[this.setting('locale')][id];
 };

@@ -1,8 +1,6 @@
 /**
  * Extension: Event
  */
-import Calendula from '../calendula';
-
 export default class Event {
     constructor() {
         this._buffer = [];
@@ -64,8 +62,6 @@ export default class Event {
     }
 
     destroy() {
-        delete this._buf;
+        delete this._buffer;
     }
 }
-
-Calendula.addExtension(Event);

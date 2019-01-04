@@ -1,8 +1,6 @@
 /**
  * Extension: DOM event
  */
-import Calendula from '../calendula';
-
 export default class DomEvent {
     constructor() {
         this._buffer = [];
@@ -88,5 +86,3 @@ export default class DomEvent {
         delete this._buffer;
     }
 }
-
-Calendula.addExtension(DomEvent);

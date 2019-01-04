@@ -1,20 +1,27 @@
-import domUtils from './lib/dom-utils';
-import mdate from './lib/date.js';
-import obj from './lib/object';
+import { isAuto, calcPosition, calcBestPosition } from './lib/calc-position';
+import { getCurrentDate, ymdToISO, parseDateToObj } from './lib/date.js';
+import { setPosition, setTranslateY } from './lib/dom-utils';
 import keyCodes from './lib/keycodes';
+import { isString, isUndefined } from './lib/type';
 
-export default class Calendula {
+import { MIN_MONTH, MAX_MONTH } from './consts';
+import Block from './block';
+
+export default class Calendula extends Block {
     constructor(rawParams) {
+        super();
+
         const
             params = Calendula.extend({}, rawParams || {}),
             years = this._prepareYears(params.years);
 
         this._data = Calendula.extend(params, {
-            autocloseable: obj.isUndefined(params.autocloseable) ? true : params.autocloseable,
-            closeAfterSelection: obj.isUndefined(params.closeAfterSelection) ? true : params.closeAfterSelection,
-            locale: params.locale || Calendula._defaultLocale,
-            max: mdate.parseDateToObj(params.max),
-            min: mdate.parseDateToObj(params.min),
+            autocloseable: isUndefined(params.autocloseable) ? true : params.autocloseable,
+            closeAfterSelection: isUndefined(params.closeAfterSelection) ? true : params.closeAfterSelection,
+            locale: params.locale || 'en',
+            max: parseDateToObj(params.max),
+            min: parseDateToObj(params.min),
+            maxColor: params.maxColor || 5,
             showOn: params.showOn || 'click',
             theme: params.theme || 'default',
             _startYear: years.start,
@@ -25,9 +32,9 @@ export default class Calendula {
 
         this._initExtensions();
 
-        this.val(this._data.value);
+        this.val(this.setting('value'));
 
-        this._addSwitcherEvents(this._data.showOn);
+        this._addSwitcherEvents(this.setting('showOn'));
     }
 
     /**
@@ -135,11 +142,11 @@ export default class Calendula {
         }
 
         if (value) {
-            this._val = mdate.parseDateToObj(value);
+            this._val = parseDateToObj(value);
             this._currentDate = Calendula.extend({}, this._val);
         } else {
             this._val = {};
-            this._currentDate = this._current();
+            this._currentDate = getCurrentDate();
         }
 
         if (this._dom) {
@@ -163,7 +170,7 @@ export default class Calendula {
             return this._data[name];
         }
 
-        this._data[name] = ['min', 'max', 'value'].indexOf(name) > -1 ? mdate.parseDateToObj(value) : value;
+        this._data[name] = ['min', 'max', 'value'].indexOf(name) > -1 ? parseDateToObj(value) : value;
 
         if (name === 'showOn') {
             this._addSwitcherEvents(value);
@@ -200,7 +207,7 @@ export default class Calendula {
 
         this.close();
 
-        this._removeExtensions();
+        this._destroyExtensions();
 
         document.body.removeChild(this._dom);
 
@@ -224,7 +231,7 @@ export default class Calendula {
         this._dom = dom;
 
         dom.classList.add('calendula');
-        this.setMod(dom, 'theme', this._data.theme);
+        this.setMod(dom, 'theme', this.setting('theme'));
 
         if (this.setting('daysAfterMonths')) {
             this.setMod(dom, 'days-after-months');
@@ -235,151 +242,20 @@ export default class Calendula {
         document.body.appendChild(dom);
     }
 
-    _isAuto(prop) {
-        return prop === 'auto' || obj.isUndefined(prop);
-    }
-
     _position(pos) {
-        pos = (pos || '').split(' ');
+        let [left, top] = (pos || '').split(' ');
 
         const switcher = this.setting('switcher');
-        let
-            left = pos[0],
-            top = pos[1];
+        let coords = {
+            left,
+            top
+        };
 
-        if (switcher && (this._isAuto(left) || this._isAuto(top))) {
-            const bestPos = this._calcBestPosition(left, top, switcher);
-            left = bestPos.left;
-            top = bestPos.top;
+        if (switcher && (isAuto(coords.left) || isAuto(coords.top))) {
+            coords = calcBestPosition(coords, this._dom, switcher);
         }
 
-        domUtils.setPosition(this._dom, this._calcPosition(left, top, switcher));
-    }
-
-    _calcPosition(left, top, switcher) {
-        const
-            offset = domUtils.getOffset(switcher),
-            con = this._dom,
-            conWidth = con.offsetWidth,
-            conHeight = con.offsetHeight,
-            offsetLeft = offset.left,
-            offsetTop = offset.top;
-
-        let x, y;
-
-        if (obj.isString(left)) {
-            switch (left) {
-                case 'left':
-                    x = offsetLeft;
-                    break;
-                case 'center':
-                    x = offsetLeft + (switcher.offsetWidth - conWidth) / 2;
-                    break;
-                case 'right':
-                    x = offsetLeft + switcher.offsetWidth - conWidth;
-                    break;
-            }
-        }
-
-        if (obj.isString(top)) {
-            switch (top) {
-                case 'top':
-                    y = offsetTop - conHeight;
-                    break;
-                case 'center':
-                    y = offsetTop - (conHeight - switcher.offsetHeight) / 2;
-                    break;
-                case 'bottom':
-                    y = offsetTop + switcher.offsetHeight;
-                    break;
-            }
-        }
-
-        return {
-            left: x,
-            top: y
-        };
-    }
-
-    _calcVisibleSquare(left, top, winArea) {
-        const
-            conArea = {
-                x1: left,
-                y1: top,
-                x2: left + this._dom.offsetWidth,
-                y2: top + this._dom.offsetHeight
-            },
-            getIntersection = (d1, d2, d3, d4) => {
-                if (d2 <= d3 || d1 >= d4) {
-                    return 0;
-                }
-
-                return Math.min(d2, d4) - Math.max(d1, d3);
-            },
-            width = getIntersection(conArea.x1, conArea.x2, winArea.x1, winArea.x2),
-            height = getIntersection(conArea.y1, conArea.y2, winArea.y1, winArea.y2);
-
-        return width * height;
-    }
-
-    _calcBestPosition(left, top, switcher) {
-        const
-            isLeftAuto = this._isAuto(left),
-            isTopAuto = this._isAuto(top);
-
-        let
-            maxArea = -1,
-            areaIndex = 0;
-
-        this._bestPositions.forEach((position, i) => {
-            const
-                leftPos = position[0],
-                topPos = position[1];
-
-            if ((isLeftAuto && isTopAuto) ||
-                (isLeftAuto && top === topPos) ||
-                (isTopAuto && left === leftPos)) {
-
-                const
-                    offset = this._calcPosition(leftPos, topPos, switcher),
-                    area = this._calcVisibleSquare(offset.left, offset.top, this._winArea());
-
-                if (area > maxArea) {
-                    maxArea = area;
-                    areaIndex = i;
-                }
-            }
-        });
-
-        const bestPosition = this._bestPositions[areaIndex];
-        return {
-            left: bestPosition[0],
-            top: bestPosition[1]
-        };
-    }
-
-    _winArea() {
-        const
-            docElement = document.documentElement,
-            pageX = window.pageXOffset,
-            pageY = window.pageYOffset;
-
-        return {
-            x1: pageX,
-            y1: pageY,
-            x2: pageX + docElement.clientWidth,
-            y2: pageY + docElement.clientHeight
-        };
-    }
-
-    _current() {
-        const date = new Date();
-
-        return {
-            day: date.getDate(),
-            month: date.getMonth(),
-            year: date.getFullYear()
-        };
+        setPosition(this._dom, calcPosition(coords, this._dom, switcher));
     }
 
     _update() {
@@ -545,7 +421,7 @@ export default class Calendula {
                 y = +this._currentDate.year;
 
             if (this.hasElem(target, 'day') && this.hasMod(target, 'has-title')) {
-                this.tooltip.show(target, this.title.get(mdate.ymdToISO(y, m, d)));
+                this.tooltip.show(target, this.title.get(ymdToISO(y, m, d)));
             }
         }, 'open');
 
@@ -597,10 +473,10 @@ export default class Calendula {
     }
 
     _monthSelector(month, anim) {
-        if (month < Calendula.MIN_MONTH) {
-            month = Calendula.MIN_MONTH;
-        } else if (month > Calendula.MAX_MONTH) {
-            month = Calendula.MAX_MONTH;
+        if (month < MIN_MONTH) {
+            month = MIN_MONTH;
+        } else if (month > MAX_MONTH) {
+            month = MAX_MONTH;
         }
 
         this._currentDate.month = month;
@@ -628,7 +504,7 @@ export default class Calendula {
             top = months.offsetHeight - selector.offsetHeight - 1;
         }
 
-        domUtils.setTranslateY(selector, top);
+        setTranslateY(selector, top);
 
         let daysContainerTop = -Math.floor(monthElem.offsetTop - days.offsetHeight / 2 + monthElem.offsetHeight / 2);
         if (daysContainerTop > 0) {
@@ -640,7 +516,7 @@ export default class Calendula {
             daysContainerTop = deltaHeight;
         }
 
-        domUtils.setTranslateY(daysContainer, daysContainerTop);
+        setTranslateY(daysContainer, daysContainerTop);
 
         this._colorizeMonths(month);
 
@@ -701,8 +577,8 @@ export default class Calendula {
             this._rebuildDays(year);
         }
 
-        domUtils.setTranslateY(selector, topSelector);
-        domUtils.setTranslateY(yearsContainer, topContainer);
+        setTranslateY(selector, topSelector);
+        setTranslateY(yearsContainer, topContainer);
 
         this._colorizeYears(year);
 
@@ -714,7 +590,7 @@ export default class Calendula {
     }
 
     _decolorize(selector) {
-        for (let c = 0; c < this._maxColor; c++) {
+        for (let c = 0; c < this.setting('maxColor'); c++) {
             const elems = this.findElemAll(selector, 'color', c);
             for (let i = 0, len = elems.length; i < len; i++) {
                 this.delMod(elems[i], 'color', c);
@@ -729,21 +605,21 @@ export default class Calendula {
 
         this.setMod(months[month], 'color', '0');
 
-        if (month - 1 >= Calendula.MIN_MONTH) {
+        if (month - 1 >= MIN_MONTH) {
             this.setMod(months[month - 1], 'color', '0');
         }
 
-        if (month + 1 <= Calendula.MAX_MONTH) {
+        if (month + 1 <= MAX_MONTH) {
             this.setMod(months[month + 1], 'color', '0');
         }
 
         let n = 1;
-        for (let c = month - 2; c >= Calendula.MIN_MONTH && n < this._maxColor; c--, n++) {
+        for (let c = month - 2; c >= MIN_MONTH && n < this.setting('maxColor'); c--, n++) {
             this.setMod(months[c], 'color', n);
         }
 
         n = 1;
-        for (let c = month + 2; c <= Calendula.MAX_MONTH && n < this._maxColor; c++, n++) {
+        for (let c = month + 2; c <= MAX_MONTH && n < this.setting('maxColor'); c++, n++) {
             this.setMod(months[c], 'color', n);
         }
     }
@@ -751,19 +627,19 @@ export default class Calendula {
     _colorizeYears(year) {
         const
             years = this.findElemAll('year'),
-            startYear = this._data._startYear;
+            startYear = this.setting('_startYear');
 
         this._decolorize('year');
 
         this.setMod(years[year - startYear], 'color', '0');
 
         let n = 1;
-        for (let c = year - 1; c >= startYear && n < this._maxColor; c--, n++) {
+        for (let c = year - 1; c >= startYear && n < this.setting('maxColor'); c--, n++) {
             this.setMod(years[c - startYear], 'color', n);
         }
 
         n = 1;
-        for (let c = year + 1; c <= this._data._endYear && n < this._maxColor; c++, n++) {
+        for (let c = year + 1; c <= this.setting('_endYear') && n < this.setting('maxColor'); c++, n++) {
             this.setMod(years[c - startYear], 'color', n);
         }
     }
@@ -773,13 +649,13 @@ export default class Calendula {
     }
 
     _prepareYears(y) {
-        const current = this._current();
+        const current = getCurrentDate();
         let
             buffer,
             startYear,
             endYear;
 
-        if (obj.isString(y)) {
+        if (isString(y)) {
             buffer = y.trim().split(/[:,; ]/);
             startYear = parseInt(buffer[0], 10);
             endYear = parseInt(buffer[1], 10);
@@ -873,20 +749,4 @@ export default class Calendula {
     }
 }
 
-Calendula.extend(Calendula, {
-    version: '{{version}}',
-    MIN_MONTH: 0,
-    MAX_MONTH: 11
-});
-
-Calendula.extend(Calendula.prototype, {
-    _maxColor: 5,
-    _bestPositions: [
-        ['left', 'bottom'],
-        ['left', 'top'],
-        ['right', 'bottom'],
-        ['right', 'top'],
-        ['center', 'bottom'],
-        ['center', 'top']
-    ]
-});
+Calendula.version = '{{version}}';

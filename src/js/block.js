@@ -1,10 +1,8 @@
-import Calendula from '../calendula';
-
 function bem(b, e, m, val) {
     return b + '__' + e + (m ? '_' + m + (val === '' ? '' : '_' + val) : '');
 }
 
-Calendula.extend(Calendula.prototype, {
+export default class Block {
     /**
      * Build CSS class for element.
      *
@@ -21,7 +19,7 @@ Calendula.extend(Calendula.prototype, {
         }
 
         return bem(this._name, e, m, val);
-    },
+    }
 
     /**
      * Build CSS class for mod.
@@ -38,7 +36,7 @@ Calendula.extend(Calendula.prototype, {
         }
 
         return bem(this._name, '', m, val);
-    },
+    }
 
     /**
      * Remove mod from DOM element.
@@ -60,7 +58,7 @@ Calendula.extend(Calendula.prototype, {
         });
 
         return this;
-    },
+    }
 
     /**
      * Set mod for DOM element.
@@ -75,7 +73,7 @@ Calendula.extend(Calendula.prototype, {
         dom.classList.add(e ? this.e(e, m, val) : this.m(m, val));
 
         return this;
-    },
+    }
 
     /**
      * Has a mod?
@@ -88,7 +86,7 @@ Calendula.extend(Calendula.prototype, {
     hasMod(dom, m, val) {
         const e = this.getElemName(dom);
         return dom.classList.contains(e ? this.e(e, m, val) : this.m(m, val));
-    },
+    }
 
     /**
      * Has a element?
@@ -99,7 +97,7 @@ Calendula.extend(Calendula.prototype, {
      */
     hasElem(dom, e) {
         return dom.classList.contains(this.e(e));
-    },
+    }
 
     /**
      * Get name for element.
@@ -110,7 +108,7 @@ Calendula.extend(Calendula.prototype, {
     getElemName(dom) {
         const result = dom.className.match(/__([^ _$]+)/);
         return result ? result[1] : '';
-    },
+    }
 
     /**
      * Find a element by name.
@@ -122,7 +120,7 @@ Calendula.extend(Calendula.prototype, {
      */
     findElem(e, m, val) {
         return this._dom.querySelector('.' + this.e(e, m, val));
-    },
+    }
 
     /**
      * Find a element by name in context.
@@ -135,7 +133,7 @@ Calendula.extend(Calendula.prototype, {
      */
     findElemContext(dom, e, m, val) {
         return dom.querySelector('.' + this.e(e, m, val));
-    },
+    }
 
     /**
      * Find all elements by name.
@@ -147,7 +145,7 @@ Calendula.extend(Calendula.prototype, {
      */
     findElemAll(dom, m, val) {
         return this._dom.querySelectorAll('.' + this.e(dom, m, val));
-    },
+    }
 
     /**
      * Find all elements by name in context.
@@ -161,4 +159,4 @@ Calendula.extend(Calendula.prototype, {
     findElemAllContext(context, e, m, val) {
         return context.querySelectorAll('.' + this.e(e, m, val));
     }
-});
+}
