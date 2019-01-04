@@ -37,10 +37,10 @@ npm install calendula
 
 Для подключения только нужной локали и темы:
 ```HTML
-<link rel="stylesheet" href="node_modules/calendula/dist/calendula.base.css" />
-<link rel="stylesheet" href="node_modules/calendula/dist/calendula.ios.css" />
-<script src="node_modules/calendula/dist/calendula.base.js"></script>
-<script src="node_modules/calendula/dist/calendula.en.js"></script>
+<link rel="stylesheet" href="node_modules/calendula/dist/calendula.css" />
+<link rel="stylesheet" href="node_modules/calendula/dist/themes/default.css" />
+<script src="node_modules/calendula/dist/calendula.js"></script>
+<script src="node_modules/calendula/dist/locales/en.js"></script>
 ```
 
 Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula-download/index.ru.html).
