@@ -75,6 +75,7 @@ export default class Tooltip {
         if (this._dom) {
             this.hide();
             document.body.removeChild(this._dom);
+
             delete this._dom;
         }
     }

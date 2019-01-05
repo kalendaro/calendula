@@ -5,7 +5,7 @@ import { parseDateToObj, parseDateToISO } from '../lib/date';
 import { isPlainObj } from '../lib/type';
 
 export default class Title {
-    constructor(data) {
+    init(data) {
         this._title = {};
         this.set(data.title);
     }

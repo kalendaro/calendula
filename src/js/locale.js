@@ -12,6 +12,15 @@ Calendula.addLocale = function(locale, texts) {
 };
 
 /**
+ * Get locales.
+ * @returns {Object[]}
+ */
+Calendula.getLocales = function() {
+    return Object.keys(locales);
+};
+
+
+/**
  * Get text by id for current locale.
  *
  * @param {string} id

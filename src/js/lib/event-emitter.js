@@ -15,9 +15,10 @@ export default class EventEmitter {
      */
     on(type, callback) {
         if (type && callback) {
-            this._events[type] = (this._events[type] || []).push({
-                type: type,
-                callback: callback
+            this._events[type] = this._events[type] || [];
+            this._events[type].push({
+                type,
+                callback
             });
         }
 

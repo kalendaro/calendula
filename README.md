@@ -13,10 +13,10 @@
 + локализация.
 
 Поддержка в браузерах:
-+ Internet Explorer 10 и выше;
++ Internet Explorer 11 и выше;
 + Mozilla Firefox 46 и выше;
-+ Google Chrome 46 и выше;
-+ Safari 7 и выше.
++ Google Chrome 67 и выше;
++ Safari 8 и выше.
 
 ## Примеры
 + [Все темы](http://hcodes.github.io/calendula/examples/many.html)
@@ -91,15 +91,15 @@ var c = new Calendula({
 ### .setting(name, [value])
 Получить или установить значение настройки.
 
-### .event.on(type, callback)
+### .on(type, callback)
 Установить событие.
   ```JavaScript
-c.event.on('select', function(e, data) {
+c.on('select', function(e, data) {
     console.log(data.day, data.month, data.year);
 });
   ```
 
-### .event.off(type, callback)
+### .off(type, callback)
 Снять событие.
 
 ### .title.set(data)

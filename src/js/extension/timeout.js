@@ -2,7 +2,7 @@
  * Extension: Timeout
  */
 export default class Timeout {
-    constructor() {
+    init() {
         this._buffer = [];
     }
 

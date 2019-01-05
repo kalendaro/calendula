@@ -2,7 +2,7 @@
  * Extension: DOM event
  */
 export default class DomEvent {
-    constructor() {
+    init() {
         this._buffer = [];
     }
 

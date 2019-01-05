@@ -204,7 +204,7 @@ window.addEventListener('load', function() {
     };
 
     var clLocale = getById('cl-locale');
-    Calendula._locales.sort().forEach(function(el) {
+    Calendula.getLocales().sort().forEach(function(el) {
         var opt = document.createElement('option');
         opt.value = opt.text = el;
         if(el === 'en') {
@@ -276,7 +276,7 @@ window.addEventListener('load', function() {
             ]
         });
 
-    cl.event.on('select', function(e, data) {
+    cl.on('select', function(e, data) {
         log(e.type + ' ' + JSON.stringify(data));
     }).on('open', function(e) {
         log(e.type);
@@ -311,7 +311,7 @@ window.addEventListener('load', function() {
         cl.setting('position', getPosition());
         cl.open();
     });
-    
+
     clPositionTop.addEventListener('change', function() {
         cl.setting('position', getPosition());
         cl.open();

@@ -18,13 +18,13 @@ function getIntersection(d1, d2, d3, d4) {
     return Math.min(d2, d4) - Math.max(d1, d3);
 }
 
-function calcVisibleSquare(left, top) {
+function calcVisibleSquare(coords, popup) {
     const
         conArea = {
-            x1: left,
-            y1: top,
-            x2: left + this._dom.offsetWidth,
-            y2: top + this._dom.offsetHeight
+            x1: coords.left,
+            y1: coords.top,
+            x2: coords.left + popup.offsetWidth,
+            y2: coords.top + popup.offsetHeight
         },
         windowArea = getWindowArea(),
         width = getIntersection(conArea.x1, conArea.x2, windowArea.x1, windowArea.x2),
@@ -46,10 +46,10 @@ export function calcPosition(coords, popup, switcher) {
     if (isString(coords.left)) {
         switch (coords.left) {
             case 'center':
-                left += (switcherOffset.offsetWidth - popup.offsetWidth) / 2;
+                left += (switcher.offsetWidth - popup.offsetWidth) / 2;
                 break;
             case 'right':
-                left += switcherOffset.offsetWidth - popup.offsetWidth;
+                left += switcher.offsetWidth - popup.offsetWidth;
                 break;
         }
     }
@@ -95,7 +95,7 @@ export function calcBestPosition(coords, popup, switcher) {
 
             const
                 offset = calcPosition(coords, popup, switcher),
-                area = calcVisibleSquare(offset.left, offset.top);
+                area = calcVisibleSquare(offset, popup);
 
             if (area > maxArea) {
                 maxArea = area;

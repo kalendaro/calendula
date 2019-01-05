@@ -15,9 +15,12 @@ function getExtensionName(ext) {
 Calendula.extend(Calendula.prototype, {
     _initExtensions() {
         extensions.forEach((Extension) => {
-            const obj = new Extension(this.params, this._dom);
+            const obj = new Extension();
             obj.parent = this;
             this[getExtensionName(Extension)] = obj;
+            if (obj.init) {
+                obj.init(this.params, this._dom);
+            }
         });
     },
     _destroyExtensions() {
