@@ -1,8 +1,12 @@
+import EventEmitter from './event-emitter';
+
 function bem(b, e, m, val) {
-    return b + '__' + e + (m ? '_' + m + (val === '' ? '' : '_' + val) : '');
+    return b +
+        (e ? '__' + e : '') +
+        (m ? '_' + m + (val === '' ? '' : '_' + val) : '');
 }
 
-export default class Block {
+export default class Block extends EventEmitter {
     /**
      * Build CSS class for element.
      *

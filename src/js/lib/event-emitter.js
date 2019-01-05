@@ -1,9 +1,9 @@
 /**
  * Extension: Event
  */
-export default class Event {
+export default class EventEmitter {
     constructor() {
-        this._buffer = [];
+        this._events = {};
     }
 
     /**
@@ -15,7 +15,7 @@ export default class Event {
      */
     on(type, callback) {
         if (type && callback) {
-            this._buffer.push({
+            this._events[type] = (this._events[type] || []).push({
                 type: type,
                 callback: callback
             });
@@ -32,12 +32,10 @@ export default class Event {
      * @returns {Event} this
      */
     off(type, callback) {
-        for (let i = 0; i < this._buffer.length; i++) {
-            const item = this._buffer[i];
-            if (callback === item.callback && type === item.type) {
-                this._buffer.splice(i, 1);
-                i--;
-            }
+        if (this._events[type]) {
+            this._events[type] = this._events[type].filter((item) => {
+                return callback !== item.callback;
+            });
         }
 
         return this;
@@ -51,17 +49,14 @@ export default class Event {
      * @returns {Event} this
      */
     trigger(type, data) {
-        for (let i = 0; i < this._buffer.length; i++) {
-            const item = this._buffer[i];
-            if (type === item.type) {
-                item.callback.call(this, {type: type}, data);
-            }
+        if (this._events[type]) {
+            this._events[type].forEach((item) => {
+                if (type === item.type) {
+                    item.callback.call(this, {type: type}, data);
+                }
+            });
         }
 
         return this;
-    }
-
-    destroy() {
-        delete this._buffer;
     }
 }

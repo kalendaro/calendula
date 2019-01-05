@@ -44,7 +44,7 @@ export function setPosition(elem, coords) {
  * @param {string|number} top
  */
 export function setTranslateY(el, top) {
-    el.style.top = 'translateY(' + (isNumber(top) ? top + 'px' : top) + ')';
+    el.style.transform = 'translateY(' + (isNumber(top) ? top + 'px' : top) + ')';
 }
 
 /**

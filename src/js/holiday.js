@@ -21,7 +21,7 @@ Calendula.addHolidays = function(locale, data) {
  * @returns {number|undefined}
  */
 Calendula.prototype.getHoliday = function(day, month, year) {
-    const locale = this._data.locale;
+    const locale = this.params.locale;
 
     return holidays[locale] && holidays[locale][year] ?
         holidays[locale][year][day + '-' + (month + 1)] :

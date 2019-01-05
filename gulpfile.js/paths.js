@@ -12,8 +12,8 @@ module.exports = {
     },
     js: {
         all: [
-            `${dest}/locales/.*.js`,
-            `${dest}/holidays/.*.js`
+            `${dest}/locales/*.js`,
+            `${dest}/holidays/*.js`
         ],
         locales: [ 'src/js/locale/*.js' ],
         main: 'src/js/main.js',

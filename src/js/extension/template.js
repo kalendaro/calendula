@@ -190,9 +190,7 @@ export default class Template {
      */
     years() {
         const
-            data = this.parent._data,
-            startYear = data._startYear,
-            endYear = data._endYear,
+            params = this.parent.params,
             buf = [
                 {
                     b: this.parent._name,
@@ -201,7 +199,7 @@ export default class Template {
                 }
             ];
 
-        for (let i = startYear; i <= endYear; i++) {
+        for (let i = params.startYear; i <= params.endYear; i++) {
             buf.push({
                 b: this.parent._name,
                 e: 'year',

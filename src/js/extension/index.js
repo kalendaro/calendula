@@ -1,5 +1,4 @@
 import DomEvent from './dom-event';
-import Event from './event';
 import Template from './template';
 import Timeout from './timeout';
 import Title from './title';
@@ -16,7 +15,7 @@ function getExtensionName(ext) {
 Calendula.extend(Calendula.prototype, {
     _initExtensions() {
         extensions.forEach((Extension) => {
-            const obj = new Extension(this._data, this._dom);
+            const obj = new Extension(this.params, this._dom);
             obj.parent = this;
             this[getExtensionName(Extension)] = obj;
         });
@@ -40,7 +39,6 @@ Calendula.addExtension = (klass) => {
 
 Calendula.addExtension([
     DomEvent,
-    Event,
     Template,
     Timeout,
     Title,

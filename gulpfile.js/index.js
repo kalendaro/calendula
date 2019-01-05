@@ -8,5 +8,6 @@ gulp.task('default', gulp.series(clean, gulp.parallel(minCss, minJs)));
 
 gulp.task('watch', function watch() {
     gulp.watch('src/css/**/*', minCss);
-    gulp.watch('src/{js|json}/**/*', minJs);
+    gulp.watch('src/js/**/*', minJs);
+    gulp.watch('src/json/**/*', minJs);
 });

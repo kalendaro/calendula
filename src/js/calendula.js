@@ -5,17 +5,17 @@ import keyCodes from './lib/keycodes';
 import { isString, isUndefined } from './lib/type';
 
 import { MIN_MONTH, MAX_MONTH } from './consts';
-import Block from './block';
+import Block from './lib/block';
 
 export default class Calendula extends Block {
     constructor(rawParams) {
-        super();
+        super(rawParams);
 
         const
             params = Calendula.extend({}, rawParams || {}),
             years = this._prepareYears(params.years);
 
-        this._data = Calendula.extend(params, {
+        this.params = Calendula.extend(params, {
             autocloseable: isUndefined(params.autocloseable) ? true : params.autocloseable,
             closeAfterSelection: isUndefined(params.closeAfterSelection) ? true : params.closeAfterSelection,
             locale: params.locale || 'en',
@@ -24,8 +24,8 @@ export default class Calendula extends Block {
             maxColor: params.maxColor || 5,
             showOn: params.showOn || 'click',
             theme: params.theme || 'default',
-            _startYear: years.start,
-            _endYear: years.end
+            startYear: years.start,
+            endYear: years.end
         });
 
         this._name = 'calendula';
@@ -84,7 +84,7 @@ export default class Calendula extends Block {
 
             this._isOpened = true;
 
-            this.event.trigger('open');
+            this.trigger('open');
         }
 
         return this;
@@ -112,7 +112,7 @@ export default class Calendula extends Block {
 
                     this.tooltip.hide();
 
-                    this.event.trigger('close');
+                    this.trigger('close');
                 }, 0, 'close');
 
             this._isOpened = false;
@@ -167,10 +167,10 @@ export default class Calendula extends Block {
         const dom = this._dom;
 
         if (arguments.length === 1) {
-            return this._data[name];
+            return this.params[name];
         }
 
-        this._data[name] = ['min', 'max', 'value'].indexOf(name) > -1 ? parseDateToObj(value) : value;
+        this.params[name] = ['min', 'max', 'value'].indexOf(name) > -1 ? parseDateToObj(value) : value;
 
         if (name === 'showOn') {
             this._addSwitcherEvents(value);
@@ -205,13 +205,15 @@ export default class Calendula extends Block {
     destroy() {
         if (!this._isInited) { return; }
 
+        delete this._events;
+
         this.close();
 
         this._destroyExtensions();
 
         document.body.removeChild(this._dom);
 
-        this._data = null;
+        this.params = null;
         this._dom = null;
         this._isInited = null;
     }
@@ -225,12 +227,13 @@ export default class Calendula extends Block {
             id = this.setting('id'),
             dom = document.createElement('div');
 
+        dom.className = this._name;
+
         if (id) {
             dom.id = id;
         }
         this._dom = dom;
 
-        dom.classList.add('calendula');
         this.setMod(dom, 'theme', this.setting('theme'));
 
         if (this.setting('daysAfterMonths')) {
@@ -368,11 +371,10 @@ export default class Calendula extends Block {
         const
             days = this.findElem('days'),
             months = this.findElem('months'),
-            years = this.findElem('years'),
-            getDelta = (e) => { return e.deltaY > 0 ? 1 : e.deltaY < 0 ? -1 : 0; };
+            years = this.findElem('years');
 
         this._onwheelmonths = e => {
-            const delta = getDelta(e);
+            const delta = this._getDeltaY(e);
             if (delta) {
                 this._monthSelector(this._currentDate.month + delta, true);
                 e.preventDefault();
@@ -380,7 +382,7 @@ export default class Calendula extends Block {
         };
 
         this._onwheelyears = e => {
-            const delta = getDelta(e);
+            const delta = this._getDeltaY(e);
             if (delta) {
                 this._yearSelector(this._currentDate.year + delta, true);
                 e.preventDefault();
@@ -458,7 +460,7 @@ export default class Calendula extends Block {
 
                     this.setMod(target, 'selected');
 
-                    this.event.trigger('select', {
+                    this.trigger('select', {
                         day: cd.day,
                         month: cd.month,
                         year: cd.year
@@ -470,6 +472,10 @@ export default class Calendula extends Block {
                 }
             }
         }, 'open');
+    }
+
+    _getDeltaY(e) {
+        return e.deltaY >= 1 ? 1 : e.deltaY < 0 ? -1 : 0;
     }
 
     _monthSelector(month, anim) {
@@ -530,9 +536,8 @@ export default class Calendula extends Block {
 
     _yearSelector(year, anim) {
         const
-            d = this._data,
-            startYear = d._startYear,
-            endYear = d._endYear,
+            startYear = this.params.startYear,
+            endYear = this.params.endYear,
             oldYear = this._currentDate.year;
 
         if (year < startYear) {
@@ -627,7 +632,7 @@ export default class Calendula extends Block {
     _colorizeYears(year) {
         const
             years = this.findElemAll('year'),
-            startYear = this.setting('_startYear');
+            startYear = this.setting('startYear');
 
         this._decolorize('year');
 
@@ -724,7 +729,7 @@ export default class Calendula extends Block {
         }
     }
 
-    _switcherText() {
+    _getSwitcherText() {
         const
             date = this._currentDate,
             m = this.text('months'),
@@ -736,7 +741,7 @@ export default class Calendula extends Block {
     _updateSwitcher() {
         const
             elem = this.setting('switcher'),
-            text = this._switcherText();
+            text = this._getSwitcherText();
 
         if (elem) {
             let tagName = elem.tagName.toLowerCase();

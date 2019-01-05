@@ -56,6 +56,7 @@
     "test": "npm run-script gulp && npm run-script eslint ",
     "eslint": "./node_modules/.bin/eslint .",
     "build": "./node_modules/.bin/gulp",
+    "watch": "./node_modules/.bin/gulp watch",
     "mocha-phantomjs": "./node_modules/.bin/mocha-phantomjs test/index.html",
     "yaspeller": "yaspeller ."
   }
