@@ -7,7 +7,7 @@ module.exports = {
             'src/css/index.scss',
             'src/css/themes/*.scss'
         ],
-        main: [ 'src/css/calendula.scss' ],
+        main: [ 'src/css/index.scss' ],
         themes: [ 'src/css/themes/*.scss' ]
     },
     js: {
