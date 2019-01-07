@@ -139,7 +139,6 @@ c.title.remove(['2018-12-11', '2018-12-12', '2018-12-13']);
 Выбрана дата.
 
 ## Разработка
-[Сборка на сайте](http://kalendaro.github.io/calendula-download/index.ru.html)
 
 Тесты:
 ```
