@@ -27,6 +27,7 @@
     position: absolute;
     right: 20px;
     top: 60px;
+    bottom: 60px;
 }
 
 .panel {
@@ -74,6 +75,8 @@
 
 .log {
     min-width: 300px;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .log__item {
@@ -81,8 +84,13 @@
     padding: 5px;
 }
 
+.log__item:hover {
+    background: #f0f0f0;
+}
+
 #example-button {
     position: fixed;
     left: 50%;
     top: 100px;
+    transform: translateX(-50%);
 }
