@@ -1,6 +1,5 @@
 const
     { dest, series, src } = require('gulp'),
-    babel = require('gulp-babel'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
     all = require('./all'),

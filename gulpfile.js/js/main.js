@@ -1,12 +1,11 @@
 const
-    { dest, src } = require('gulp'),
+    fs = require('fs'),
+    { series } = require('gulp'),
     rollup = require('rollup'),
     babel = require('rollup-plugin-babel'),
-    rename = require('gulp-rename'),
-    replace = require('gulp-replace'),
     paths = require('../paths'),
     version = require('../../package.json').version,
-    updateVersion = () => { return replace(/\{\{version\}\}/, version); };
+    mainJs = `${paths.dest}/calendula.js`;
 
 
 function main() {
@@ -21,13 +20,18 @@ function main() {
         plugins: [
             babel()
         ]
-    }).then((data) => {
-        data.write({
-            file: `${paths.dest}/calendula.js`,
-            format: 'umd',
-            name: 'Calendula'
-        });
-    });
+    }).then((data) => data.write({
+        file: mainJs,
+        format: 'umd',
+        name: 'Calendula'
+    }));
 }
 
-module.exports = main;
+function updateVersion(cb) {
+    const source  = fs.readFileSync(mainJs, 'utf8').replace(/\{\{version\}\}/, version);
+    fs.writeFileSync(mainJs, source);
+
+    cb();
+}
+
+module.exports = series(main, updateVersion);
