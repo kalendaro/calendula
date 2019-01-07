@@ -41,7 +41,7 @@
 .panel__title {
     position: absolute;
     left: 5px;
-    top: -7px;
+    top: -9px;
     background-color: white;
     z-index: 1;
 
@@ -63,6 +63,10 @@
 .api-params__item {
     display: flex;
     margin-bottom: 7px;
+}
+
+.api-params__subitem {
+    margin-top: 4px;
 }
 
 .api-params__label {

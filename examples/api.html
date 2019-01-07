@@ -87,7 +87,7 @@
 
             <div class="api-params__item">
                 <div class="api-params__control">
-                    <input type="checkbox" checked="checked" id="cl-autocloseable" /> <label for="cl-autocloseable">autocloseable</label>
+                    <input type="checkbox" id="cl-autocloseable" /> <label for="cl-autocloseable">autocloseable</label>
                 </div>
             </div>
 
@@ -109,25 +109,27 @@
 
             <div class="api-params__item">
                 <div class="api-params__control">
-                    <input type="text" id="cl-title-add-date" placeholder="date" value="" style="width: 5em;"/>
-                    <select id="cl-title-color">
-                        <option name="black">black</option>
-                        <option name="blue">blue</option>
-                        <option name="green">green</option>
-                        <option name="olive">olive</option>
-                        <option name="orange">orange</option>
-                        <option name="pink">pink</option>
-                        <option name="red">red</option>
-                        <option name="white">white</option>
-                        <option name="yellow">yellow</option>
-                    </select><br/>
-                    <input type="text" id="cl-title-text" placeholder="text" value=""/> <input type="submit" value="Add" id="cl-title-add"/>
+                    <input type="date" id="cl-title-add-date" placeholder="date" value=""/>
+                    <input type="text" id="cl-title-text" placeholder="text" value=""/>
+                    <div class="api-params__subitem" style="margin-bottom: 1em;">
+                        <select id="cl-title-color">
+                            <option name="black">black</option>
+                            <option name="blue">blue</option>
+                            <option name="green">green</option>
+                            <option name="olive">olive</option>
+                            <option name="orange">orange</option>
+                            <option name="pink">pink</option>
+                            <option name="red">red</option>
+                            <option name="white">white</option>
+                            <option name="yellow">yellow</option>
+                        </select> <input type="submit" value="add" id="cl-title-add"/>
+                    </div>
                 </div>
             </div>
 
             <div class="api-params__item">
                 <div class="api-params__control">
-                    <input type="text" id="cl-title-del-date" placeholder="date" value="" style="width: 5em;" /> <input type="submit" value="Remove" id="cl-title-del"/>
+                    <input type="date" id="cl-title-del-date" placeholder="date" value=""/> <input type="submit" value="remove" id="cl-title-del"/>
                 </div>
             </div>
         </div>
