@@ -19,11 +19,11 @@
 + Safari 8 и выше.
 
 ## Примеры
-+ [Все темы](http://hcodes.github.io/calendula/examples/many.html)
-+ [Расширенный](http://hcodes.github.io/calendula/examples/api.html)
-+ [Цветные подсказки](http://hcodes.github.io/calendula/examples/color_title.html)
-+ [Моя тема](http://hcodes.github.io/calendula/examples/my_theme.html)
-+ [Простой](http://hcodes.github.io/calendula/examples/simple.html)
++ [Все темы](http://kalendaro.github.io/calendula/examples/many.html)
++ [Расширенный](http://kalendaro.github.io/calendula/examples/api.html)
++ [Цветные подсказки](http://kalendaro.github.io/calendula/examples/color_title.html)
++ [Моя тема](http://kalendaro.github.io/calendula/examples/my_theme.html)
++ [Простой](http://kalendaro.github.io/calendula/examples/simple.html)
 
 ## Подключение
 ```
@@ -43,14 +43,14 @@ npm install calendula
 <script src="node_modules/calendula/dist/locales/en.js"></script>
 ```
 
-Или воспользуйтесь [инструментом для сборки](http://hcodes.github.io/calendula-download/index.ru.html).
+Или воспользуйтесь [инструментом для сборки](http://kalendaro.github.io/calendula-download/index.ru.html).
 
 ## Использование
 ```JavaScript
 var c = new Calendula({
     theme: 'ios',
     locale: 'en',
-    value: '2014-10-11'
+    value: '2018-10-11'
     //...
 });
 ```
@@ -105,20 +105,20 @@ c.on('select', function(e, data) {
 ### .title.set(data)
 Установить цветную подсказку на дату.
 ```JavaScript
-c.title.set({date: '2014-12-15', text: 'Hello world!', color: 'red'});
+c.title.set({date: '2018-12-15', text: 'Hello world!', color: 'red'});
 
 c.title.set([
-    {date: '2014-12-11', text: 'Hello world!', color: 'red'},
-    {date: '2014-12-12', text: 'Hello world!', color: 'orange'},
-    {date: '2014-12-13', text: 'Hello world!', color: 'blue'}
+    {date: '2018-12-11', text: 'Hello world!', color: 'red'},
+    {date: '2018-12-12', text: 'Hello world!', color: 'orange'},
+    {date: '2018-12-13', text: 'Hello world!', color: 'blue'}
 ]);
 ```
 ### .title.remove(date)
 Удалить цветную подсказку.
 ```JavaScript
-c.title.remove('2014-12-15');
+c.title.remove('2018-12-15');
 
-c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
+c.title.remove(['2018-12-11', '2018-12-12', '2018-12-13']);
 ```
 
 ### .title.removeAll()
@@ -139,7 +139,7 @@ c.title.remove(['2014-12-11', '2014-12-12', '2014-12-13']);
 Выбрана дата.
 
 ## Разработка
-[Сборка на сайте](http://hcodes.github.io/calendula-download/index.ru.html)
+[Сборка на сайте](http://kalendaro.github.io/calendula-download/index.ru.html)
 
 Тесты:
 ```
@@ -148,8 +148,8 @@ npm test
 
 Пересборка:
 ```
-gulp
+npm run build
 ```
 
-## [Лицензия](https://github.com/hcodes/calendula/blob/master/LICENSE)
+## [Лицензия](https://github.com/kalendaro/calendula/blob/master/LICENSE)
 MIT License
