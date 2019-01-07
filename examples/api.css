@@ -1,0 +1,88 @@
+.page, .panel__title {
+    transition: background-color .3s linear 0s;
+}
+
+.page, input, button, select {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.page_theme_normal {
+    background-color: transparent;
+    color: #000;
+}
+
+.page_theme_black {
+    background-color: black;
+    color: #fff;
+}
+
+.sidebar_left {
+    position: absolute;
+    left: 20px;
+    top: 60px;
+}
+
+.sidebar_right {
+    position: absolute;
+    right: 20px;
+    top: 60px;
+}
+
+.panel {
+    position: relative;
+    border: 1px solid rgba(100, 100, 100, .3);
+    border-radius: 5px;
+    padding: 15px 10px 10px 10px;
+    margin-bottom: 20px;
+}
+
+.panel__title {
+    position: absolute;
+    left: 5px;
+    top: -7px;
+    background-color: white;
+    z-index: 1;
+
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 14px;
+    color: blue;
+}
+
+.page_theme_black .panel__title {
+    background-color: black;
+    color: rgb(150, 150, 255);
+}
+
+.api-methods {
+    white-space: nowrap;
+}
+
+.api-params__item {
+    display: flex;
+    margin-bottom: 7px;
+}
+
+.api-params__label {
+    width: 80px;
+}
+
+.api-params__item:last-child {
+    margin-bottom: 0;
+}
+
+.log {
+    min-width: 300px;
+}
+
+.log__item {
+    white-space: nowrap;
+    padding: 5px;
+}
+
+#example-button {
+    position: fixed;
+    left: 50%;
+    top: 100px;
+}

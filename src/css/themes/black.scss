@@ -7,7 +7,7 @@
     color: #fff;
     border-radius: 3px;
     background: #000;
-    box-shadow: 0 0 20px #b0b0b0;
+    box-shadow: 0 0 20px rgba(255, 255, 255, .3);
 }
 
 .calendula_theme_black .calendula
@@ -118,6 +118,6 @@
         border-radius: 10px;
         background: #ffec95;
         background: linear-gradient(to bottom, #ffec95 0%,#ff8f56 100%);
-        text-shadow: 1px 1px 3px #000;
+        text-shadow: 1px 1px 3px #777;
     }
 }

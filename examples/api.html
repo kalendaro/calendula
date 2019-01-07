@@ -4,66 +4,19 @@
     <title>Calendula: API</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../dist/calendula.all.css" />
+    <link rel="stylesheet" href="common.css" />
+    <link rel="stylesheet" href="api.css" />
     <script src="../dist/calendula.all.js"></script>
-    <style>
-        #api-methods
-        {
-            position: absolute;
-            left: 20px;
-            top: 20px;
-        }
-
-        #example-button
-        {
-            position: absolute;
-            left: 30%;
-            top: 100px;
-        }
-
-        .page
-        {
-            -webkit-transition: background-color .3s linear 0s;
-                    transition: background-color .3s linear 0s;
-        }
-
-        .page_theme_normal
-        {
-            background-color: transparent;
-            color: #000;
-        }
-
-        .page_theme_black
-        {
-            background-color: black;
-            color: #fff;
-        }
-
-        #log
-        {
-            margin-left: 5px;
-        }
-
-        td
-        {
-            vertical-align: top;
-            line-height: 2em;
-        }
-    </style>
+    <script src="common.js"></script>
 </head>
 <body class="page page_theme_normal">
+    <div class="sidebar sidebar_left">
+        <div class="api-params panel">
+            <div class="panel__title">Params</div>
 
-    <div id="api-methods">
-        <input type="button" value="open" id="cl-open" />
-        <input type="button" value="close" id="cl-close" />
-        <input type="button" value="toggle" id="cl-toggle" />
-        <input type="button" value="destroy" id="cl-destroy" />
-        <br /><br />
-        <table>
-            <tr>
-                <td>
-                    theme
-                </td>
-                <td>
+            <div class="api-params__item">
+                <div class="api-params__label">theme</div>
+                <div class="api-params__control">
                     <select id="cl-theme">
                         <option value="default">default</option>
                         <option value="black">black</option>
@@ -71,87 +24,91 @@
                         <option value="metro">metro</option>
                         <option value="android">android</option>
                     </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    locale
-                <td>
-                    <select id="cl-locale"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>
+                </div>
+            </div>
+
+            <div class="api-params__item">
+                <div class="api-params__label">locale</div>
+                <div class="api-params__control"><select id="cl-locale"></select></div>
+            </div>
+
+            <div class="api-params__item">
+                <div class="api-params__label">
                     value
-                <td>
+                </div>
+                <div class="api-params__control">
                     <input type="date" id="cl-value" size="10" value="" /> <input type="button" id="cl-value-set" value="Set" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    min
-                <td>
+                </div>
+            </div>
+
+            <div class="api-params__item">
+                <div class="api-params__label">min</div>
+                <div class="api-params__control">
                     <input type="date" id="cl-min" size="10" value="" /> <input type="button" id="cl-min-set" value="Set" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    max
-                <td>
+                </div>
+            </div>
+
+            <div class="api-params__item">
+                <div class="api-params__label">max</div>
+                <div class="api-params__control">
                     <input type="date" id="cl-max" size="10" value="" /> <input type="button" id="cl-max-set" value="Set" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    position
-                <td>
+                </div>
+            </div>
+
+            <div class="api-params__item">
+                <div class="api-params__label">position</div>
+                <div class="api-params__control">
                     <select id="cl-position-left">
                         <option value="auto">auto</option>
                         <option value="left">left</option>
                         <option value="center">center</option>
                         <option value="right">right</option>
                     </select>
-
                     <select id="cl-position-top">
                         <option value="auto">auto</option>
                         <option value="top">top</option>
                         <option value="center">center</option>
                         <option value="bottom">bottom</option>
                     </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    showOn
-                <td>
+                </div>
+            </div>
+
+            <div class="api-params__item">
+                <div class="api-params__label">showOn</div>
+                <div class="api-params__control">
                     <select id="cl-show-on">
                         <option value="both">click and focus</option>
                         <option value="click">click</option>
                         <option value="focus">focus</option>
                         <option value="mouseover">mouseover</option>
                     </select>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                </div>
+            </div>
+
+            <div class="api-params__item">
+                <div class="api-params__control">
                     <input type="checkbox" checked="checked" id="cl-autocloseable" /> <label for="cl-autocloseable">autocloseable</label>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                </div>
+            </div>
+
+            <div class="api-params__item">
+                <div class="api-params__control">
                     <input type="checkbox" checked="checked" id="cl-closeAfterSelection" /> <label for="cl-closeAfterSelection">close after selection</label>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                </div>
+            </div>
+
+            <div class="api-params__item">
+                <div class="api-params__control">
                     <input type="checkbox" checked="checked" id="cl-daysAfterMonths" /> <label for="cl-daysAfterMonths">days after months</label>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    title
-                </td>
-                <td>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-tooltip panel">
+            <div class="panel__title">Tooltip</div>
+
+            <div class="api-params__item">
+                <div class="api-params__control">
                     <input type="text" id="cl-title-add-date" placeholder="date" value="" style="width: 5em;"/>
                     <select id="cl-title-color">
                         <option name="black">black</option>
@@ -164,214 +121,36 @@
                         <option name="white">white</option>
                         <option name="yellow">yellow</option>
                     </select><br/>
-                    <input type="text" id="cl-title-text" placeholder="text" value=""/><br/>
-                    <input type="submit" value="Add" id="cl-title-add"/>
-                </td>
-            </tr>
-                <td>
-                </td>
-                <td>
-                    <input type="text" id="cl-title-del-date" placeholder="date" value="" style="width: 5em;" /> <input type="submit" value="Del" id="cl-title-del"/>
-                </td>
-            </tr>
+                    <input type="text" id="cl-title-text" placeholder="text" value=""/> <input type="submit" value="Add" id="cl-title-add"/>
+                </div>
+            </div>
 
-        </table>
+            <div class="api-params__item">
+                <div class="api-params__control">
+                    <input type="text" id="cl-title-del-date" placeholder="date" value="" style="width: 5em;" /> <input type="submit" value="Remove" id="cl-title-del"/>
+                </div>
+            </div>
+        </div>
 
-        <br />
-        Events:<br />
-        <div id="log"></div>
+        <div class="api-methods panel">
+            <div class="panel__title">Methods</div>
+
+            <input type="button" value="open" id="cl-open" />
+            <input type="button" value="close" id="cl-close" />
+            <input type="button" value="toggle" id="cl-toggle" />
+            <input type="button" value="destroy" id="cl-destroy" />
+        </div>
+    </div>
+
+    <div class="sidebar sidebar_right">
+        <div class="log panel">
+            <div class="panel__title">Events</div>
+
+            <div class="log__list"></div>
+        </div>
     </div>
 
     <input type="text" id="example-button" value=""/>
-    <!--<button id="example-button"></button>-->
-
-<script>
-window.addEventListener('load', function() {
-    var leadZero = function(num) {
-        return num < 10 ? '0' + num : num;
-    };
-
-    var formatDate = function(d) {
-        return [d.getFullYear(), leadZero(d.getMonth() + 1), leadZero(d.getDate())].join('-');
-    };
-
-    var log = function(text) {
-        getById('log').innerHTML += text + '<br />';
-    };
-
-    var getById = function(id) {
-        return document.getElementById(id);
-    };
-
-    var clLocale = getById('cl-locale');
-    Calendula.getLocales().sort().forEach(function(el) {
-        var opt = document.createElement('option');
-        opt.value = opt.text = el;
-        if(el === 'en') {
-            opt.selected = true;
-        }
-        clLocale.add(opt);
-    });
-
-    var getPosition = function() {
-        return clPositionLeft.value + ' ' + clPositionTop.value;
-    };
-
-    var getShowOn = function() {
-        return clShowOn.value === 'both' ? ['click', 'focus'] : clShowOn.value;
-    };
-
-    var clOpen = getById('cl-open'),
-        clClose = getById('cl-close'),
-        clToggle = getById('cl-toggle'),
-        clDestroy = getById('cl-destroy'),
-        clTheme = getById('cl-theme'),
-        clValue = getById('cl-value'),
-        clValueSet = getById('cl-value-set'),
-        clMin = getById('cl-min'),
-        clMinSet = getById('cl-min-set'),
-        clMax = getById('cl-max'),
-        clMaxSet = getById('cl-max-set'),
-        clAutocloseable = getById('cl-autocloseable'),
-        clCloseAfterSelection = getById('cl-closeAfterSelection'),
-        clDaysAfterMonths = getById('cl-daysAfterMonths'),
-        clPositionLeft = getById('cl-position-left'),
-        clPositionTop = getById('cl-position-top'),
-        clShowOn = getById('cl-show-on'),
-        clTitleText = getById('cl-title-text'),
-        clTitleAdd = getById('cl-title-add'),
-        clTitleDel = getById('cl-title-del'),
-        clTitleColor = getById('cl-title-color'),
-        clTitleAddDate = getById('cl-title-add-date'),
-        clTitleDelDate = getById('cl-title-del-date'),
-        button = getById('example-button'),
-        minDate = new Date(),
-        maxDate = new Date();
-
-    minDate.setDate(1);
-    minDate.setYear(minDate.getFullYear() - 5);
-    maxDate.setDate(1);
-    maxDate.setYear(maxDate.getFullYear() + 1);
-
-    clValue.value = formatDate(new Date());
-    clMin.value = formatDate(minDate);
-    clMax.value = formatDate(maxDate);
-
-    window.cl = new Calendula({
-            locale: clLocale.value,
-            value: clValue.value,
-            min: clMin.value,
-            max: clMax.value,
-            switcher: button,
-            autocloseable: clAutocloseable.checked,
-            daysAfterMonths: clDaysAfterMonths.checked,
-            theme: clTheme.value,
-            showOn: getShowOn(),
-            position: getPosition(),
-            title: [
-                {date: '2014-10-10', text: 'Hello world!'},
-                {date: '2014-10-11', color: 'red', text: 'Hello world!'},
-                {date: '2014-10-12', color: 'orange', text: 'Hello world!'},
-                {date: '2014-10-13', color: 'green', text: 'Hello world!'}
-            ]
-        });
-
-    cl.on('select', function(e, data) {
-        log(e.type + ' ' + JSON.stringify(data));
-    }).on('open', function(e) {
-        log(e.type);
-    }).on('close', function(e) {
-        log(e.type);
-    })
-
-    cl.open();
-
-    clTheme.addEventListener('change', function() {
-        cl.setting('theme', this.value);
-        document.body.className = 'page page_theme_' + this.value;
-
-        setTimeout(function() {
-            cl.open();
-        }, 300);
-    }, false);
-
-    clValueSet.addEventListener('click', function() {
-        cl.val(clValue.value);
-    }, false);
-
-    clMinSet.addEventListener('click', function() {
-        cl.setting('min', clMin.value);
-    }, false);
-
-    clMaxSet.addEventListener('click', function() {
-        cl.setting('max', clMax.value);
-    }, false);
-
-    clPositionLeft.addEventListener('change', function() {
-        cl.setting('position', getPosition());
-        cl.open();
-    });
-
-    clPositionTop.addEventListener('change', function() {
-        cl.setting('position', getPosition());
-        cl.open();
-    });
-
-    clAutocloseable.addEventListener('change', function() {
-        cl.setting('autocloseable', this.checked);
-    }, false);
-
-    clShowOn.addEventListener('change', function() {
-        cl.setting('showOn', getShowOn());
-    }, false);
-
-    clCloseAfterSelection.addEventListener('change', function() {
-        cl.setting('closeAfterSelection', this.checked);
-    }, false);
-
-    clDaysAfterMonths.addEventListener('change', function() {
-        cl.setting('daysAfterMonths', this.checked);
-    }, false);
-
-    document.body.className = 'page_theme_' + clTheme.value;
-
-    clLocale.addEventListener('change', function() {
-        cl.setting('locale', this.value);
-
-        setTimeout(function() {
-            cl.open();
-        }, 300);
-    }, false);
-
-    clTitleAdd.addEventListener('click', function() {
-        cl.title.set({
-            text: clTitleText.value,
-            color: clTitleColor.value,
-            date: clTitleAddDate.value
-        });
-    }, false);
-
-    clTitleDel.addEventListener('click', function() {
-        cl.title.remove(clTitleDelDate.value);
-    }, false);
-
-    clOpen.addEventListener('click', function() {
-        cl.open();
-    }, false);
-
-    clClose.addEventListener('click', function() {
-        cl.close();
-    }, false);
-
-    clToggle.addEventListener('click', function() {
-        cl.toggle();
-    }, false);
-
-    clDestroy.addEventListener('click', function() {
-        cl.destroy();
-    }, false);
-}, false);
-
-</script>
+    <script src="api.js"></script>
 </body>
 </html>

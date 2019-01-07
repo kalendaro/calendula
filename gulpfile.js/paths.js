@@ -4,7 +4,7 @@ module.exports = {
     dest,
     css: {
         all: [
-            'src/css/index.scss',
+            'dist/calendula.css',
             'src/css/themes/*.scss'
         ],
         main: [ 'src/css/index.scss' ],
@@ -16,6 +16,6 @@ module.exports = {
             `${dest}/holidays/*.js`
         ],
         locales: [ 'src/js/locale/*.js' ],
-        main: 'src/js/main.js',
+        main: 'src/js/main.js'
     }
 };
