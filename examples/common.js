@@ -18,9 +18,9 @@ window.addEventListener('load', function() {
 
     var nav = document.createElement('div');
     nav.innerHTML = '<div class="nav">\
-        <a href="https://github.com/kalendaro/calendula" class="button back">🏠</a>\
-        <a href="./' + prev + '.html" class="button prev">◀</a>\
-        <a href="./' + next + '.html" class="button next">▶</a>\
+        <a title="Github" href="https://github.com/kalendaro/calendula" class="button back">🏠</a>\
+        <a title="Previous" href="./' + prev + '.html" class="button prev">◀</a>\
+        <a title="Next" href="./' + next + '.html" class="button next">▶</a>\
         </div>';
 
     document.body.appendChild(nav);

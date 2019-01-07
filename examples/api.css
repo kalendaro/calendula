@@ -19,13 +19,13 @@
 
 .sidebar_left {
     position: absolute;
-    left: 20px;
+    left: 10px;
     top: 60px;
 }
 
 .sidebar_right {
     position: absolute;
-    right: 20px;
+    right: 10px;
     top: 60px;
     bottom: 60px;
 }
