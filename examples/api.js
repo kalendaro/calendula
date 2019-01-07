@@ -66,7 +66,9 @@
         clTitleDelDate = getById('cl-title-del-date'),
         button = getById('example-button'),
         minDate = new Date(),
-        maxDate = new Date();
+        maxDate = new Date(),
+        currentDate = new Date(),
+        currentMonth = currentDate.getFullYear() + '-' + leadZero(currentDate.getMonth() + 1);
 
     minDate.setDate(1);
     minDate.setYear(minDate.getFullYear() - 5);
@@ -89,10 +91,10 @@
         showOn: getShowOn(),
         position: getPosition(),
         title: [
-            {date: '2014-10-10', text: 'Hello world!'},
-            {date: '2014-10-11', color: 'red', text: 'Hello world!'},
-            {date: '2014-10-12', color: 'orange', text: 'Hello world!'},
-            {date: '2014-10-13', color: 'green', text: 'Hello world!'}
+            {date: currentMonth + '-10', text: 'Hello world!'},
+            {date: currentMonth + '-11', color: 'red', text: 'Hello world!'},
+            {date: currentMonth + '-12', color: 'orange', text: 'Hello world!'},
+            {date: currentMonth + '-13', color: 'green', text: 'Hello world!'}
         ]
     });
 
