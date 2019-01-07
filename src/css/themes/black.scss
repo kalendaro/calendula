@@ -14,7 +14,7 @@
 {
     &__days
     {
-        border-radius: 3px;
+        border-radius: 3px 0 0 3px;
         box-shadow: inset 0 0 5px 0 rgba(255, 255, 255, .2);
     }
 
@@ -93,6 +93,16 @@
         box-shadow: inset 0 0 5px 0 rgba(255, 255, 255, .2);
     }
 
+    &__months
+    {
+        border-radius: 0;
+    }
+
+    &__years
+    {
+        border-radius: 0 3px 3px 0;
+    }
+
     &__short-daynames-cell_n_0,
     &__short-daynames-cell_n_6,
     &__day_holiday,
@@ -121,3 +131,14 @@
         text-shadow: 1px 1px 3px #777;
     }
 }
+
+.calendula_theme_black.calendula_days-after-months .calendula {
+    &__days {
+        border-radius: 0;
+    }
+
+    &__months {
+        border-radius: 3px 0 0 3px;
+    }
+}
+

@@ -267,17 +267,23 @@ export default class Template {
         return [
             {
                 b: this.parent._name,
-                e: 'short-daynames',
-                c: bufDayNames
-            }, {
-                b: this.parent._name,
                 e: 'container',
                 c: [{
-                    e: 'days',
-                    c: {
-                        e: 'days-container',
-                        c: this.days()
-                    }
+                    e: 'days-i',
+                    c: [
+                        {
+                            b: this.parent._name,
+                            e: 'short-daynames',
+                            c: bufDayNames
+                        },
+                        {
+                            e: 'days',
+                            c: {
+                                e: 'days-container',
+                                c: this.days()
+                            }
+                        }
+                    ]
                 },
                 {
                     e: 'months',

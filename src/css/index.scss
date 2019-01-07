@@ -4,8 +4,6 @@
 
     visibility: hidden;
 
-    width: 310px;
-    height: 310px;
     margin-top: 1px;
 
     user-select: none;
@@ -31,56 +29,50 @@
 
     &__container
     {
-        position: absolute;
-        top: 26px;
-        right: 6px;
-        bottom: 6px;
-        left: 6px;
+        display: flex;
+        flex-direction: row;
+        margin: 26px 6px 6px 6px;
 
         backface-visibility: hidden;
     }
 
     &__short-daynames
     {
+        display: flex;
+        flex-direction: row;
         position: absolute;
-        top: 4px;
-        left: 12px;
+        top: -19px;
+        left: 5px;
 
         cursor: default;
     }
 
-    &_days-after-months &__short-daynames
-    {
-        left: 79px;
-    }
-
     &__short-daynames-cell
     {
-        float: left;
-        overflow-x: hidden;
-
-        width: 22px;
+        width: 2em;
 
         text-align: center;
     }
 
     &__days
     {
-        position: absolute;
-        top: 0;
-        left: 0;
-
         overflow: hidden;
 
-        width: 166px;
         height: 100%;
 
         cursor: default;
     }
 
-    &_days-after-months &__days
-    {
-        left: 67px;
+    &__days,
+    &__months,
+    &__years {
+        position: relative;
+        overflow-y: hidden;
+        height: 276px;
+    }
+
+    &__days-i {
+        position: relative;
     }
 
     &__days_noanim &__days-container,
@@ -107,9 +99,8 @@
 
     &__days-table
     {
-        width: 157px;
+        width: 100%;
 
-        table-layout: fixed;
         border-spacing: 0 0;
         border-collapse: collapse;
     }
@@ -118,7 +109,7 @@
     {
         position: relative;
         top: 0;
-        left: 5px;
+        margin: 0 5px;
 
         transition: transform .2s linear;
     }
@@ -137,8 +128,8 @@
         position: relative;
 
         box-sizing: border-box;
-        height: 20px;
-        padding: 0;
+        width: 2em;
+        padding: 4px 0;
 
         transition: border-radius .2s linear;
         text-align: center;
@@ -157,7 +148,10 @@
         position: relative;
         z-index: 10;
 
-        padding-left: 6px;
+        white-space: nowrap;
+
+        padding-left: 10px;
+        padding-right: 10px;
 
         transition: color .2s linear;
         vertical-align: middle;
@@ -197,23 +191,9 @@
         height: 50%;
     }
 
-    &__months
-    {
-        left: 166px;
-
-        width: 67px;
-    }
-
     &_days-after-months &__months
     {
         left: 0;
-    }
-
-    &__years
-    {
-        left: 233px;
-
-        width: 66px;
     }
 
     &__years-container
@@ -223,17 +203,8 @@
         transition: transition .2s linear;
     }
 
-    &__years,
-    &__months
-    {
-        position: absolute;
-        top: 0;
-
-        overflow: hidden;
-
-        height: 100%;
-
-        cursor: default;
+    &_days-after-months &__months {
+        order: -1;
     }
 
     &__year
@@ -243,7 +214,10 @@
         position: relative;
         z-index: 10;
 
+        white-space: nowrap;
+
         padding-left: 16px;
+        padding-right: 16px;
 
         transition: color .2s linear;
         vertical-align: middle;
