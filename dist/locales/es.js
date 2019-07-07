@@ -1,0 +1,29 @@
+Calendula.addLocale('es', {
+  "months": [
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre"
+  ],
+  "shortDayNames": ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "S?"],
+  "dayNames": [
+    "Domingo",
+    "Lunes",
+    "Martes",
+    "Mi?rcoles",
+    "Jueves",
+    "Viernes",
+    "S?bado"
+  ],
+  "today": "Hoy",
+  "firstWeekday": 1
+}
+);
