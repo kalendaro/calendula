@@ -2,13 +2,15 @@
 .calendula__tooltip_theme_metro {
   font-family: Segoe UI, sans-serif;
   font-size: 12px;
-  transform: translateY(-20%);
+  -webkit-transform: translateY(-20%);
+          transform: translateY(-20%);
   color: #000;
   outline: 1px solid #ccc;
   background: #fff; }
 
 .calendula_theme_metro.calendula_opened {
-  transform: translateY(0%); }
+  -webkit-transform: translateY(0%);
+          transform: translateY(0%); }
 
 .calendula_theme_metro .calendula__month, .calendula_theme_metro .calendula__year {
   color: #a0a0a0; }

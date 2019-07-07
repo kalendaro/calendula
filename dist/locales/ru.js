@@ -1,4 +1,5 @@
-Calendula.addLocale('ru', {
+Calendula.addLocale({
+  "locale": "ru",
   "months": [
     "январь",
     "февраль",

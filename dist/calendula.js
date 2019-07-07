@@ -1550,12 +1550,11 @@
   var locales = {};
   /**
    * Add a locale.
-   * @param {string} locale
-   * @param {Object} texts
+   * @param {Object} data
    */
 
-  Calendula.addLocale = function (locale, texts) {
-    locales[locale] = texts;
+  Calendula.addLocale = function (data) {
+    locales[data.locale] = data;
   };
   /**
    * Get locales.
@@ -1574,7 +1573,7 @@
    */
 
 
-  Calendula.prototype.text = function (id) {
+  Calendula.prototype.i18n = function (id) {
     return locales[this.setting('locale')][id];
   };
 
@@ -1987,7 +1986,7 @@
     }, {
       key: "dayNames",
       value: function dayNames() {
-        var first = this.parent.text('firstWeekday') || 0,
+        var first = this.parent.i18n('firstWeekday') || 0,
             week = {
           first: first,
           last: !first ? SATURDAY : first - 1
@@ -2057,7 +2056,7 @@
 
           if (todayTs === dateTs) {
             mods.now = true;
-            title = parent.text('today');
+            title = parent.i18n('today');
           }
 
           if (minTs && dateTs < minTs || maxTs && dateTs > maxTs) {
@@ -2174,7 +2173,7 @@
             e: 'month-selector-i'
           }
         }];
-        this.parent.text('months').forEach(function (el, i) {
+        this.parent.i18n('months').forEach(function (el, i) {
           buf.push({
             b: _this.parent._name,
             e: 'month',
@@ -2194,10 +2193,10 @@
       key: "main",
       value: function main() {
         var parent = this.parent,
-            dayNames = parent.text('dayNames') || [],
+            dayNames = parent.i18n('dayNames') || [],
             bufDayNames = [];
-        var weekday = parent.text('firstWeekday') || SUNDAY;
-        parent.text('shortDayNames').forEach(function (el, i, data) {
+        var weekday = parent.i18n('firstWeekday') || SUNDAY;
+        parent.i18n('shortDayNames').forEach(function (el, i, data) {
           bufDayNames.push({
             e: 'short-daynames-cell',
             m: {
@@ -2264,7 +2263,7 @@
         return {
           e: 'days-title-month',
           m: mods,
-          c: this.parent.text('months')[m]
+          c: this.parent.i18n('months')[m]
         };
       }
     }, {

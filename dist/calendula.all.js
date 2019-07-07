@@ -1550,12 +1550,11 @@
   var locales = {};
   /**
    * Add a locale.
-   * @param {string} locale
-   * @param {Object} texts
+   * @param {Object} data
    */
 
-  Calendula.addLocale = function (locale, texts) {
-    locales[locale] = texts;
+  Calendula.addLocale = function (data) {
+    locales[data.locale] = data;
   };
   /**
    * Get locales.
@@ -1574,7 +1573,7 @@
    */
 
 
-  Calendula.prototype.text = function (id) {
+  Calendula.prototype.i18n = function (id) {
     return locales[this.setting('locale')][id];
   };
 
@@ -1987,7 +1986,7 @@
     }, {
       key: "dayNames",
       value: function dayNames() {
-        var first = this.parent.text('firstWeekday') || 0,
+        var first = this.parent.i18n('firstWeekday') || 0,
             week = {
           first: first,
           last: !first ? SATURDAY : first - 1
@@ -2057,7 +2056,7 @@
 
           if (todayTs === dateTs) {
             mods.now = true;
-            title = parent.text('today');
+            title = parent.i18n('today');
           }
 
           if (minTs && dateTs < minTs || maxTs && dateTs > maxTs) {
@@ -2174,7 +2173,7 @@
             e: 'month-selector-i'
           }
         }];
-        this.parent.text('months').forEach(function (el, i) {
+        this.parent.i18n('months').forEach(function (el, i) {
           buf.push({
             b: _this.parent._name,
             e: 'month',
@@ -2194,10 +2193,10 @@
       key: "main",
       value: function main() {
         var parent = this.parent,
-            dayNames = parent.text('dayNames') || [],
+            dayNames = parent.i18n('dayNames') || [],
             bufDayNames = [];
-        var weekday = parent.text('firstWeekday') || SUNDAY;
-        parent.text('shortDayNames').forEach(function (el, i, data) {
+        var weekday = parent.i18n('firstWeekday') || SUNDAY;
+        parent.i18n('shortDayNames').forEach(function (el, i, data) {
           bufDayNames.push({
             e: 'short-daynames-cell',
             m: {
@@ -2264,7 +2263,7 @@
         return {
           e: 'days-title-month',
           m: mods,
-          c: this.parent.text('months')[m]
+          c: this.parent.i18n('months')[m]
         };
       }
     }, {
@@ -2648,7 +2647,8 @@
 
 }));
 
-Calendula.addLocale('be', {
+Calendula.addLocale({
+  "locale": "be",
   "months": [
     "студзень",
     "люты",
@@ -2691,7 +2691,8 @@ Calendula.addLocale('be', {
   "firstWeekday": 1
 }
 );
-Calendula.addLocale('de', {
+Calendula.addLocale({
+  "locale": "de",
   "months": [
     "Januar",
     "Februar",
@@ -2720,7 +2721,8 @@ Calendula.addLocale('de', {
   "firstWeekday": 1
 }
 );
-Calendula.addLocale('en', {
+Calendula.addLocale({
+  "locale": "en",
   "months": [
     "January",
     "February",
@@ -2749,7 +2751,8 @@ Calendula.addLocale('en', {
   "firstWeekday": 0
 }
 );
-Calendula.addLocale('es', {
+Calendula.addLocale({
+  "locale": "es",
   "months": [
     "enero",
     "febrero",
@@ -2778,7 +2781,8 @@ Calendula.addLocale('es', {
   "firstWeekday": 1
 }
 );
-Calendula.addLocale('fr', {
+Calendula.addLocale({
+  "locale": "fr",
   "months": [
     "janvier",
     "février",
@@ -2807,7 +2811,8 @@ Calendula.addLocale('fr', {
   "firstWeekday": 1
 }
 );
-Calendula.addLocale('it', {
+Calendula.addLocale({
+  "locale": "it",
   "months": [
     "gennaio",
     "febbraio",
@@ -2836,7 +2841,8 @@ Calendula.addLocale('it', {
   "firstWeekday": 1
 }
 );
-Calendula.addLocale('pl', {
+Calendula.addLocale({
+  "locale": "pl",
   "months": [
     "styczeń",
     "luty",
@@ -2879,7 +2885,8 @@ Calendula.addLocale('pl', {
   "firstWeekday": 1
 }
 );
-Calendula.addLocale('ru', {
+Calendula.addLocale({
+  "locale": "ru",
   "months": [
     "январь",
     "февраль",
@@ -2922,7 +2929,8 @@ Calendula.addLocale('ru', {
   "firstWeekday": 1
 }
 );
-Calendula.addLocale('tr', {
+Calendula.addLocale({
+  "locale": "tr",
   "months": [
     "ocak",
     "şubat",
@@ -2951,7 +2959,8 @@ Calendula.addLocale('tr', {
   "firstWeekday": 1
 }
 );
-Calendula.addLocale('uk', {
+Calendula.addLocale({
+  "locale": "uk",
   "months": [
     "січень",
     "лютий",

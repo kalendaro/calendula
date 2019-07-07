@@ -1,4 +1,5 @@
-Calendula.addLocale('de', {
+Calendula.addLocale({
+  "locale": "de",
   "months": [
     "Januar",
     "Februar",

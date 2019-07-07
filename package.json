@@ -30,15 +30,16 @@
   "devDependencies": {
     "@babel/core": "^7.5.0",
     "@babel/preset-env": "^7.5.0",
+    "autoprefixer": "^9.6.1",
     "chai": "^4.2.0",
+    "cssnano": "^4.1.10",
     "del": "^5.0.0",
     "eslint": "^6.0.1",
     "glob": "^7.1.4",
     "gulp": "^4.0.2",
-    "gulp-autoprefixer": "^6.1.0",
     "gulp-babel": "^8.0.0",
-    "gulp-cleancss": "^0.2.0",
     "gulp-concat": "^2.6.0",
+    "gulp-postcss": "^8.0.0",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
     "gulp-rollup": "^2.16.2",
@@ -58,7 +59,7 @@
     "iOS >= 8",
     "Safari >= 8",
     "Android > 4.4"
-],
+  ],
   "scripts": {
     "test": "npm run build && npm run eslint ",
     "eslint": "./node_modules/.bin/eslint .",

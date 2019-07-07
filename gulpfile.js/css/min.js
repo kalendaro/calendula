@@ -1,7 +1,8 @@
 const
     { src, dest, series } = require('gulp'),
-    autoprefixer = require('gulp-autoprefixer'),
-    cleancss = require('gulp-cleancss'),
+    postcss = require('gulp-postcss'),
+    autoprefixer = require('autoprefixer'),
+    cssnano = require('cssnano'),
     rename = require('gulp-rename'),
     all = require('./all'),
     paths = require('../paths'),
@@ -12,8 +13,10 @@ function min() {
         .pipe(rename(function(path) {
             path.basename += '.min';
         }))
-        .pipe(autoprefixer())
-        .pipe(cleancss({keepBreaks: false}))
+        .pipe(postcss([
+            autoprefixer(),
+            cssnano()
+        ]))
         .pipe(dest(paths.dest));
 }
 

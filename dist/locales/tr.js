@@ -1,4 +1,5 @@
-Calendula.addLocale('tr', {
+Calendula.addLocale({
+  "locale": "tr",
   "months": [
     "ocak",
     "şubat",

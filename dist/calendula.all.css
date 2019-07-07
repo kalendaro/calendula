@@ -2,8 +2,12 @@
   position: absolute;
   visibility: hidden;
   margin-top: 1px;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   user-select: none;
+  transition: visibility 0s linear .2s, opacity .2s linear, -webkit-transform .2s linear;
   transition: visibility 0s linear .2s, opacity .2s linear, transform .2s linear;
+  transition: visibility 0s linear .2s, opacity .2s linear, transform .2s linear, -webkit-transform .2s linear;
   opacity: 0;
   z-index: 1000;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -16,13 +20,18 @@
   opacity: 1; }
 
 .calendula__container {
+  display: -webkit-flex;
   display: flex;
+  -webkit-flex-direction: row;
   flex-direction: row;
   margin: 26px 6px 6px 6px;
+  -webkit-backface-visibility: hidden;
   backface-visibility: hidden; }
 
 .calendula__short-daynames {
+  display: -webkit-flex;
   display: flex;
+  -webkit-flex-direction: row;
   flex-direction: row;
   position: absolute;
   top: -19px;
@@ -69,7 +78,9 @@
   position: relative;
   top: 0;
   margin: 0 5px;
-  transition: transform .2s linear; }
+  transition: -webkit-transform .2s linear;
+  transition: transform .2s linear;
+  transition: transform .2s linear, -webkit-transform .2s linear; }
 
 .calendula__days-title-month {
   font-weight: bold;
@@ -104,13 +115,17 @@
 .calendula__year-selector {
   height: 21px;
   margin-top: 1px;
-  transition: transform .2s linear; }
+  transition: -webkit-transform .2s linear;
+  transition: transform .2s linear;
+  transition: transform .2s linear, -webkit-transform .2s linear; }
 
 .calendula__month-selector, .calendula__year-selector {
   position: absolute;
   right: 1px;
   left: 1px;
-  transition: transform .2s ease-in; }
+  transition: -webkit-transform .2s ease-in;
+  transition: transform .2s ease-in;
+  transition: transform .2s ease-in, -webkit-transform .2s ease-in; }
 
 .calendula__month-selector-i, .calendula__year-selector-i {
   position: absolute;
@@ -127,6 +142,7 @@
   transition: transition .2s linear; }
 
 .calendula_days-after-months .calendula__months {
+  -webkit-order: -1;
   order: -1; }
 
 .calendula__year {
@@ -164,6 +180,7 @@
   width: 6px;
   height: 6px;
   content: '';
+  -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
   border: 2px solid transparent;
   background: #fff; }
@@ -541,13 +558,15 @@
 .calendula__tooltip_theme_metro {
   font-family: Segoe UI, sans-serif;
   font-size: 12px;
-  transform: translateY(-20%);
+  -webkit-transform: translateY(-20%);
+          transform: translateY(-20%);
   color: #000;
   outline: 1px solid #ccc;
   background: #fff; }
 
 .calendula_theme_metro.calendula_opened {
-  transform: translateY(0%); }
+  -webkit-transform: translateY(0%);
+          transform: translateY(0%); }
 
 .calendula_theme_metro .calendula__month, .calendula_theme_metro .calendula__year {
   color: #a0a0a0; }

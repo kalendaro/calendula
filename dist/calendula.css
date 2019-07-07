@@ -2,8 +2,12 @@
   position: absolute;
   visibility: hidden;
   margin-top: 1px;
-  user-select: none;
+  -webkit-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  transition: visibility 0s linear .2s, opacity .2s linear, -webkit-transform .2s linear;
   transition: visibility 0s linear .2s, opacity .2s linear, transform .2s linear;
+  transition: visibility 0s linear .2s, opacity .2s linear, transform .2s linear, -webkit-transform .2s linear;
   opacity: 0;
   z-index: 1000;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -14,13 +18,18 @@
     transition-delay: 0s;
     opacity: 1; }
   .calendula__container {
+    display: -webkit-flex;
     display: flex;
-    flex-direction: row;
+    -webkit-flex-direction: row;
+            flex-direction: row;
     margin: 26px 6px 6px 6px;
-    backface-visibility: hidden; }
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden; }
   .calendula__short-daynames {
+    display: -webkit-flex;
     display: flex;
-    flex-direction: row;
+    -webkit-flex-direction: row;
+            flex-direction: row;
     position: absolute;
     top: -19px;
     left: 5px;
@@ -56,7 +65,9 @@
     position: relative;
     top: 0;
     margin: 0 5px;
-    transition: transform .2s linear; }
+    transition: -webkit-transform .2s linear;
+    transition: transform .2s linear;
+    transition: transform .2s linear, -webkit-transform .2s linear; }
   .calendula__days-title-month {
     font-weight: bold;
     padding-left: 4px;
@@ -85,12 +96,16 @@
   .calendula__year-selector {
     height: 21px;
     margin-top: 1px;
-    transition: transform .2s linear; }
+    transition: -webkit-transform .2s linear;
+    transition: transform .2s linear;
+    transition: transform .2s linear, -webkit-transform .2s linear; }
   .calendula__month-selector, .calendula__year-selector {
     position: absolute;
     right: 1px;
     left: 1px;
-    transition: transform .2s ease-in; }
+    transition: -webkit-transform .2s ease-in;
+    transition: transform .2s ease-in;
+    transition: transform .2s ease-in, -webkit-transform .2s ease-in; }
   .calendula__month-selector-i, .calendula__year-selector-i {
     position: absolute;
     top: 50%;
@@ -103,7 +118,8 @@
     position: relative;
     transition: transition .2s linear; }
   .calendula_days-after-months .calendula__months {
-    order: -1; }
+    -webkit-order: -1;
+            order: -1; }
   .calendula__year {
     line-height: 23px;
     position: relative;
@@ -139,7 +155,8 @@
   width: 6px;
   height: 6px;
   content: '';
-  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
   border: 2px solid transparent;
   background: #fff; }
 

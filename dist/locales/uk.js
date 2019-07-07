@@ -1,4 +1,5 @@
-Calendula.addLocale('uk', {
+Calendula.addLocale({
+  "locale": "uk",
   "months": [
     "січень",
     "лютий",
