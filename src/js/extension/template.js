@@ -38,7 +38,7 @@ export default class Template {
      */
     dayNames() {
         const
-            first = this.parent.text('firstWeekday') || 0,
+            first = this.parent.i18n('firstWeekday') || 0,
             week = {
                 first: first,
                 last: !first ? SATURDAY : first - 1
@@ -108,7 +108,7 @@ export default class Template {
 
             if (todayTs === dateTs) {
                 mods.now = true;
-                title = parent.text('today');
+                title = parent.i18n('today');
             }
 
             if ((minTs && dateTs < minTs) || (maxTs && dateTs > maxTs)) {
@@ -225,7 +225,7 @@ export default class Template {
             }
         ];
 
-        this.parent.text('months').forEach((el, i) => {
+        this.parent.i18n('months').forEach((el, i) => {
             buf.push({
                 b: this.parent._name,
                 e: 'month',
@@ -245,12 +245,12 @@ export default class Template {
     main() {
         const
             parent = this.parent,
-            dayNames = parent.text('dayNames') || [],
+            dayNames = parent.i18n('dayNames') || [],
             bufDayNames = [];
 
-        let weekday = parent.text('firstWeekday') || SUNDAY;
+        let weekday = parent.i18n('firstWeekday') || SUNDAY;
 
-        parent.text('shortDayNames').forEach((el, i, data) => {
+        parent.i18n('shortDayNames').forEach((el, i, data) => {
             bufDayNames.push({
                 e: 'short-daynames-cell',
                 m: { n: weekday },
@@ -322,7 +322,7 @@ export default class Template {
         return {
             e: 'days-title-month',
             m: mods,
-            c: this.parent.text('months')[m]
+            c: this.parent.i18n('months')[m]
         };
     }
 

@@ -4,11 +4,10 @@ const locales = {};
 
 /**
  * Add a locale.
- * @param {string} locale
- * @param {Object} texts
+ * @param {Object} data
  */
-Calendula.addLocale = function(locale, texts) {
-    locales[locale] = texts;
+Calendula.addLocale = function(data) {
+    locales[data.locale] = data;
 };
 
 /**
@@ -26,6 +25,6 @@ Calendula.getLocales = function() {
  * @param {string} id
  * @returns {*}
  */
-Calendula.prototype.text = function(id) {
+Calendula.prototype.i18n = function(id) {
     return locales[this.setting('locale')][id];
 };

@@ -23,7 +23,7 @@ function generateJS(cb) {
 
             fs.writeFileSync(
                 `${paths.dest}/locales/${name}.js`,
-                `Calendula.addLocale('${name}', ${text});`
+                `Calendula.addLocale(${text});`
             );
         });
 
