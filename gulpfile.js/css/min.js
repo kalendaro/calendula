@@ -5,7 +5,6 @@ const
     rename = require('gulp-rename'),
     all = require('./all'),
     paths = require('../paths'),
-    supportedBrowsers = require('./supportedBrowsers'),
     themes = require('./themes');
 
 function min() {
@@ -13,7 +12,7 @@ function min() {
         .pipe(rename(function(path) {
             path.basename += '.min';
         }))
-        .pipe(autoprefixer(supportedBrowsers))
+        .pipe(autoprefixer())
         .pipe(cleancss({keepBreaks: false}))
         .pipe(dest(paths.dest));
 }
