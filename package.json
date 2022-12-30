@@ -47,7 +47,7 @@
     "gulp-uglify": "^3.0.2",
     "jstohtml": "^2.1.1",
     "kalendaro-holidays": "^1.0.1",
-    "mocha": "^6.1.4",
+    "mocha": "^10.2.0",
     "rollup": "^1.16.6",
     "rollup-plugin-babel": "^4.3.3",
     "yaspeller": "^6.0.0"
